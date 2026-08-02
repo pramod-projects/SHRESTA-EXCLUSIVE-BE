@@ -1,0 +1,17 @@
+{
+  "class": "RedisKvReadThroughCache",
+  "module": "kv",
+  "purpose": "Redis implementation of table-configurable read-through aggregate caching.",
+  "businessRules": [
+    "If global KV or any dependent table is disabled, read directly from PostgreSQL through the loader.",
+    "Value keys include dependent table version keys so invalidation is coarse and safe.",
+    "TTL is the minimum configured TTL across dependent tables.",
+    "Redis read/write failures log a warning and fall back to PostgreSQL for reads."
+  ],
+  "configuration": [
+    "shresta.kv.enabled",
+    "shresta.kv.key-prefix",
+    "shresta.kv.tables.<table>.enabled",
+    "shresta.kv.tables.<table>.ttl"
+  ]
+}

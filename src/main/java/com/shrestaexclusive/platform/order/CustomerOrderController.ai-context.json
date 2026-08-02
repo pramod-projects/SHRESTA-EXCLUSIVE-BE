@@ -1,0 +1,24 @@
+{
+  "class": "CustomerOrderController",
+  "module": "order",
+  "purpose": "Customer-facing checkout draft, order placement, and order status API boundary.",
+  "apiSurface": [
+    "POST /api/v1/customer/orders/draft",
+    "POST /api/v1/customer/orders",
+    "GET /api/v1/customer/orders",
+    "GET /api/v1/customer/orders/{orderNumber}"
+  ],
+  "businessRules": [
+    "Authenticate every request with the bearer customer session token before exposing order data.",
+    "Require Idempotency-Key for draft creation and final placement, and delegate mutation replay/conflict handling to IdempotentMutationCoordinator.",
+    "Use per-customer mutation locks so repeated proceed-to-checkout or confirm-and-pay clicks cannot create overlapping writes.",
+    "Draft creation returns a 15-minute checkout order ID before the customer enters checkout details.",
+    "Return the standard ApiResponse envelope with backend trace IDs.",
+    "GET /api/v1/customer/orders returns lightweight summaries for the authenticated customer's profile order history."
+  ],
+  "dependencies": [
+    "CustomerAuthService",
+    "CustomerOrderService",
+    "IdempotentMutationCoordinator"
+  ]
+}

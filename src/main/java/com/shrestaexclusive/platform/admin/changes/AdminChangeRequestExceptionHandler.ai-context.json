@@ -1,0 +1,11 @@
+{
+  "class": "AdminChangeRequestExceptionHandler",
+  "module": "admin-governance",
+  "purpose": "Structured error adapter for admin ACL, change request validation, approval execution, idempotency, and mutation lock failures.",
+  "businessRules": [
+    "Review APIs must return SHRESTA ApiResponse error envelopes with trace IDs.",
+    "Unsupported approval payloads are rejected as INVALID_ADMIN_CHANGE_REQUEST.",
+    "Idempotency and mutation lock failures keep their specific platform error codes."
+  ],
+  "apiBoundary": "AdminChangeRequestController"
+}

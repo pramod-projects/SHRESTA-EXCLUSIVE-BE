@@ -1,0 +1,19 @@
+{
+  "class": "AdminCategoryService",
+  "module": "category",
+  "purpose": "Transactional application service for category configuration admin mutations, archive operations, permanent delete operations, and KV refresh.",
+  "ownedTables": [
+    "category_family_config",
+    "category_product_type_config",
+    "category_attribute_config",
+    "category_filter_config",
+    "category_tax_config",
+    "category_styling_config"
+  ],
+  "businessRules": [
+    "Category configuration is saree-focused and must stay saree-only.",
+    "Each write delegates persistence to AdminCategoryRepository and refreshes the public category aggregate through CategoryConfigService.",
+    "List reads reuse the public category service so admin and storefront see the same active graph.",
+    "Permanent delete operations are explicit methods invoked by reviewer-approved DELETE change requests."
+  ]
+}

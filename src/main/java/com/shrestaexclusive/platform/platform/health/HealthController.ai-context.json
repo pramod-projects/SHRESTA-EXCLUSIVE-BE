@@ -1,0 +1,10 @@
+{
+  "class": "HealthController",
+  "module": "platform",
+  "purpose": "Public platform health endpoint that exposes stable architecture invariants for smoke tests.",
+  "businessRules": [
+    "Health response must not expose secrets, credentials, hostnames, or environment-specific internal URLs.",
+    "Health response should make core invariants visible to deployment smoke tests."
+  ],
+  "aiHint": "Keep this endpoint lightweight. Deep dependency health belongs to Spring Actuator readiness checks."
+}

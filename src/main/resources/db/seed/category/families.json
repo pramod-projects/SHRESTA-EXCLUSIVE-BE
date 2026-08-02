@@ -1,0 +1,13 @@
+[
+  {
+    "family_key": "silk_saree",
+    "display_name": "Sarees",
+    "description": "Curated saree collections for weddings, festivities, and timeless daily elegance.",
+    "is_active": true,
+    "sort_order": 10,
+    "metadata": {
+      "launch": true,
+      "brand": "SHRESTA EXCLUSIVE"
+    }
+  }
+]

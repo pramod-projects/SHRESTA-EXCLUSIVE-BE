@@ -1,0 +1,9 @@
+{
+  "class": "AssetReplacementTarget",
+  "module": "asset",
+  "purpose": "Small repository row projection used to replace an existing asset image while preserving assetKey.",
+  "businessRules": [
+    "The repository reads this target with FOR UPDATE so concurrent replacements cannot calculate the same next version.",
+    "nextVersion is used for the replacement original and variant object-key paths."
+  ]
+}

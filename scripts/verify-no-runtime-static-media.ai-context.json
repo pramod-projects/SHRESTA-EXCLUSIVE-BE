@@ -1,0 +1,11 @@
+{
+  "module": "platform-verification",
+  "file": "scripts/verify-no-runtime-static-media",
+  "purpose": "Repository guard that prevents SHRESTA-BE from packaging or serving static image assets at runtime.",
+  "businessRules": [
+    "Image binaries must not be placed under src/ or runtime Spring resources.",
+    "seed/shresta-media is the only allowed repository media-binary location and exists only to seed S3-compatible object storage.",
+    "Runtime Java/config must not reference backend-local media routes such as /shresta-media or /shresta-assets.",
+    "Gradle check depends on this guard through verifyNoRuntimeStaticMedia."
+  ]
+}

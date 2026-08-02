@@ -1,0 +1,13 @@
+{
+  "class": "Money",
+  "module": "common",
+  "purpose": "Paise-only money value object used for all backend financial arithmetic.",
+  "financialCritical": true,
+  "businessRules": [
+    "All money is represented as long paise.",
+    "No float, double, BigDecimal, rupee string, or client-computed amount is accepted as money truth.",
+    "Arithmetic uses exact operations to surface overflow instead of silently wrapping."
+  ],
+  "mustNotDirectlyCall": ["CurrencyFormatters", "LocaleFormatters"],
+  "aiHint": "Do not add rupee factories. Formatting belongs to presentation clients; backend APIs expose paise explicitly."
+}

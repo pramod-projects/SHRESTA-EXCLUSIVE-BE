@@ -1,0 +1,17 @@
+{
+  "class": "AssetTagRules",
+  "module": "asset",
+  "purpose": "Single backend contract for admin-managed asset/product badge tags stored on media_assets.tags.",
+  "ownedRules": [
+    "Asset tags normalize to uppercase enum tokens using A-Z, 0-9, hyphen, and underscore only.",
+    "Asset tags are limited to 40 characters each, which leaves room beyond current merchandising labels while preventing storefront badge overflow.",
+    "A media asset may carry at most 16 tags.",
+    "Tags are deduplicated in insertion order before persistence or API response serialization."
+  ],
+  "usedBy": [
+    "AssetUploadRequest",
+    "AssetMetadataUpdateRequest",
+    "AssetResponse"
+  ],
+  "databaseContract": "V19__asset_tag_contract.sql mirrors the same max length, max count, and token regex at PostgreSQL level."
+}

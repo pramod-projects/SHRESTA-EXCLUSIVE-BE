@@ -1,0 +1,19 @@
+{
+  "class": "AdminCategoryController",
+  "module": "category",
+  "purpose": "Admin HTTP boundary for category family, subcategory, attribute, filter, tax, and styling configuration mutations.",
+  "apiSurface": [
+    "/api/v1/admin/catalog/categories",
+    "/api/v1/admin/catalog/categories/{familyKey}/subcategories",
+    "/api/v1/admin/catalog/categories/{familyKey}/attributes",
+    "/api/v1/admin/catalog/categories/{familyKey}/filters",
+    "/api/v1/admin/catalog/categories/{familyKey}/taxes",
+    "/api/v1/admin/catalog/categories/{familyKey}/styling"
+  ],
+  "businessRules": [
+    "Only SUPER_ADMIN, CHANGE_SUBMITTER, CHANGE_REVIEWER, or CHANGE_MANAGER can access category admin endpoints.",
+    "Every mutation uses Idempotency-Key, request fingerprinting, and a coarse category configuration Redis lock.",
+    "Responses return the refreshed active category graph so admin UI can re-render from backend truth.",
+    "Admin responses are private no-store API envelopes with trace IDs."
+  ]
+}

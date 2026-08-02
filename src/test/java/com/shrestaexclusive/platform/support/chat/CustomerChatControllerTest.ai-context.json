@@ -1,0 +1,11 @@
+{
+  "module": "customer-chat-tests",
+  "file": "CustomerChatControllerTest.java",
+  "purpose": "Verifies the storefront chat API creates assistant replies and validates blank customer messages.",
+  "coverage": [
+    "POST /api/v1/customer/chat/messages",
+    "No-store response headers",
+    "Blank message validation"
+  ],
+  "lastUpdated": "2026-07-05"
+}

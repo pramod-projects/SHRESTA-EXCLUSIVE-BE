@@ -1,0 +1,18 @@
+{
+  "class": "RedisIdempotentMutationCoordinator",
+  "module": "mutation",
+  "purpose": "Redis-backed implementation of idempotency replay and mutation locking.",
+  "businessRules": [
+    "Missing idempotency keys are rejected when require-key is enabled.",
+    "Existing records replay only when the stored request fingerprint matches the submitted fingerprint.",
+    "Active locks return MUTATION_LOCKED instead of allowing concurrent protected writes.",
+    "Redis unavailability fails closed for protected mutations."
+  ],
+  "configuration": [
+    "shresta.mutation.idempotency.enabled",
+    "shresta.mutation.idempotency.require-key",
+    "shresta.mutation.idempotency.ttl",
+    "shresta.mutation.locking.enabled",
+    "shresta.mutation.locking.ttl"
+  ]
+}

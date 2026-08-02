@@ -1,0 +1,13 @@
+{
+  "class": "StorefrontMediaUrlBuilder",
+  "module": "storefront",
+  "purpose": "Builds S3-compatible public media URLs from persisted object keys and backend-owned media versions.",
+  "businessRules": [
+    "Persisted HTTP/HTTPS URLs pass through unchanged.",
+    "Object keys are normalized with a leading slash.",
+    "Configured S3-compatible public asset base URL is prepended without double slashes.",
+    "When a version is supplied, append v as a query parameter for cache busting.",
+    "Frontend must consume generated URLs instead of rebuilding storage paths.",
+    "The configured media base URL is required; missing media origin config should fail fast instead of returning broken relative paths."
+  ]
+}

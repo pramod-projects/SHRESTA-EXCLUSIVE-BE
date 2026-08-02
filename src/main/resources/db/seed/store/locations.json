@@ -1,0 +1,56 @@
+[
+  {
+    "store_key": "bengaluru-signature-studio",
+    "display_name": "SHRESTA EXCLUSIVE Bengaluru Signature Studio",
+    "short_name": "Bengaluru Studio",
+    "status": "ACTIVE",
+    "address_line1": "Level 2, Prestige Meridian",
+    "address_line2": "Mahatma Gandhi Road",
+    "locality": "Ashok Nagar",
+    "city": "Bengaluru",
+    "state": "Karnataka",
+    "postal_code": "560001",
+    "country_code": "IN",
+    "phone": "+91-80-4567-1100",
+    "whatsapp_number": "+91-90080-11000",
+    "email": "bengaluru@shrestaexclusive.com",
+    "latitude": 12.9753,
+    "longitude": 77.6033,
+    "supported_family_keys": [
+      "silk_saree"
+    ],
+    "service_modes": [
+      "same_day_delivery",
+      "pickup",
+      "appointment"
+    ],
+    "highlights": [
+      "Personal saree consultation",
+      "Drape assistance",
+      "Styling support"
+    ],
+    "opening_hours": [
+      {
+        "day": "Mon-Sat",
+        "closed": false,
+        "opensAt": "10:00",
+        "closesAt": "20:30"
+      },
+      {
+        "day": "Sun",
+        "closed": false,
+        "opensAt": "11:00",
+        "closesAt": "19:00"
+      }
+    ],
+    "fulfillment": {
+      "pickupPromise": "45 min",
+      "deliveryPromise": "90-180 min",
+      "deliveryRadiusKm": 12,
+      "sameDayAvailable": true,
+      "appointmentRequired": false
+    },
+    "is_active": true,
+    "sort_order": 10
+  }
+]

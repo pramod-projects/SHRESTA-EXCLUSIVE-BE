@@ -1,0 +1,19 @@
+{
+  "module": "admin-governance",
+  "purpose": "Backend API for submitting and reviewing admin create/update/archive/delete requests before destructive or catalog-changing work is applied.",
+  "routes": [
+    "GET /api/v1/admin/change-requests",
+    "GET /api/v1/admin/change-requests/{requestKey}",
+    "POST /api/v1/admin/change-requests",
+    "POST /api/v1/admin/change-requests/{requestKey}/approve",
+    "POST /api/v1/admin/change-requests/{requestKey}/reject"
+  ],
+  "businessRules": [
+    "CHANGE_SUBMITTER can submit requests.",
+    "CHANGE_REVIEWER can approve or reject requests.",
+    "CHANGE_MANAGER can both submit and review requests.",
+    "SUPER_ADMIN is accepted by the shared admin access guard for all role checks.",
+    "Every mutation route uses IdempotentMutationCoordinator.",
+    "Approval applies the request payload through AdminChangeRequestApplier in the same transaction before marking the request approved."
+  ]
+}

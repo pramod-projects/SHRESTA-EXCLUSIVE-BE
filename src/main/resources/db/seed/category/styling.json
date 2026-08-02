@@ -1,0 +1,44 @@
+[
+  {
+    "family_key": "silk_saree",
+    "occasion_key": "wedding",
+    "display_name": "Wedding",
+    "complementary_family_keys": [
+      "silk_saree"
+    ],
+    "rules": {
+      "bundle": true,
+      "drape_style": "traditional"
+    },
+    "is_active": true,
+    "sort_order": 10
+  },
+  {
+    "family_key": "silk_saree",
+    "occasion_key": "festival",
+    "display_name": "Festival",
+    "complementary_family_keys": [
+      "silk_saree"
+    ],
+    "rules": {
+      "bundle": true,
+      "drape_style": "lightweight"
+    },
+    "is_active": true,
+    "sort_order": 20
+  },
+  {
+    "family_key": "silk_saree",
+    "occasion_key": "party",
+    "display_name": "Party",
+    "complementary_family_keys": [
+      "silk_saree"
+    ],
+    "rules": {
+      "bundle": true,
+      "drape_style": "modern"
+    },
+    "is_active": true,
+    "sort_order": 30
+  }
+]

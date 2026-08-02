@@ -1,0 +1,10 @@
+{
+  "class": "ApiResponse",
+  "module": "common",
+  "purpose": "Standard JSON envelope for public backend APIs.",
+  "businessRules": [
+    "Every public API response should include success, data or error, traceId, and timestamp.",
+    "Do not expose stack traces or provider internals through error messages."
+  ],
+  "aiHint": "When adding controllers, return ApiResponse unless a framework endpoint such as actuator owns the response shape."
+}

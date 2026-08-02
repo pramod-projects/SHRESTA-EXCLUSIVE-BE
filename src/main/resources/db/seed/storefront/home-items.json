@@ -1,0 +1,474 @@
+[
+  {
+    "item_key": "brand-shresta-exclusive",
+    "section_key": "brand",
+    "family_key": null,
+    "title": "SHRESTA EXCLUSIVE",
+    "subtitle": null,
+    "description": "A saree-first luxury house for curated silk and festive drapes.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 10,
+    "is_featured": false,
+    "media_asset_key": "shresta-logo-light",
+    "demo_video_url": "logos/SHRESTA.mp4",
+    "metadata": {},
+    "is_active": true
+  },
+  {
+    "item_key": "nav-shop",
+    "section_key": "navigation",
+    "family_key": null,
+    "title": "Shop",
+    "subtitle": null,
+    "description": null,
+    "cta_label": null,
+    "cta_href": "/products",
+    "sort_order": 10,
+    "is_featured": false,
+    "media_asset_key": null,
+    "demo_video_url": null,
+    "metadata": {},
+    "is_active": true
+  },
+  {
+    "item_key": "nav-sarees",
+    "section_key": "navigation",
+    "family_key": null,
+    "title": "Sarees",
+    "subtitle": null,
+    "description": null,
+    "cta_label": null,
+    "cta_href": "/categories/silk-sarees",
+    "sort_order": 20,
+    "is_featured": false,
+    "media_asset_key": null,
+    "demo_video_url": null,
+    "metadata": {},
+    "is_active": true
+  },
+  {
+    "item_key": "nav-new-arrivals",
+    "section_key": "navigation",
+    "family_key": null,
+    "title": "New Arrivals",
+    "subtitle": null,
+    "description": null,
+    "cta_label": null,
+    "cta_href": "/products?query=new",
+    "sort_order": 30,
+    "is_featured": false,
+    "media_asset_key": null,
+    "demo_video_url": null,
+    "metadata": {},
+    "is_active": true
+  },
+  {
+    "item_key": "hero-kalamkari",
+    "section_key": "hero",
+    "family_key": "silk_saree",
+    "title": "SHRESTA Saree Signature",
+    "subtitle": "Luxury saree curation for every celebration",
+    "description": "Discover kalamkari sarees with refined craftsmanship, rich drape, and premium finish.",
+    "cta_label": "Shop Sarees",
+    "cta_href": "/categories/silk-sarees",
+    "sort_order": 10,
+    "is_featured": true,
+    "media_asset_key": "saree-kalamkari-0001",
+    "demo_video_url": null,
+    "metadata": {
+      "trustNote": "Authentic weave stories, premium finish, curated by SHRESTA"
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "hero-karishma",
+    "section_key": "hero",
+    "family_key": "silk_saree",
+    "title": "Karishma Collection",
+    "subtitle": "Karishma saree edit",
+    "description": "Discover karishma sarees with refined craftsmanship, rich drape, and premium finish.",
+    "cta_label": "Shop Sarees",
+    "cta_href": "/categories/silk-sarees",
+    "sort_order": 20,
+    "is_featured": true,
+    "media_asset_key": "saree-karishma-0019",
+    "demo_video_url": null,
+    "metadata": {
+      "trustNote": "Authentic weave stories, premium finish, curated by SHRESTA"
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "hero-leela",
+    "section_key": "hero",
+    "family_key": "silk_saree",
+    "title": "Leela Collection",
+    "subtitle": "Leela saree edit",
+    "description": "Discover leela sarees with refined craftsmanship, rich drape, and premium finish.",
+    "cta_label": "Shop Sarees",
+    "cta_href": "/categories/silk-sarees",
+    "sort_order": 30,
+    "is_featured": true,
+    "media_asset_key": "saree-leela-0028",
+    "demo_video_url": null,
+    "metadata": {
+      "trustNote": "Authentic weave stories, premium finish, curated by SHRESTA"
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "trust-curation",
+    "section_key": "trust_badges",
+    "family_key": null,
+    "title": "Curated Saree Edits",
+    "subtitle": null,
+    "description": "Each listing is handpicked to match SHRESTA quality and drape expectations.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 10,
+    "is_featured": false,
+    "media_asset_key": null,
+    "demo_video_url": null,
+    "metadata": {
+      "iconKey": "sparkles"
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "trust-brand-mark",
+    "section_key": "trust_badges",
+    "family_key": null,
+    "title": "Authentic Brand Promise",
+    "subtitle": null,
+    "description": "Every saree follows SHRESTA quality checks before it reaches your cart.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 20,
+    "is_featured": false,
+    "media_asset_key": null,
+    "demo_video_url": null,
+    "metadata": {
+      "iconKey": "shield"
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "trust-care",
+    "section_key": "trust_badges",
+    "family_key": null,
+    "title": "Care Guidance Included",
+    "subtitle": null,
+    "description": "Get support on drape, care, and occasion styling for every purchase.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 30,
+    "is_featured": false,
+    "media_asset_key": null,
+    "demo_video_url": null,
+    "metadata": {
+      "iconKey": "heart"
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "trust-video-preview",
+    "section_key": "trust_badges",
+    "family_key": null,
+    "title": "Brand Story In Motion",
+    "subtitle": null,
+    "description": "Watch the SHRESTA brand film to explore the design language behind each drop.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 40,
+    "is_featured": false,
+    "media_asset_key": null,
+    "demo_video_url": null,
+    "metadata": {
+      "iconKey": "play"
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "collection-kalamkari",
+    "section_key": "featured_collections",
+    "family_key": "silk_saree",
+    "title": "Kalamkari",
+    "subtitle": null,
+    "description": "Kalamkari saree edit curated for premium drape and occasion styling.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 10,
+    "is_featured": true,
+    "media_asset_key": "saree-kalamkari-0001",
+    "demo_video_url": null,
+    "metadata": {
+      "slug": "kalamkari",
+      "itemCount": 18,
+      "qualityBadges": [
+        "Curated Weaves",
+        "Occasion Ready",
+        "Signature Edit"
+      ],
+      "productBadgeFilters": [
+        "Collection Kalamkari"
+      ]
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "collection-karishma",
+    "section_key": "featured_collections",
+    "family_key": "silk_saree",
+    "title": "Karishma",
+    "subtitle": null,
+    "description": "Karishma saree edit curated for premium drape and occasion styling.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 20,
+    "is_featured": true,
+    "media_asset_key": "saree-karishma-0019",
+    "demo_video_url": null,
+    "metadata": {
+      "slug": "karishma",
+      "itemCount": 9,
+      "qualityBadges": [
+        "Curated Weaves",
+        "Occasion Ready",
+        "Signature Edit"
+      ],
+      "productBadgeFilters": [
+        "Collection Karishma"
+      ]
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "collection-leela",
+    "section_key": "featured_collections",
+    "family_key": "silk_saree",
+    "title": "Leela",
+    "subtitle": null,
+    "description": "Leela saree edit curated for premium drape and occasion styling.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 30,
+    "is_featured": true,
+    "media_asset_key": "saree-leela-0028",
+    "demo_video_url": null,
+    "metadata": {
+      "slug": "leela",
+      "itemCount": 2,
+      "qualityBadges": [
+        "Curated Weaves",
+        "Occasion Ready",
+        "Signature Edit"
+      ],
+      "productBadgeFilters": [
+        "Collection Leela"
+      ]
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "collection-meenakari",
+    "section_key": "featured_collections",
+    "family_key": "silk_saree",
+    "title": "Meenakari",
+    "subtitle": null,
+    "description": "Meenakari saree edit curated for premium drape and occasion styling.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 40,
+    "is_featured": true,
+    "media_asset_key": "saree-meenakari-0030",
+    "demo_video_url": null,
+    "metadata": {
+      "slug": "meenakari",
+      "itemCount": 4,
+      "qualityBadges": [
+        "Curated Weaves",
+        "Occasion Ready",
+        "Signature Edit"
+      ],
+      "productBadgeFilters": [
+        "Collection Meenakari"
+      ]
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "collection-monalisa",
+    "section_key": "featured_collections",
+    "family_key": "silk_saree",
+    "title": "Monalisa",
+    "subtitle": null,
+    "description": "Monalisa saree edit curated for premium drape and occasion styling.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 50,
+    "is_featured": true,
+    "media_asset_key": "saree-monalisa-0034",
+    "demo_video_url": null,
+    "metadata": {
+      "slug": "monalisa",
+      "itemCount": 13,
+      "qualityBadges": [
+        "Curated Weaves",
+        "Occasion Ready",
+        "Signature Edit"
+      ],
+      "productBadgeFilters": [
+        "Collection Monalisa"
+      ]
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "collection-mysore_silk_crepe",
+    "section_key": "featured_collections",
+    "family_key": "silk_saree",
+    "title": "Mysore Silk Crepe",
+    "subtitle": null,
+    "description": "Mysore Silk Crepe saree edit curated for premium drape and occasion styling.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 60,
+    "is_featured": true,
+    "media_asset_key": "saree-mysore_silk_crepe-0047",
+    "demo_video_url": null,
+    "metadata": {
+      "slug": "mysore-silk-crepe",
+      "itemCount": 15,
+      "qualityBadges": [
+        "Curated Weaves",
+        "Occasion Ready",
+        "Signature Edit"
+      ],
+      "productBadgeFilters": [
+        "Collection Mysore Silk Crepe"
+      ]
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "why-saree-first",
+    "section_key": "why_shresta",
+    "family_key": "silk_saree",
+    "title": "Saree-First Curation",
+    "subtitle": null,
+    "description": "SHRESTA is focused exclusively on sarees, so discovery is sharp and intentional.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 10,
+    "is_featured": false,
+    "media_asset_key": null,
+    "demo_video_url": null,
+    "metadata": {
+      "iconKey": "sparkles"
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "why-consistency",
+    "section_key": "why_shresta",
+    "family_key": "silk_saree",
+    "title": "Consistent Brand Quality",
+    "subtitle": null,
+    "description": "Color, presentation, and catalog language are kept consistent with the SHRESTA identity.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 20,
+    "is_featured": false,
+    "media_asset_key": null,
+    "demo_video_url": null,
+    "metadata": {
+      "iconKey": "badge"
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "why-support",
+    "section_key": "why_shresta",
+    "family_key": "silk_saree",
+    "title": "Support That Understands Sarees",
+    "subtitle": null,
+    "description": "From fabric questions to draping events, SHRESTA support stays saree-specific.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 30,
+    "is_featured": false,
+    "media_asset_key": null,
+    "demo_video_url": null,
+    "metadata": {
+      "iconKey": "heart"
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "material-brand-mark",
+    "section_key": "material_showcase",
+    "family_key": "silk_saree",
+    "title": "SHRESTA Brand Signature",
+    "subtitle": null,
+    "description": "The SHRESTA mark reflects our modern saree language: confident, crafted, and refined.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 10,
+    "is_featured": false,
+    "media_asset_key": "shresta-brand-mark-light",
+    "demo_video_url": "logos/SHRESTA.mp4",
+    "metadata": {
+      "highlights": [
+        "Brand film",
+        "Signature mark",
+        "Consistent identity"
+      ]
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "material-weaves",
+    "section_key": "material_showcase",
+    "family_key": "silk_saree",
+    "title": "Weave Stories",
+    "subtitle": null,
+    "description": "Every collection in SHRESTA brings a distinct weave character and styling mood.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 20,
+    "is_featured": false,
+    "media_asset_key": "saree-kalamkari-0001",
+    "demo_video_url": null,
+    "metadata": {
+      "highlights": [
+        "Handpicked weaves",
+        "Festive drape",
+        "Premium finish"
+      ]
+    },
+    "is_active": true
+  },
+  {
+    "item_key": "material-occasion",
+    "section_key": "material_showcase",
+    "family_key": "silk_saree",
+    "title": "Occasion-Ready Sarees",
+    "subtitle": null,
+    "description": "Wedding mornings, festive evenings, and statement celebrations, all in one saree-focused destination.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 30,
+    "is_featured": false,
+    "media_asset_key": "saree-kalamkari-0002",
+    "demo_video_url": null,
+    "metadata": {
+      "highlights": [
+        "Wedding edits",
+        "Festival palette",
+        "Modern elegance"
+      ]
+    },
+    "is_active": true
+  }
+]

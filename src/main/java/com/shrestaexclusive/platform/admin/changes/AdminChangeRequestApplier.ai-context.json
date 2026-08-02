@@ -1,0 +1,22 @@
+{
+  "class": "AdminChangeRequestApplier",
+  "module": "admin-governance",
+  "purpose": "Dispatches reviewer-approved admin change requests to concrete domain services that mutate asset, category, and storefront data.",
+  "ownedConcepts": [
+    "Approval-time payload execution",
+    "Archive versus permanent delete routing",
+    "Dashboard request type to backend service mapping"
+  ],
+  "businessRules": [
+    "Pending requests are applied only when a reviewer approves them.",
+    "ARCHIVE performs temporary removal through soft status or inactive flags.",
+    "DELETE performs permanent row removal through explicit service delete methods.",
+    "Unsupported request type or action combinations fail approval with a structured admin change request error."
+  ],
+  "dependencies": [
+    "AssetService",
+    "AdminCategoryService",
+    "StorefrontHomeService",
+    "ObjectMapper"
+  ]
+}

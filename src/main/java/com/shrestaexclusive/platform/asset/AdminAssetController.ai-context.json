@@ -1,0 +1,24 @@
+{
+  "class": "AdminAssetController",
+  "module": "asset",
+  "purpose": "Admin HTTP boundary for asset search, upload, metadata update, bulk assignment, and archive/remove.",
+  "apiSurface": [
+    "GET /api/v1/admin/assets",
+    "GET /api/v1/admin/assets/{assetKey}",
+    "POST /api/v1/admin/assets",
+    "POST /api/v1/admin/assets/{assetKey}/image",
+    "PATCH /api/v1/admin/assets/{assetKey}",
+    "POST /api/v1/admin/assets/bulk/category-assignment",
+    "DELETE /api/v1/admin/assets/{assetKey}"
+  ],
+  "businessRules": [
+    "Admin key and role headers are required before asset data is exposed.",
+    "Search responses must remain in the SHRESTA ApiResponse envelope even when filters are empty.",
+    "Search, upload, metadata update, and bulk assignment support categoryProductTypeKey in addition to categoryFamilyKey so assets can be bound to category subcategories.",
+    "The admin asset surface is catalog/DAM scoped; brand/system chrome such as the SHRESTA logo is excluded by the repository layer.",
+    "Existing asset images can be replaced through a multipart endpoint that preserves assetKey and returns regenerated versioned S3-compatible media metadata.",
+    "Mutating endpoints require Idempotency-Key and run through IdempotentMutationCoordinator.",
+    "Multipart upload fingerprints include file metadata and request fields.",
+    "Admin responses are private no-store API envelopes with trace IDs."
+  ]
+}

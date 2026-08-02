@@ -1,0 +1,18 @@
+{
+  "class": "CustomerAuthService",
+  "module": "auth",
+  "purpose": "Customer OTP login, session validation, profile lookup, and logout service.",
+  "ownedTables": [
+    "customer_accounts",
+    "customer_auth_identities",
+    "customer_otp_challenges",
+    "customer_sessions"
+  ],
+  "businessRules": [
+    "Local/dev/UAT may use the seeded testuser@gmail.com and OTP 123456; production must not load seed migration paths.",
+    "Login normalizes email and Indian mobile identities and resolves through customer_auth_identities so email and phone can map to the same customerId.",
+    "Raw session tokens are returned only once at login and persisted only as SHA-256 hashes.",
+    "authenticatedCustomer validates active, non-expired sessions and returns a token-free AuthenticatedCustomer for downstream modules.",
+    "Profile and logout operations require the same bearer session token validation."
+  ]
+}

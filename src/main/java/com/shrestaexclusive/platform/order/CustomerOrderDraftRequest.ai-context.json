@@ -1,0 +1,10 @@
+{
+  "class": "CustomerOrderDraftRequest",
+  "module": "order",
+  "purpose": "Authenticated proceed-to-checkout request containing only cart product IDs and quantities.",
+  "businessRules": [
+    "The frontend may submit only product IDs and quantities for checkout draft creation.",
+    "Prices, SKU, titles, media, category metadata, and totals are resolved by CustomerOrderService from backend-owned storefront tables.",
+    "Line quantity is bounded to the production cart limit before draft persistence."
+  ]
+}

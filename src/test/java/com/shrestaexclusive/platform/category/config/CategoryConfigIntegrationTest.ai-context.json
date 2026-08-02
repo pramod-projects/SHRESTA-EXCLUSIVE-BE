@@ -1,0 +1,15 @@
+{
+  "class": "CategoryConfigIntegrationTest",
+  "module": "category",
+  "purpose": "Verifies the category API against a real PostgreSQL 16 container with Flyway migrations applied from an empty schema.",
+  "businessRules": [
+    "Launch category families must come from Flyway-seeded PostgreSQL configuration.",
+    "Public category filter mappings must use canonical attribute_facet backend mappings.",
+    "The API must be deployable from an empty database through migrations."
+  ],
+  "dependencies": [
+    "Testcontainers PostgreSQL 16",
+    "SpringBootTest",
+    "Flyway"
+  ]
+}

@@ -1,0 +1,84 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+REPO_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
+. "$SCRIPT_DIR/be-env.sh"
+
+ENV_FILE="$REPO_ROOT/.env.prod"
+if [ ! -f "$ENV_FILE" ]; then
+  echo "ERROR: $ENV_FILE not found." >&2
+  echo "       Copy .env.prod.example to .env.prod and fill in all secrets." >&2
+  exit 1
+fi
+set -a; . "$ENV_FILE"; set +a
+
+# ── Profile safety guard ──────────────────────────────────────────────────────
+# Prevent accidentally starting production with a dev/uat profile, which would
+# activate DatabaseSeeder and upsert seed data into the production database.
+case "${SPRING_PROFILES_ACTIVE:-}" in
+  *local*|*dev*|*uat*)
+    echo "ERROR: SPRING_PROFILES_ACTIVE contains a non-production profile: ${SPRING_PROFILES_ACTIVE}" >&2
+    echo "       Remove it from .env.prod before starting production." >&2
+    exit 1
+    ;;
+esac
+
+# ── Required secret validation ────────────────────────────────────────────────
+# These secrets have no safe default. The process will fail or behave insecurely
+# without them. Detect missing or placeholder values before attempting to start.
+MISSING=0
+_require_secret() {
+  _name="$1"
+  # Use indirect expansion via eval — POSIX sh compatible
+  _val=$(eval "printf '%s' \"\${${_name}:-}\"" 2>/dev/null || true)
+  if [ -z "$_val" ]; then
+    echo "  MISSING: $_name is not set" >&2
+    MISSING=1
+  elif echo "$_val" | grep -qE "^YOUR_|^replace-in-real-env$"; then
+    echo "  PLACEHOLDER: $_name still has a placeholder value" >&2
+    MISSING=1
+  fi
+}
+
+echo "Checking required production secrets..." >&2
+_require_secret DATABASE_PASSWORD
+_require_secret REDIS_PASSWORD
+_require_secret SHRESTA_ADMIN_API_KEY
+_require_secret JWT_PUBLIC_KEY_BASE64
+_require_secret JWT_PRIVATE_KEY_BASE64
+_require_secret RAZORPAY_KEY_ID
+_require_secret RAZORPAY_KEY_SECRET
+_require_secret RAZORPAY_WEBHOOK_SECRET
+_require_secret SHRESTA_ASSET_OBJECT_ACCESS_KEY
+_require_secret SHRESTA_ASSET_OBJECT_SECRET_KEY
+
+if [ "$MISSING" -ne 0 ]; then
+  echo "" >&2
+  echo "ERROR: One or more required production secrets are missing or have placeholder values." >&2
+  echo "       Edit .env.prod and set all values before starting production." >&2
+  exit 1
+fi
+echo "All required secrets are present." >&2
+
+# ── Port check ────────────────────────────────────────────────────────────────
+_PORT=${SERVER_PORT:-8090}
+if lsof -i "TCP:$_PORT" -sTCP:LISTEN -t >/dev/null 2>&1; then
+  echo "ERROR: Port $_PORT is already in use." >&2
+  echo "       Kill the process with: lsof -ti TCP:$_PORT | xargs kill -9" >&2
+  exit 1
+fi
+
+JAR=$(ls "$REPO_ROOT/build/libs/shresta-be-"*.jar 2>/dev/null | tail -1)
+if [ -z "$JAR" ]; then
+  echo "No jar found. Building..." >&2
+  "$SCRIPT_DIR/be-gradle" --project-dir "$REPO_ROOT" clean bootJar --no-daemon
+  JAR=$(ls "$REPO_ROOT/build/libs/shresta-be-"*.jar | tail -1)
+elif [ -n "$(find "$REPO_ROOT/src" -name '*.java' -newer "$JAR" 2>/dev/null | head -1)" ]; then
+  echo "Source files changed since last build. Rebuilding..." >&2
+  "$SCRIPT_DIR/be-gradle" --project-dir "$REPO_ROOT" clean bootJar --no-daemon
+  JAR=$(ls "$REPO_ROOT/build/libs/shresta-be-"*.jar | tail -1)
+fi
+
+export SPRING_PROFILES_ACTIVE=prod
+exec "$JAVA_HOME/bin/java" -jar "$JAR" "$@"

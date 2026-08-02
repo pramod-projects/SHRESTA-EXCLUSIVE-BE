@@ -1,0 +1,15 @@
+{
+  "class": "AssetResponse",
+  "module": "asset",
+  "purpose": "Admin-facing asset read model containing media metadata, CDN/S3-compatible URLs, generated variants, optimization stats, and asset tags.",
+  "ownedRules": [
+    "Response tags are normalized through AssetTagRules before serialization so UI consumers receive the same 40-character/16-tag contract as writes.",
+    "Variant lists are immutable response snapshots.",
+    "Asset responses expose backend-built media URLs and do not expose runtime static image paths."
+  ],
+  "usedBy": [
+    "JdbcAssetRepository",
+    "AdminAssetController",
+    "AssetService"
+  ]
+}

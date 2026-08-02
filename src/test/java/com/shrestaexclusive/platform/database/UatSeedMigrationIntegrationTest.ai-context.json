@@ -1,0 +1,19 @@
+{
+  "file": "UatSeedMigrationIntegrationTest.java",
+  "purpose": "Verifies the non-production UAT Spring profile loads the dev-uat Flyway migration path and seeds the shared customer/admin test login.",
+  "profiles": [
+    "uat"
+  ],
+  "dependencies": [
+    "PostgreSQL 16 Testcontainers",
+    "Flyway",
+    "db/dev-uat-migration/R__seed_uat_login_accounts.sql"
+  ],
+  "businessRules": [
+    "The shared UAT login is testuser@gmail.com.",
+    "The shared UAT OTP is exactly 123456.",
+    "The shared test account is enabled for both customer and admin flows.",
+    "The shared test account is projected into customer_accounts and customer_auth_identities.",
+    "Seeded admin roles cover SUPER_ADMIN, CHANGE_SUBMITTER, CHANGE_REVIEWER, and CHANGE_MANAGER."
+  ]
+}

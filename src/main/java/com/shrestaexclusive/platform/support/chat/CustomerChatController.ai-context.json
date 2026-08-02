@@ -1,0 +1,14 @@
+{
+  "module": "customer-chat",
+  "file": "CustomerChatController.java",
+  "purpose": "Backend-owned customer chat endpoint for the storefront SHRESTA Assistant widget.",
+  "routes": [
+    "POST /api/v1/customer/chat/messages"
+  ],
+  "dataOwnership": [
+    "Creates or resumes customer_chat_sessions.",
+    "Persists CUSTOMER and ASSISTANT messages for audit and future provider integration.",
+    "Does not expose private order data before customer login."
+  ],
+  "lastUpdated": "2026-07-05"
+}

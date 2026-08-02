@@ -1,0 +1,76 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: shresta-postgres
+    environment:
+      POSTGRES_DB: shresta
+      POSTGRES_USER: shresta_app
+      POSTGRES_PASSWORD: change-me
+    ports:
+      - "5442:5432"
+    volumes:
+      - shresta_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shresta_app -d shresta"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: shresta-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6389:6379"
+    volumes:
+      - shresta_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: shresta-minio
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ${SHRESTA_ASSET_OBJECT_ACCESS_KEY:?SHRESTA_ASSET_OBJECT_ACCESS_KEY is required}
+      MINIO_ROOT_PASSWORD: ${SHRESTA_ASSET_OBJECT_SECRET_KEY:?SHRESTA_ASSET_OBJECT_SECRET_KEY is required}
+    ports:
+      - "9010:9000"
+      - "9011:9001"
+    volumes:
+      - shresta_minio_data:/data
+
+  minio-setup:
+    image: minio/mc:latest
+    container_name: shresta-minio-setup
+    depends_on:
+      - minio
+    environment:
+      MINIO_ROOT_USER: ${SHRESTA_ASSET_OBJECT_ACCESS_KEY:?SHRESTA_ASSET_OBJECT_ACCESS_KEY is required}
+      MINIO_ROOT_PASSWORD: ${SHRESTA_ASSET_OBJECT_SECRET_KEY:?SHRESTA_ASSET_OBJECT_SECRET_KEY is required}
+      SHRESTA_MINIO_BUCKET: ${SHRESTA_ASSET_OBJECT_BUCKET:?SHRESTA_ASSET_OBJECT_BUCKET is required}
+    volumes:
+      - ./seed/shresta-media:/seed/shresta-media:ro
+      - ./var/shresta-assets:/seed/shresta-assets:ro
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        set -eu
+        until mc alias set local http://minio:9000 "$$MINIO_ROOT_USER" "$$MINIO_ROOT_PASSWORD"; do
+          sleep 2
+        done
+        mc mb -p "local/$$SHRESTA_MINIO_BUCKET"
+        mc anonymous set download "local/$$SHRESTA_MINIO_BUCKET"
+        mc mirror --overwrite /seed/shresta-media "local/$$SHRESTA_MINIO_BUCKET"
+        if [ -d /seed/shresta-assets ]; then
+          mc mirror --overwrite /seed/shresta-assets "local/$$SHRESTA_MINIO_BUCKET"
+        fi
+
+volumes:
+  shresta_postgres_data:
+  shresta_redis_data:
+  shresta_minio_data:

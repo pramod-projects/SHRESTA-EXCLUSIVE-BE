@@ -1,0 +1,10 @@
+{
+  "interface": "KvReadThroughCache",
+  "module": "kv",
+  "purpose": "Abstraction for table-aware KV-first aggregate reads and after-commit snapshot publication.",
+  "businessRules": [
+    "Callers declare all PostgreSQL tables their aggregate depends on.",
+    "Implementations must fall back to the supplied loader when KV is disabled or unavailable.",
+    "Mutation services publish fresh values or invalidate dependent tables after commit."
+  ]
+}

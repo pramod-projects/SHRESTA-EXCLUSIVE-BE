@@ -1,0 +1,15 @@
+{
+  "class": "JdbcCategoryConfigRepository",
+  "module": "category",
+  "purpose": "PostgreSQL read-model adapter for active category families, product types, attributes, filters, taxes, and styling rules.",
+  "businessRules": [
+    "Reads only active configuration rows for public category configuration APIs.",
+    "JSONB configuration is parsed into typed API structures before leaving the backend.",
+    "Filter responses include the canonical source attribute key used by catalog/search facets."
+  ],
+  "dependencies": [
+    "NamedParameterJdbcTemplate",
+    "ObjectMapper",
+    "PostgreSQL JSONB"
+  ]
+}

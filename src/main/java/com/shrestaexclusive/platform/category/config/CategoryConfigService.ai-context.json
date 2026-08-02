@@ -1,0 +1,13 @@
+{
+  "class": "CategoryConfigService",
+  "module": "category",
+  "purpose": "Application service that assembles category configuration rows into the public category family contract.",
+  "businessRules": [
+    "Only active category families are returned by the public read API.",
+    "Category product types, attributes, filters, taxes, and styling are grouped under the owning family.",
+    "Controllers depend on this service instead of reading repositories directly.",
+    "Public category reads are KV-first when every dependent category table has KV enabled.",
+    "Category mutations refresh the active category-family aggregate through this service after database writes."
+  ],
+  "apiSurface": ["/api/v1/categories"]
+}

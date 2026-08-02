@@ -1,0 +1,2948 @@
+[
+  {
+    "item_key": "product-shresta-kalamkari-0001",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 073439",
+    "subtitle": "Kalamkari style 073439",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 10,
+    "is_featured": true,
+    "media_asset_key": "saree-kalamkari-0001",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-001",
+      "slug": "shresta-kalamkari-001",
+      "badges": [
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.2,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 29,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 073439 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260722_073439.png"
+  },
+  {
+    "item_key": "product-shresta-kalamkari-0002",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 074409",
+    "subtitle": "Kalamkari style 074409",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 110,
+    "is_featured": true,
+    "media_asset_key": "saree-kalamkari-0002",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-002",
+      "slug": "shresta-kalamkari-002",
+      "badges": [
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.3,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 40,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 074409 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260722_074409.png"
+  },
+  {
+    "item_key": "product-shresta-kalamkari-0003",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 074450",
+    "subtitle": "Kalamkari style 074450",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 210,
+    "is_featured": true,
+    "media_asset_key": "saree-kalamkari-0003",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-003",
+      "slug": "shresta-kalamkari-003",
+      "badges": [
+        "Pure Silk",
+        "Party Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.4,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 51,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 074450 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260722_074450.png"
+  },
+  {
+    "item_key": "product-shresta-kalamkari-0004",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 075020",
+    "subtitle": "Kalamkari style 075020",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 300,
+    "is_featured": false,
+    "media_asset_key": "saree-kalamkari-0004",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-004",
+      "slug": "shresta-kalamkari-004",
+      "badges": [
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.5,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 62,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 075020 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260722_075020.png"
+  },
+  {
+    "item_key": "product-shresta-kalamkari-0005",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 075120",
+    "subtitle": "Kalamkari style 075120",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 380,
+    "is_featured": false,
+    "media_asset_key": "saree-kalamkari-0005",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-005",
+      "slug": "shresta-kalamkari-005",
+      "badges": [
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.6,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 73,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 075120 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260722_075120.png"
+  },
+  {
+    "item_key": "product-shresta-kalamkari-0006",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 075147",
+    "subtitle": "Kalamkari style 075147",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 440,
+    "is_featured": false,
+    "media_asset_key": "saree-kalamkari-0006",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-006",
+      "slug": "shresta-kalamkari-006",
+      "badges": [
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.7,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 84,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 075147 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260722_075147.png"
+  },
+  {
+    "item_key": "product-shresta-kalamkari-0007",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 080335",
+    "subtitle": "Kalamkari style 080335",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 490,
+    "is_featured": false,
+    "media_asset_key": "saree-kalamkari-0007",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-007",
+      "slug": "shresta-kalamkari-007",
+      "badges": [
+        "Pure Silk",
+        "Party Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.8,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 95,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 080335 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260722_080335.png"
+  },
+  {
+    "item_key": "product-shresta-kalamkari-0008",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 080454",
+    "subtitle": "Kalamkari style 080454",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 540,
+    "is_featured": false,
+    "media_asset_key": "saree-kalamkari-0008",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-008",
+      "slug": "shresta-kalamkari-008",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.9,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 106,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 080454 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260722_080454.png"
+  },
+  {
+    "item_key": "product-shresta-kalamkari-0009",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 080735",
+    "subtitle": "Kalamkari style 080735",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 590,
+    "is_featured": false,
+    "media_asset_key": "saree-kalamkari-0009",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-009",
+      "slug": "shresta-kalamkari-009",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.1,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 117,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 080735 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260722_080735.png"
+  },
+  {
+    "item_key": "product-shresta-kalamkari-0010",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 080111",
+    "subtitle": "Kalamkari style 080111",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 630,
+    "is_featured": false,
+    "media_asset_key": "saree-kalamkari-0010",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-010",
+      "slug": "shresta-kalamkari-010",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.2,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 128,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 080111 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260730_080111.png"
+  },
+  {
+    "item_key": "product-shresta-kalamkari-0011",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 080138",
+    "subtitle": "Kalamkari style 080138",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 660,
+    "is_featured": false,
+    "media_asset_key": "saree-kalamkari-0011",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-011",
+      "slug": "shresta-kalamkari-011",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Party Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.3,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 139,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 080138 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260730_080138.png"
+  },
+  {
+    "item_key": "product-shresta-kalamkari-0012",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 080306",
+    "subtitle": "Kalamkari style 080306",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 690,
+    "is_featured": false,
+    "media_asset_key": "saree-kalamkari-0012",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-012",
+      "slug": "shresta-kalamkari-012",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.4,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 150,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 080306 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260730_080306.png"
+  },
+  {
+    "item_key": "product-shresta-kalamkari-0013",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 080357",
+    "subtitle": "Kalamkari style 080357",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 720,
+    "is_featured": false,
+    "media_asset_key": "saree-kalamkari-0013",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-013",
+      "slug": "shresta-kalamkari-013",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.5,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 161,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 080357 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260730_080357.png"
+  },
+  {
+    "item_key": "product-shresta-kalamkari-0014",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 080703",
+    "subtitle": "Kalamkari style 080703",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 750,
+    "is_featured": false,
+    "media_asset_key": "saree-kalamkari-0014",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-014",
+      "slug": "shresta-kalamkari-014",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.6,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 172,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 080703 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260730_080703.png"
+  },
+  {
+    "item_key": "product-shresta-kalamkari-0015",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 080749",
+    "subtitle": "Kalamkari style 080749",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 770,
+    "is_featured": false,
+    "media_asset_key": "saree-kalamkari-0015",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-015",
+      "slug": "shresta-kalamkari-015",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Party Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.7,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 183,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 080749 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260730_080749.png"
+  },
+  {
+    "item_key": "product-shresta-kalamkari-0016",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 080922",
+    "subtitle": "Kalamkari style 080922",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 790,
+    "is_featured": false,
+    "media_asset_key": "saree-kalamkari-0016",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-016",
+      "slug": "shresta-kalamkari-016",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.8,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 194,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 080922 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260730_080922.png"
+  },
+  {
+    "item_key": "product-shresta-kalamkari-0017",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 081149",
+    "subtitle": "Kalamkari style 081149",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 800,
+    "is_featured": false,
+    "media_asset_key": "saree-kalamkari-0017",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-017",
+      "slug": "shresta-kalamkari-017",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.9,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 205,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 081149 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260730_081149.png"
+  },
+  {
+    "item_key": "product-shresta-kalamkari-0018",
+    "family_key": "silk_saree",
+    "title": "Kalamkari Silk Saree 082039",
+    "subtitle": "Kalamkari style 082039",
+    "description": "Kalamkari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 810,
+    "is_featured": false,
+    "media_asset_key": "saree-kalamkari-0018",
+    "metadata": {
+      "sku": "SHRESTA-KALAMKARI-018",
+      "slug": "shresta-kalamkari-018",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Kalamkari"
+      ],
+      "rating": 4.1,
+      "attributes": {
+        "weave": "Kalamkari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "kalamkari",
+      "reviewCount": 26,
+      "stockQuantity": 1,
+      "longDescription": "Kalamkari Silk Saree 082039 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Kalankari/IMG_20260730_082039.png"
+  },
+  {
+    "item_key": "product-shresta-karishma-0019",
+    "family_key": "silk_saree",
+    "title": "Karishma Silk Saree 074157",
+    "subtitle": "Karishma style 074157",
+    "description": "Karishma saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 20,
+    "is_featured": true,
+    "media_asset_key": "saree-karishma-0019",
+    "metadata": {
+      "sku": "SHRESTA-KARISHMA-001",
+      "slug": "shresta-karishma-001",
+      "badges": [
+        "Pure Silk",
+        "Party Edit",
+        "Collection Karishma"
+      ],
+      "rating": 4.2,
+      "attributes": {
+        "weave": "Karishma",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "karishma",
+      "reviewCount": 37,
+      "stockQuantity": 1,
+      "longDescription": "Karishma Silk Saree 074157 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Karishma/IMG_20260722_074157.png"
+  },
+  {
+    "item_key": "product-shresta-karishma-0020",
+    "family_key": "silk_saree",
+    "title": "Karishma Silk Saree 074224",
+    "subtitle": "Karishma style 074224",
+    "description": "Karishma saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 120,
+    "is_featured": true,
+    "media_asset_key": "saree-karishma-0020",
+    "metadata": {
+      "sku": "SHRESTA-KARISHMA-002",
+      "slug": "shresta-karishma-002",
+      "badges": [
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Karishma"
+      ],
+      "rating": 4.3,
+      "attributes": {
+        "weave": "Karishma",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "karishma",
+      "reviewCount": 48,
+      "stockQuantity": 1,
+      "longDescription": "Karishma Silk Saree 074224 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Karishma/IMG_20260722_074224.png"
+  },
+  {
+    "item_key": "product-shresta-karishma-0021",
+    "family_key": "silk_saree",
+    "title": "Karishma Silk Saree 074250",
+    "subtitle": "Karishma style 074250",
+    "description": "Karishma saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 220,
+    "is_featured": true,
+    "media_asset_key": "saree-karishma-0021",
+    "metadata": {
+      "sku": "SHRESTA-KARISHMA-003",
+      "slug": "shresta-karishma-003",
+      "badges": [
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Karishma"
+      ],
+      "rating": 4.4,
+      "attributes": {
+        "weave": "Karishma",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "karishma",
+      "reviewCount": 59,
+      "stockQuantity": 1,
+      "longDescription": "Karishma Silk Saree 074250 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Karishma/IMG_20260722_074250.png"
+  },
+  {
+    "item_key": "product-shresta-karishma-0022",
+    "family_key": "silk_saree",
+    "title": "Karishma Silk Saree 074312",
+    "subtitle": "Karishma style 074312",
+    "description": "Karishma saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 310,
+    "is_featured": false,
+    "media_asset_key": "saree-karishma-0022",
+    "metadata": {
+      "sku": "SHRESTA-KARISHMA-004",
+      "slug": "shresta-karishma-004",
+      "badges": [
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Karishma"
+      ],
+      "rating": 4.5,
+      "attributes": {
+        "weave": "Karishma",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "karishma",
+      "reviewCount": 70,
+      "stockQuantity": 1,
+      "longDescription": "Karishma Silk Saree 074312 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Karishma/IMG_20260722_074312.png"
+  },
+  {
+    "item_key": "product-shresta-karishma-0023",
+    "family_key": "silk_saree",
+    "title": "Karishma Silk Saree 080023",
+    "subtitle": "Karishma style 080023",
+    "description": "Karishma saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 390,
+    "is_featured": false,
+    "media_asset_key": "saree-karishma-0023",
+    "metadata": {
+      "sku": "SHRESTA-KARISHMA-005",
+      "slug": "shresta-karishma-005",
+      "badges": [
+        "Pure Silk",
+        "Party Edit",
+        "Collection Karishma"
+      ],
+      "rating": 4.6,
+      "attributes": {
+        "weave": "Karishma",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "karishma",
+      "reviewCount": 81,
+      "stockQuantity": 1,
+      "longDescription": "Karishma Silk Saree 080023 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Karishma/IMG_20260722_080023.png"
+  },
+  {
+    "item_key": "product-shresta-karishma-0024",
+    "family_key": "silk_saree",
+    "title": "Karishma Silk Saree 080417",
+    "subtitle": "Karishma style 080417",
+    "description": "Karishma saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 450,
+    "is_featured": false,
+    "media_asset_key": "saree-karishma-0024",
+    "metadata": {
+      "sku": "SHRESTA-KARISHMA-006",
+      "slug": "shresta-karishma-006",
+      "badges": [
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Karishma"
+      ],
+      "rating": 4.7,
+      "attributes": {
+        "weave": "Karishma",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "karishma",
+      "reviewCount": 92,
+      "stockQuantity": 1,
+      "longDescription": "Karishma Silk Saree 080417 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Karishma/IMG_20260722_080417.png"
+  },
+  {
+    "item_key": "product-shresta-karishma-0025",
+    "family_key": "silk_saree",
+    "title": "Karishma Silk Saree 080557",
+    "subtitle": "Karishma style 080557",
+    "description": "Karishma saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 500,
+    "is_featured": false,
+    "media_asset_key": "saree-karishma-0025",
+    "metadata": {
+      "sku": "SHRESTA-KARISHMA-007",
+      "slug": "shresta-karishma-007",
+      "badges": [
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Karishma"
+      ],
+      "rating": 4.8,
+      "attributes": {
+        "weave": "Karishma",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "karishma",
+      "reviewCount": 103,
+      "stockQuantity": 1,
+      "longDescription": "Karishma Silk Saree 080557 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Karishma/IMG_20260722_080557.png"
+  },
+  {
+    "item_key": "product-shresta-karishma-0026",
+    "family_key": "silk_saree",
+    "title": "Karishma Silk Saree 080712",
+    "subtitle": "Karishma style 080712",
+    "description": "Karishma saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 550,
+    "is_featured": false,
+    "media_asset_key": "saree-karishma-0026",
+    "metadata": {
+      "sku": "SHRESTA-KARISHMA-008",
+      "slug": "shresta-karishma-008",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Karishma"
+      ],
+      "rating": 4.9,
+      "attributes": {
+        "weave": "Karishma",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "karishma",
+      "reviewCount": 114,
+      "stockQuantity": 1,
+      "longDescription": "Karishma Silk Saree 080712 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Karishma/IMG_20260722_080712.png"
+  },
+  {
+    "item_key": "product-shresta-karishma-0027",
+    "family_key": "silk_saree",
+    "title": "Karishma Silk Saree 080628",
+    "subtitle": "Karishma style 080628",
+    "description": "Karishma saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 600,
+    "is_featured": false,
+    "media_asset_key": "saree-karishma-0027",
+    "metadata": {
+      "sku": "SHRESTA-KARISHMA-009",
+      "slug": "shresta-karishma-009",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Party Edit",
+        "Collection Karishma"
+      ],
+      "rating": 4.1,
+      "attributes": {
+        "weave": "Karishma",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1500000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "karishma",
+      "reviewCount": 125,
+      "stockQuantity": 1,
+      "longDescription": "Karishma Silk Saree 080628 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1850000
+    },
+    "is_active": true,
+    "image_path": "assets/Karishma/IMG_20260730_080628.png"
+  },
+  {
+    "item_key": "product-shresta-leela-0028",
+    "family_key": "silk_saree",
+    "title": "Leela Silk Saree 074049",
+    "subtitle": "Leela style 074049",
+    "description": "Leela saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 30,
+    "is_featured": true,
+    "media_asset_key": "saree-leela-0028",
+    "metadata": {
+      "sku": "SHRESTA-LEELA-001",
+      "slug": "shresta-leela-001",
+      "badges": [
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Leela"
+      ],
+      "rating": 4.2,
+      "attributes": {
+        "weave": "Leela",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "leela",
+      "reviewCount": 136,
+      "stockQuantity": 1,
+      "longDescription": "Leela Silk Saree 074049 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Leela/IMG_20260722_074049.png"
+  },
+  {
+    "item_key": "product-shresta-leela-0029",
+    "family_key": "silk_saree",
+    "title": "Leela Silk Saree 080201",
+    "subtitle": "Leela style 080201",
+    "description": "Leela saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 130,
+    "is_featured": true,
+    "media_asset_key": "saree-leela-0029",
+    "metadata": {
+      "sku": "SHRESTA-LEELA-002",
+      "slug": "shresta-leela-002",
+      "badges": [
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Leela"
+      ],
+      "rating": 4.3,
+      "attributes": {
+        "weave": "Leela",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "leela",
+      "reviewCount": 147,
+      "stockQuantity": 1,
+      "longDescription": "Leela Silk Saree 080201 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Leela/IMG_20260722_080201.jpg"
+  },
+  {
+    "item_key": "product-shresta-meenakari-0030",
+    "family_key": "silk_saree",
+    "title": "Meenakari Silk Saree 074519",
+    "subtitle": "Meenakari style 074519",
+    "description": "Meenakari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 40,
+    "is_featured": true,
+    "media_asset_key": "saree-meenakari-0030",
+    "metadata": {
+      "sku": "SHRESTA-MEENAKARI-001",
+      "slug": "shresta-meenakari-001",
+      "badges": [
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Meenakari"
+      ],
+      "rating": 4.4,
+      "attributes": {
+        "weave": "Meenakari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 700000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "meenakari",
+      "reviewCount": 158,
+      "stockQuantity": 1,
+      "longDescription": "Meenakari Silk Saree 074519 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1000000
+    },
+    "is_active": true,
+    "image_path": "assets/Meenakari/IMG_20260722_074519.png"
+  },
+  {
+    "item_key": "product-shresta-meenakari-0031",
+    "family_key": "silk_saree",
+    "title": "Meenakari Silk Saree 074555",
+    "subtitle": "Meenakari style 074555",
+    "description": "Meenakari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 140,
+    "is_featured": true,
+    "media_asset_key": "saree-meenakari-0031",
+    "metadata": {
+      "sku": "SHRESTA-MEENAKARI-002",
+      "slug": "shresta-meenakari-002",
+      "badges": [
+        "Pure Silk",
+        "Party Edit",
+        "Collection Meenakari"
+      ],
+      "rating": 4.5,
+      "attributes": {
+        "weave": "Meenakari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 700000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "meenakari",
+      "reviewCount": 169,
+      "stockQuantity": 1,
+      "longDescription": "Meenakari Silk Saree 074555 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1000000
+    },
+    "is_active": true,
+    "image_path": "assets/Meenakari/IMG_20260722_074555.png"
+  },
+  {
+    "item_key": "product-shresta-meenakari-0032",
+    "family_key": "silk_saree",
+    "title": "Meenakari Silk Saree 075437",
+    "subtitle": "Meenakari style 075437",
+    "description": "Meenakari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 230,
+    "is_featured": true,
+    "media_asset_key": "saree-meenakari-0032",
+    "metadata": {
+      "sku": "SHRESTA-MEENAKARI-003",
+      "slug": "shresta-meenakari-003",
+      "badges": [
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Meenakari"
+      ],
+      "rating": 4.6,
+      "attributes": {
+        "weave": "Meenakari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 700000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "meenakari",
+      "reviewCount": 180,
+      "stockQuantity": 1,
+      "longDescription": "Meenakari Silk Saree 075437 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1000000
+    },
+    "is_active": true,
+    "image_path": "assets/Meenakari/IMG_20260722_075437.png"
+  },
+  {
+    "item_key": "product-shresta-meenakari-0033",
+    "family_key": "silk_saree",
+    "title": "Meenakari Silk Saree 075510",
+    "subtitle": "Meenakari style 075510",
+    "description": "Meenakari saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 320,
+    "is_featured": false,
+    "media_asset_key": "saree-meenakari-0033",
+    "metadata": {
+      "sku": "SHRESTA-MEENAKARI-004",
+      "slug": "shresta-meenakari-004",
+      "badges": [
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Meenakari"
+      ],
+      "rating": 4.7,
+      "attributes": {
+        "weave": "Meenakari",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 700000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "meenakari",
+      "reviewCount": 191,
+      "stockQuantity": 1,
+      "longDescription": "Meenakari Silk Saree 075510 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1000000
+    },
+    "is_active": true,
+    "image_path": "assets/Meenakari/IMG_20260722_075510.png"
+  },
+  {
+    "item_key": "product-shresta-monalisa-0034",
+    "family_key": "silk_saree",
+    "title": "Monalisa Silk Saree 073350",
+    "subtitle": "Monalisa style 073350",
+    "description": "Monalisa saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 50,
+    "is_featured": true,
+    "media_asset_key": "saree-monalisa-0034",
+    "metadata": {
+      "sku": "SHRESTA-MONALISA-001",
+      "slug": "shresta-monalisa-001",
+      "badges": [
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Monalisa"
+      ],
+      "rating": 4.8,
+      "attributes": {
+        "weave": "Monalisa",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "monalisa",
+      "reviewCount": 202,
+      "stockQuantity": 1,
+      "longDescription": "Monalisa Silk Saree 073350 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Monalisa/IMG_20260722_073350.png"
+  },
+  {
+    "item_key": "product-shresta-monalisa-0035",
+    "family_key": "silk_saree",
+    "title": "Monalisa Silk Saree 073632",
+    "subtitle": "Monalisa style 073632",
+    "description": "Monalisa saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 150,
+    "is_featured": true,
+    "media_asset_key": "saree-monalisa-0035",
+    "metadata": {
+      "sku": "SHRESTA-MONALISA-002",
+      "slug": "shresta-monalisa-002",
+      "badges": [
+        "Pure Silk",
+        "Party Edit",
+        "Collection Monalisa"
+      ],
+      "rating": 4.9,
+      "attributes": {
+        "weave": "Monalisa",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "monalisa",
+      "reviewCount": 23,
+      "stockQuantity": 1,
+      "longDescription": "Monalisa Silk Saree 073632 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Monalisa/IMG_20260722_073632.png"
+  },
+  {
+    "item_key": "product-shresta-monalisa-0036",
+    "family_key": "silk_saree",
+    "title": "Monalisa Silk Saree 073655",
+    "subtitle": "Monalisa style 073655",
+    "description": "Monalisa saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 240,
+    "is_featured": true,
+    "media_asset_key": "saree-monalisa-0036",
+    "metadata": {
+      "sku": "SHRESTA-MONALISA-003",
+      "slug": "shresta-monalisa-003",
+      "badges": [
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Monalisa"
+      ],
+      "rating": 4.1,
+      "attributes": {
+        "weave": "Monalisa",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "monalisa",
+      "reviewCount": 34,
+      "stockQuantity": 1,
+      "longDescription": "Monalisa Silk Saree 073655 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Monalisa/IMG_20260722_073655.png"
+  },
+  {
+    "item_key": "product-shresta-monalisa-0037",
+    "family_key": "silk_saree",
+    "title": "Monalisa Silk Saree 074901",
+    "subtitle": "Monalisa style 074901",
+    "description": "Monalisa saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 330,
+    "is_featured": false,
+    "media_asset_key": "saree-monalisa-0037",
+    "metadata": {
+      "sku": "SHRESTA-MONALISA-004",
+      "slug": "shresta-monalisa-004",
+      "badges": [
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Monalisa"
+      ],
+      "rating": 4.2,
+      "attributes": {
+        "weave": "Monalisa",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "monalisa",
+      "reviewCount": 45,
+      "stockQuantity": 1,
+      "longDescription": "Monalisa Silk Saree 074901 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Monalisa/IMG_20260722_074901.png"
+  },
+  {
+    "item_key": "product-shresta-monalisa-0038",
+    "family_key": "silk_saree",
+    "title": "Monalisa Silk Saree 074933",
+    "subtitle": "Monalisa style 074933",
+    "description": "Monalisa saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 400,
+    "is_featured": false,
+    "media_asset_key": "saree-monalisa-0038",
+    "metadata": {
+      "sku": "SHRESTA-MONALISA-005",
+      "slug": "shresta-monalisa-005",
+      "badges": [
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Monalisa"
+      ],
+      "rating": 4.3,
+      "attributes": {
+        "weave": "Monalisa",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "monalisa",
+      "reviewCount": 56,
+      "stockQuantity": 1,
+      "longDescription": "Monalisa Silk Saree 074933 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Monalisa/IMG_20260722_074933.png"
+  },
+  {
+    "item_key": "product-shresta-monalisa-0039",
+    "family_key": "silk_saree",
+    "title": "Monalisa Silk Saree 074952",
+    "subtitle": "Monalisa style 074952",
+    "description": "Monalisa saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 460,
+    "is_featured": false,
+    "media_asset_key": "saree-monalisa-0039",
+    "metadata": {
+      "sku": "SHRESTA-MONALISA-006",
+      "slug": "shresta-monalisa-006",
+      "badges": [
+        "Pure Silk",
+        "Party Edit",
+        "Collection Monalisa"
+      ],
+      "rating": 4.4,
+      "attributes": {
+        "weave": "Monalisa",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "monalisa",
+      "reviewCount": 67,
+      "stockQuantity": 1,
+      "longDescription": "Monalisa Silk Saree 074952 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Monalisa/IMG_20260722_074952.png"
+  },
+  {
+    "item_key": "product-shresta-monalisa-0040",
+    "family_key": "silk_saree",
+    "title": "Monalisa Silk Saree 075542",
+    "subtitle": "Monalisa style 075542",
+    "description": "Monalisa saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 510,
+    "is_featured": false,
+    "media_asset_key": "saree-monalisa-0040",
+    "metadata": {
+      "sku": "SHRESTA-MONALISA-007",
+      "slug": "shresta-monalisa-007",
+      "badges": [
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Monalisa"
+      ],
+      "rating": 4.5,
+      "attributes": {
+        "weave": "Monalisa",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "monalisa",
+      "reviewCount": 78,
+      "stockQuantity": 1,
+      "longDescription": "Monalisa Silk Saree 075542 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Monalisa/IMG_20260722_075542.png"
+  },
+  {
+    "item_key": "product-shresta-monalisa-0041",
+    "family_key": "silk_saree",
+    "title": "Monalisa Silk Saree 075618",
+    "subtitle": "Monalisa style 075618",
+    "description": "Monalisa saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 560,
+    "is_featured": false,
+    "media_asset_key": "saree-monalisa-0041",
+    "metadata": {
+      "sku": "SHRESTA-MONALISA-008",
+      "slug": "shresta-monalisa-008",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Monalisa"
+      ],
+      "rating": 4.6,
+      "attributes": {
+        "weave": "Monalisa",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "monalisa",
+      "reviewCount": 89,
+      "stockQuantity": 1,
+      "longDescription": "Monalisa Silk Saree 075618 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Monalisa/IMG_20260722_075618.png"
+  },
+  {
+    "item_key": "product-shresta-monalisa-0042",
+    "family_key": "silk_saree",
+    "title": "Monalisa Silk Saree 075637",
+    "subtitle": "Monalisa style 075637",
+    "description": "Monalisa saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 610,
+    "is_featured": false,
+    "media_asset_key": "saree-monalisa-0042",
+    "metadata": {
+      "sku": "SHRESTA-MONALISA-009",
+      "slug": "shresta-monalisa-009",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Monalisa"
+      ],
+      "rating": 4.7,
+      "attributes": {
+        "weave": "Monalisa",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "monalisa",
+      "reviewCount": 100,
+      "stockQuantity": 1,
+      "longDescription": "Monalisa Silk Saree 075637 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Monalisa/IMG_20260722_075637.png"
+  },
+  {
+    "item_key": "product-shresta-monalisa-0043",
+    "family_key": "silk_saree",
+    "title": "Monalisa Silk Saree 075722",
+    "subtitle": "Monalisa style 075722",
+    "description": "Monalisa saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 640,
+    "is_featured": false,
+    "media_asset_key": "saree-monalisa-0043",
+    "metadata": {
+      "sku": "SHRESTA-MONALISA-010",
+      "slug": "shresta-monalisa-010",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Party Edit",
+        "Collection Monalisa"
+      ],
+      "rating": 4.8,
+      "attributes": {
+        "weave": "Monalisa",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "monalisa",
+      "reviewCount": 111,
+      "stockQuantity": 1,
+      "longDescription": "Monalisa Silk Saree 075722 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Monalisa/IMG_20260722_075722.png"
+  },
+  {
+    "item_key": "product-shresta-monalisa-0044",
+    "family_key": "silk_saree",
+    "title": "Monalisa Silk Saree 075739",
+    "subtitle": "Monalisa style 075739",
+    "description": "Monalisa saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 670,
+    "is_featured": false,
+    "media_asset_key": "saree-monalisa-0044",
+    "metadata": {
+      "sku": "SHRESTA-MONALISA-011",
+      "slug": "shresta-monalisa-011",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Monalisa"
+      ],
+      "rating": 4.9,
+      "attributes": {
+        "weave": "Monalisa",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "monalisa",
+      "reviewCount": 122,
+      "stockQuantity": 1,
+      "longDescription": "Monalisa Silk Saree 075739 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Monalisa/IMG_20260722_075739.png"
+  },
+  {
+    "item_key": "product-shresta-monalisa-0045",
+    "family_key": "silk_saree",
+    "title": "Monalisa Silk Saree 075832",
+    "subtitle": "Monalisa style 075832",
+    "description": "Monalisa saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 700,
+    "is_featured": false,
+    "media_asset_key": "saree-monalisa-0045",
+    "metadata": {
+      "sku": "SHRESTA-MONALISA-012",
+      "slug": "shresta-monalisa-012",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Monalisa"
+      ],
+      "rating": 4.1,
+      "attributes": {
+        "weave": "Monalisa",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "monalisa",
+      "reviewCount": 133,
+      "stockQuantity": 1,
+      "longDescription": "Monalisa Silk Saree 075832 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Monalisa/IMG_20260722_075832.png"
+  },
+  {
+    "item_key": "product-shresta-monalisa-0046",
+    "family_key": "silk_saree",
+    "title": "Monalisa Silk Saree 080353",
+    "subtitle": "Monalisa style 080353",
+    "description": "Monalisa saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 730,
+    "is_featured": false,
+    "media_asset_key": "saree-monalisa-0046",
+    "metadata": {
+      "sku": "SHRESTA-MONALISA-013",
+      "slug": "shresta-monalisa-013",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Monalisa"
+      ],
+      "rating": 4.2,
+      "attributes": {
+        "weave": "Monalisa",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "monalisa",
+      "reviewCount": 144,
+      "stockQuantity": 1,
+      "longDescription": "Monalisa Silk Saree 080353 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Monalisa/IMG_20260722_080353.png"
+  },
+  {
+    "item_key": "product-shresta-mysore_silk_crepe-0047",
+    "family_key": "silk_saree",
+    "title": "Mysore Silk Crepe Silk Saree 072919",
+    "subtitle": "Mysore Silk Crepe style 072919",
+    "description": "Mysore Silk Crepe saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 60,
+    "is_featured": true,
+    "media_asset_key": "saree-mysore_silk_crepe-0047",
+    "metadata": {
+      "sku": "SHRESTA-MYSORE_SILK_CREPE-001",
+      "slug": "shresta-mysore-silk-crepe-001",
+      "badges": [
+        "Pure Silk",
+        "Party Edit",
+        "Collection Mysore Silk Crepe"
+      ],
+      "rating": 4.3,
+      "attributes": {
+        "weave": "Mysore Silk Crepe",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "mysore_silk_crepe",
+      "reviewCount": 155,
+      "stockQuantity": 1,
+      "longDescription": "Mysore Silk Crepe Silk Saree 072919 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Mysore silk Crepe/IMG_20260722_072919.png"
+  },
+  {
+    "item_key": "product-shresta-mysore_silk_crepe-0048",
+    "family_key": "silk_saree",
+    "title": "Mysore Silk Crepe Silk Saree 072951",
+    "subtitle": "Mysore Silk Crepe style 072951",
+    "description": "Mysore Silk Crepe saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 160,
+    "is_featured": true,
+    "media_asset_key": "saree-mysore_silk_crepe-0048",
+    "metadata": {
+      "sku": "SHRESTA-MYSORE_SILK_CREPE-002",
+      "slug": "shresta-mysore-silk-crepe-002",
+      "badges": [
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Mysore Silk Crepe"
+      ],
+      "rating": 4.4,
+      "attributes": {
+        "weave": "Mysore Silk Crepe",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "mysore_silk_crepe",
+      "reviewCount": 166,
+      "stockQuantity": 1,
+      "longDescription": "Mysore Silk Crepe Silk Saree 072951 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Mysore silk Crepe/IMG_20260722_072951.png"
+  },
+  {
+    "item_key": "product-shresta-mysore_silk_crepe-0049",
+    "family_key": "silk_saree",
+    "title": "Mysore Silk Crepe Silk Saree 073148",
+    "subtitle": "Mysore Silk Crepe style 073148",
+    "description": "Mysore Silk Crepe saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 250,
+    "is_featured": false,
+    "media_asset_key": "saree-mysore_silk_crepe-0049",
+    "metadata": {
+      "sku": "SHRESTA-MYSORE_SILK_CREPE-003",
+      "slug": "shresta-mysore-silk-crepe-003",
+      "badges": [
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Mysore Silk Crepe"
+      ],
+      "rating": 4.5,
+      "attributes": {
+        "weave": "Mysore Silk Crepe",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "mysore_silk_crepe",
+      "reviewCount": 177,
+      "stockQuantity": 1,
+      "longDescription": "Mysore Silk Crepe Silk Saree 073148 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Mysore silk Crepe/IMG_20260722_073148.png"
+  },
+  {
+    "item_key": "product-shresta-mysore_silk_crepe-0050",
+    "family_key": "silk_saree",
+    "title": "Mysore Silk Crepe Silk Saree 073216",
+    "subtitle": "Mysore Silk Crepe style 073216",
+    "description": "Mysore Silk Crepe saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 340,
+    "is_featured": false,
+    "media_asset_key": "saree-mysore_silk_crepe-0050",
+    "metadata": {
+      "sku": "SHRESTA-MYSORE_SILK_CREPE-004",
+      "slug": "shresta-mysore-silk-crepe-004",
+      "badges": [
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Mysore Silk Crepe"
+      ],
+      "rating": 4.6,
+      "attributes": {
+        "weave": "Mysore Silk Crepe",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "mysore_silk_crepe",
+      "reviewCount": 188,
+      "stockQuantity": 1,
+      "longDescription": "Mysore Silk Crepe Silk Saree 073216 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Mysore silk Crepe/IMG_20260722_073216.png"
+  },
+  {
+    "item_key": "product-shresta-mysore_silk_crepe-0051",
+    "family_key": "silk_saree",
+    "title": "Mysore Silk Crepe Silk Saree 073328",
+    "subtitle": "Mysore Silk Crepe style 073328",
+    "description": "Mysore Silk Crepe saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 410,
+    "is_featured": false,
+    "media_asset_key": "saree-mysore_silk_crepe-0051",
+    "metadata": {
+      "sku": "SHRESTA-MYSORE_SILK_CREPE-005",
+      "slug": "shresta-mysore-silk-crepe-005",
+      "badges": [
+        "Pure Silk",
+        "Party Edit",
+        "Collection Mysore Silk Crepe"
+      ],
+      "rating": 4.7,
+      "attributes": {
+        "weave": "Mysore Silk Crepe",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "mysore_silk_crepe",
+      "reviewCount": 199,
+      "stockQuantity": 1,
+      "longDescription": "Mysore Silk Crepe Silk Saree 073328 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Mysore silk Crepe/IMG_20260722_073328.png"
+  },
+  {
+    "item_key": "product-shresta-mysore_silk_crepe-0052",
+    "family_key": "silk_saree",
+    "title": "Mysore Silk Crepe Silk Saree 073416",
+    "subtitle": "Mysore Silk Crepe style 073416",
+    "description": "Mysore Silk Crepe saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 470,
+    "is_featured": false,
+    "media_asset_key": "saree-mysore_silk_crepe-0052",
+    "metadata": {
+      "sku": "SHRESTA-MYSORE_SILK_CREPE-006",
+      "slug": "shresta-mysore-silk-crepe-006",
+      "badges": [
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Mysore Silk Crepe"
+      ],
+      "rating": 4.8,
+      "attributes": {
+        "weave": "Mysore Silk Crepe",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "mysore_silk_crepe",
+      "reviewCount": 20,
+      "stockQuantity": 1,
+      "longDescription": "Mysore Silk Crepe Silk Saree 073416 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Mysore silk Crepe/IMG_20260722_073416.png"
+  },
+  {
+    "item_key": "product-shresta-mysore_silk_crepe-0053",
+    "family_key": "silk_saree",
+    "title": "Mysore Silk Crepe Silk Saree 080220",
+    "subtitle": "Mysore Silk Crepe style 080220",
+    "description": "Mysore Silk Crepe saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 520,
+    "is_featured": false,
+    "media_asset_key": "saree-mysore_silk_crepe-0053",
+    "metadata": {
+      "sku": "SHRESTA-MYSORE_SILK_CREPE-007",
+      "slug": "shresta-mysore-silk-crepe-007",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Mysore Silk Crepe"
+      ],
+      "rating": 4.9,
+      "attributes": {
+        "weave": "Mysore Silk Crepe",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "mysore_silk_crepe",
+      "reviewCount": 31,
+      "stockQuantity": 1,
+      "longDescription": "Mysore Silk Crepe Silk Saree 080220 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Mysore silk Crepe/IMG_20260722_080220.jpg"
+  },
+  {
+    "item_key": "product-shresta-mysore_silk_crepe-0054",
+    "family_key": "silk_saree",
+    "title": "Mysore Silk Crepe Silk Saree 080236",
+    "subtitle": "Mysore Silk Crepe style 080236",
+    "description": "Mysore Silk Crepe saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 570,
+    "is_featured": false,
+    "media_asset_key": "saree-mysore_silk_crepe-0054",
+    "metadata": {
+      "sku": "SHRESTA-MYSORE_SILK_CREPE-008",
+      "slug": "shresta-mysore-silk-crepe-008",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Mysore Silk Crepe"
+      ],
+      "rating": 4.1,
+      "attributes": {
+        "weave": "Mysore Silk Crepe",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "mysore_silk_crepe",
+      "reviewCount": 42,
+      "stockQuantity": 1,
+      "longDescription": "Mysore Silk Crepe Silk Saree 080236 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Mysore silk Crepe/IMG_20260722_080236.jpg"
+  },
+  {
+    "item_key": "product-shresta-mysore_silk_crepe-0055",
+    "family_key": "silk_saree",
+    "title": "Mysore Silk Crepe Silk Saree 080317",
+    "subtitle": "Mysore Silk Crepe style 080317",
+    "description": "Mysore Silk Crepe saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 620,
+    "is_featured": false,
+    "media_asset_key": "saree-mysore_silk_crepe-0055",
+    "metadata": {
+      "sku": "SHRESTA-MYSORE_SILK_CREPE-009",
+      "slug": "shresta-mysore-silk-crepe-009",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Party Edit",
+        "Collection Mysore Silk Crepe"
+      ],
+      "rating": 4.2,
+      "attributes": {
+        "weave": "Mysore Silk Crepe",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "mysore_silk_crepe",
+      "reviewCount": 53,
+      "stockQuantity": 1,
+      "longDescription": "Mysore Silk Crepe Silk Saree 080317 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Mysore silk Crepe/IMG_20260722_080317.png"
+  },
+  {
+    "item_key": "product-shresta-mysore_silk_crepe-0056",
+    "family_key": "silk_saree",
+    "title": "Mysore Silk Crepe Silk Saree 075650",
+    "subtitle": "Mysore Silk Crepe style 075650",
+    "description": "Mysore Silk Crepe saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 650,
+    "is_featured": false,
+    "media_asset_key": "saree-mysore_silk_crepe-0056",
+    "metadata": {
+      "sku": "SHRESTA-MYSORE_SILK_CREPE-010",
+      "slug": "shresta-mysore-silk-crepe-010",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Mysore Silk Crepe"
+      ],
+      "rating": 4.3,
+      "attributes": {
+        "weave": "Mysore Silk Crepe",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "mysore_silk_crepe",
+      "reviewCount": 64,
+      "stockQuantity": 1,
+      "longDescription": "Mysore Silk Crepe Silk Saree 075650 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Mysore silk Crepe/IMG_20260730_075650.png"
+  },
+  {
+    "item_key": "product-shresta-mysore_silk_crepe-0057",
+    "family_key": "silk_saree",
+    "title": "Mysore Silk Crepe Silk Saree 075802",
+    "subtitle": "Mysore Silk Crepe style 075802",
+    "description": "Mysore Silk Crepe saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 680,
+    "is_featured": false,
+    "media_asset_key": "saree-mysore_silk_crepe-0057",
+    "metadata": {
+      "sku": "SHRESTA-MYSORE_SILK_CREPE-011",
+      "slug": "shresta-mysore-silk-crepe-011",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Mysore Silk Crepe"
+      ],
+      "rating": 4.4,
+      "attributes": {
+        "weave": "Mysore Silk Crepe",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "mysore_silk_crepe",
+      "reviewCount": 75,
+      "stockQuantity": 1,
+      "longDescription": "Mysore Silk Crepe Silk Saree 075802 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Mysore silk Crepe/IMG_20260730_075802.png"
+  },
+  {
+    "item_key": "product-shresta-mysore_silk_crepe-0058",
+    "family_key": "silk_saree",
+    "title": "Mysore Silk Crepe Silk Saree 075814",
+    "subtitle": "Mysore Silk Crepe style 075814",
+    "description": "Mysore Silk Crepe saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 710,
+    "is_featured": false,
+    "media_asset_key": "saree-mysore_silk_crepe-0058",
+    "metadata": {
+      "sku": "SHRESTA-MYSORE_SILK_CREPE-012",
+      "slug": "shresta-mysore-silk-crepe-012",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Mysore Silk Crepe"
+      ],
+      "rating": 4.5,
+      "attributes": {
+        "weave": "Mysore Silk Crepe",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "mysore_silk_crepe",
+      "reviewCount": 86,
+      "stockQuantity": 1,
+      "longDescription": "Mysore Silk Crepe Silk Saree 075814 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Mysore silk Crepe/IMG_20260730_075814.png"
+  },
+  {
+    "item_key": "product-shresta-mysore_silk_crepe-0059",
+    "family_key": "silk_saree",
+    "title": "Mysore Silk Crepe Silk Saree 075836",
+    "subtitle": "Mysore Silk Crepe style 075836",
+    "description": "Mysore Silk Crepe saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 740,
+    "is_featured": false,
+    "media_asset_key": "saree-mysore_silk_crepe-0059",
+    "metadata": {
+      "sku": "SHRESTA-MYSORE_SILK_CREPE-013",
+      "slug": "shresta-mysore-silk-crepe-013",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Party Edit",
+        "Collection Mysore Silk Crepe"
+      ],
+      "rating": 4.6,
+      "attributes": {
+        "weave": "Mysore Silk Crepe",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "mysore_silk_crepe",
+      "reviewCount": 97,
+      "stockQuantity": 1,
+      "longDescription": "Mysore Silk Crepe Silk Saree 075836 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Mysore silk Crepe/IMG_20260730_075836.png"
+  },
+  {
+    "item_key": "product-shresta-mysore_silk_crepe-0060",
+    "family_key": "silk_saree",
+    "title": "Mysore Silk Crepe Silk Saree 075933",
+    "subtitle": "Mysore Silk Crepe style 075933",
+    "description": "Mysore Silk Crepe saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 760,
+    "is_featured": false,
+    "media_asset_key": "saree-mysore_silk_crepe-0060",
+    "metadata": {
+      "sku": "SHRESTA-MYSORE_SILK_CREPE-014",
+      "slug": "shresta-mysore-silk-crepe-014",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Mysore Silk Crepe"
+      ],
+      "rating": 4.7,
+      "attributes": {
+        "weave": "Mysore Silk Crepe",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "mysore_silk_crepe",
+      "reviewCount": 108,
+      "stockQuantity": 1,
+      "longDescription": "Mysore Silk Crepe Silk Saree 075933 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Mysore silk Crepe/IMG_20260730_075933.png"
+  },
+  {
+    "item_key": "product-shresta-mysore_silk_crepe-0061",
+    "family_key": "silk_saree",
+    "title": "Mysore Silk Crepe Silk Saree 081602",
+    "subtitle": "Mysore Silk Crepe style 081602",
+    "description": "Mysore Silk Crepe saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 780,
+    "is_featured": false,
+    "media_asset_key": "saree-mysore_silk_crepe-0061",
+    "metadata": {
+      "sku": "SHRESTA-MYSORE_SILK_CREPE-015",
+      "slug": "shresta-mysore-silk-crepe-015",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Mysore Silk Crepe"
+      ],
+      "rating": 4.8,
+      "attributes": {
+        "weave": "Mysore Silk Crepe",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "mysore_silk_crepe",
+      "reviewCount": 119,
+      "stockQuantity": 1,
+      "longDescription": "Mysore Silk Crepe Silk Saree 081602 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Mysore silk Crepe/IMG_20260730_081602.png"
+  },
+  {
+    "item_key": "product-shresta-platina-0062",
+    "family_key": "silk_saree",
+    "title": "Platina Silk Saree 073744",
+    "subtitle": "Platina style 073744",
+    "description": "Platina saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 70,
+    "is_featured": true,
+    "media_asset_key": "saree-platina-0062",
+    "metadata": {
+      "sku": "SHRESTA-PLATINA-001",
+      "slug": "shresta-platina-001",
+      "badges": [
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Platina"
+      ],
+      "rating": 4.9,
+      "attributes": {
+        "weave": "Platina",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "platina",
+      "reviewCount": 130,
+      "stockQuantity": 1,
+      "longDescription": "Platina Silk Saree 073744 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Platina/IMG_20260722_073744.png"
+  },
+  {
+    "item_key": "product-shresta-platina-0063",
+    "family_key": "silk_saree",
+    "title": "Platina Silk Saree 073942",
+    "subtitle": "Platina style 073942",
+    "description": "Platina saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 170,
+    "is_featured": true,
+    "media_asset_key": "saree-platina-0063",
+    "metadata": {
+      "sku": "SHRESTA-PLATINA-002",
+      "slug": "shresta-platina-002",
+      "badges": [
+        "Pure Silk",
+        "Party Edit",
+        "Collection Platina"
+      ],
+      "rating": 4.1,
+      "attributes": {
+        "weave": "Platina",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "platina",
+      "reviewCount": 141,
+      "stockQuantity": 1,
+      "longDescription": "Platina Silk Saree 073942 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Platina/IMG_20260722_073942.png"
+  },
+  {
+    "item_key": "product-shresta-platina-0064",
+    "family_key": "silk_saree",
+    "title": "Platina Silk Saree 075810",
+    "subtitle": "Platina style 075810",
+    "description": "Platina saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 260,
+    "is_featured": false,
+    "media_asset_key": "saree-platina-0064",
+    "metadata": {
+      "sku": "SHRESTA-PLATINA-003",
+      "slug": "shresta-platina-003",
+      "badges": [
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Platina"
+      ],
+      "rating": 4.2,
+      "attributes": {
+        "weave": "Platina",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "platina",
+      "reviewCount": 152,
+      "stockQuantity": 1,
+      "longDescription": "Platina Silk Saree 075810 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Platina/IMG_20260722_075810.png"
+  },
+  {
+    "item_key": "product-shresta-platina-0065",
+    "family_key": "silk_saree",
+    "title": "Platina Silk Saree 082059",
+    "subtitle": "Platina style 082059",
+    "description": "Platina saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 350,
+    "is_featured": false,
+    "media_asset_key": "saree-platina-0065",
+    "metadata": {
+      "sku": "SHRESTA-PLATINA-004",
+      "slug": "shresta-platina-004",
+      "badges": [
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Platina"
+      ],
+      "rating": 4.3,
+      "attributes": {
+        "weave": "Platina",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 259900,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "platina",
+      "reviewCount": 163,
+      "stockQuantity": 1,
+      "longDescription": "Platina Silk Saree 082059 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 399900
+    },
+    "is_active": true,
+    "image_path": "assets/Platina/IMG_20260730_082059.png"
+  },
+  {
+    "item_key": "product-shresta-radha-0066",
+    "family_key": "silk_saree",
+    "title": "Radha Silk Saree 074617",
+    "subtitle": "Radha style 074617",
+    "description": "Radha saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 80,
+    "is_featured": true,
+    "media_asset_key": "saree-radha-0066",
+    "metadata": {
+      "sku": "SHRESTA-RADHA-001",
+      "slug": "shresta-radha-001",
+      "badges": [
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Radha"
+      ],
+      "rating": 4.4,
+      "attributes": {
+        "weave": "Radha",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "radha",
+      "reviewCount": 174,
+      "stockQuantity": 1,
+      "longDescription": "Radha Silk Saree 074617 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Radha/IMG_20260722_074617.png"
+  },
+  {
+    "item_key": "product-shresta-radha-0067",
+    "family_key": "silk_saree",
+    "title": "Radha Silk Saree 074638",
+    "subtitle": "Radha style 074638",
+    "description": "Radha saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 180,
+    "is_featured": true,
+    "media_asset_key": "saree-radha-0067",
+    "metadata": {
+      "sku": "SHRESTA-RADHA-002",
+      "slug": "shresta-radha-002",
+      "badges": [
+        "Pure Silk",
+        "Party Edit",
+        "Collection Radha"
+      ],
+      "rating": 4.5,
+      "attributes": {
+        "weave": "Radha",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "radha",
+      "reviewCount": 185,
+      "stockQuantity": 1,
+      "longDescription": "Radha Silk Saree 074638 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Radha/IMG_20260722_074638.png"
+  },
+  {
+    "item_key": "product-shresta-radha-0068",
+    "family_key": "silk_saree",
+    "title": "Radha Silk Saree 080107",
+    "subtitle": "Radha style 080107",
+    "description": "Radha saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 270,
+    "is_featured": false,
+    "media_asset_key": "saree-radha-0068",
+    "metadata": {
+      "sku": "SHRESTA-RADHA-003",
+      "slug": "shresta-radha-003",
+      "badges": [
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Radha"
+      ],
+      "rating": 4.6,
+      "attributes": {
+        "weave": "Radha",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "radha",
+      "reviewCount": 196,
+      "stockQuantity": 1,
+      "longDescription": "Radha Silk Saree 080107 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Radha/IMG_20260722_080107.png"
+  },
+  {
+    "item_key": "product-shresta-radha-0069",
+    "family_key": "silk_saree",
+    "title": "Radha Silk Saree 080143",
+    "subtitle": "Radha style 080143",
+    "description": "Radha saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 360,
+    "is_featured": false,
+    "media_asset_key": "saree-radha-0069",
+    "metadata": {
+      "sku": "SHRESTA-RADHA-004",
+      "slug": "shresta-radha-004",
+      "badges": [
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Radha"
+      ],
+      "rating": 4.7,
+      "attributes": {
+        "weave": "Radha",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "radha",
+      "reviewCount": 207,
+      "stockQuantity": 1,
+      "longDescription": "Radha Silk Saree 080143 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Radha/IMG_20260722_080143.jpg"
+  },
+  {
+    "item_key": "product-shresta-radha-0070",
+    "family_key": "silk_saree",
+    "title": "Radha Silk Saree 080436",
+    "subtitle": "Radha style 080436",
+    "description": "Radha saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 420,
+    "is_featured": false,
+    "media_asset_key": "saree-radha-0070",
+    "metadata": {
+      "sku": "SHRESTA-RADHA-005",
+      "slug": "shresta-radha-005",
+      "badges": [
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Radha"
+      ],
+      "rating": 4.8,
+      "attributes": {
+        "weave": "Radha",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "radha",
+      "reviewCount": 28,
+      "stockQuantity": 1,
+      "longDescription": "Radha Silk Saree 080436 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Radha/IMG_20260722_080436.png"
+  },
+  {
+    "item_key": "product-shresta-sandhya-0071",
+    "family_key": "silk_saree",
+    "title": "Sandhya Silk Saree 080257",
+    "subtitle": "Sandhya style 080257",
+    "description": "Sandhya saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 90,
+    "is_featured": true,
+    "media_asset_key": "saree-sandhya-0071",
+    "metadata": {
+      "sku": "SHRESTA-SANDHYA-001",
+      "slug": "shresta-sandhya-001",
+      "badges": [
+        "Pure Silk",
+        "Party Edit",
+        "Collection Sandhya"
+      ],
+      "rating": 4.9,
+      "attributes": {
+        "weave": "Sandhya",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 700000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "sandhya",
+      "reviewCount": 39,
+      "stockQuantity": 1,
+      "longDescription": "Sandhya Silk Saree 080257 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1000000
+    },
+    "is_active": true,
+    "image_path": "assets/Sandhya/IMG_20260722_080257.png"
+  },
+  {
+    "item_key": "product-shresta-sandhya-0072",
+    "family_key": "silk_saree",
+    "title": "Sandhya Silk Saree 075844",
+    "subtitle": "Sandhya style 075844",
+    "description": "Sandhya saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 190,
+    "is_featured": true,
+    "media_asset_key": "saree-sandhya-0072",
+    "metadata": {
+      "sku": "SHRESTA-SANDHYA-002",
+      "slug": "shresta-sandhya-002",
+      "badges": [
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Sandhya"
+      ],
+      "rating": 4.1,
+      "attributes": {
+        "weave": "Sandhya",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 700000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "sandhya",
+      "reviewCount": 50,
+      "stockQuantity": 1,
+      "longDescription": "Sandhya Silk Saree 075844 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1000000
+    },
+    "is_active": true,
+    "image_path": "assets/Sandhya/IMG_20260730_075844.png"
+  },
+  {
+    "item_key": "product-shresta-sandhya-0073",
+    "family_key": "silk_saree",
+    "title": "Sandhya Silk Saree 075954",
+    "subtitle": "Sandhya style 075954",
+    "description": "Sandhya saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 280,
+    "is_featured": false,
+    "media_asset_key": "saree-sandhya-0073",
+    "metadata": {
+      "sku": "SHRESTA-SANDHYA-003",
+      "slug": "shresta-sandhya-003",
+      "badges": [
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Sandhya"
+      ],
+      "rating": 4.2,
+      "attributes": {
+        "weave": "Sandhya",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 700000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "sandhya",
+      "reviewCount": 61,
+      "stockQuantity": 1,
+      "longDescription": "Sandhya Silk Saree 075954 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1000000
+    },
+    "is_active": true,
+    "image_path": "assets/Sandhya/IMG_20260730_075954.png"
+  },
+  {
+    "item_key": "product-shresta-shringar-0074",
+    "family_key": "silk_saree",
+    "title": "Shringar Silk Saree 074025",
+    "subtitle": "Shringar style 074025",
+    "description": "Shringar saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 100,
+    "is_featured": true,
+    "media_asset_key": "saree-shringar-0074",
+    "metadata": {
+      "sku": "SHRESTA-SHRINGAR-001",
+      "slug": "shresta-shringar-001",
+      "badges": [
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Shringar"
+      ],
+      "rating": 4.3,
+      "attributes": {
+        "weave": "Shringar",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "shringar",
+      "reviewCount": 72,
+      "stockQuantity": 1,
+      "longDescription": "Shringar Silk Saree 074025 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Shringar /IMG_20260722_074025.png"
+  },
+  {
+    "item_key": "product-shresta-shringar-0075",
+    "family_key": "silk_saree",
+    "title": "Shringar Silk Saree 075331",
+    "subtitle": "Shringar style 075331",
+    "description": "Shringar saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 200,
+    "is_featured": true,
+    "media_asset_key": "saree-shringar-0075",
+    "metadata": {
+      "sku": "SHRESTA-SHRINGAR-002",
+      "slug": "shresta-shringar-002",
+      "badges": [
+        "Pure Silk",
+        "Party Edit",
+        "Collection Shringar"
+      ],
+      "rating": 4.4,
+      "attributes": {
+        "weave": "Shringar",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "shringar",
+      "reviewCount": 83,
+      "stockQuantity": 1,
+      "longDescription": "Shringar Silk Saree 075331 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Shringar /IMG_20260722_075331.png"
+  },
+  {
+    "item_key": "product-shresta-shringar-0076",
+    "family_key": "silk_saree",
+    "title": "Shringar Silk Saree 080046",
+    "subtitle": "Shringar style 080046",
+    "description": "Shringar saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 290,
+    "is_featured": false,
+    "media_asset_key": "saree-shringar-0076",
+    "metadata": {
+      "sku": "SHRESTA-SHRINGAR-003",
+      "slug": "shresta-shringar-003",
+      "badges": [
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Shringar"
+      ],
+      "rating": 4.5,
+      "attributes": {
+        "weave": "Shringar",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "shringar",
+      "reviewCount": 94,
+      "stockQuantity": 1,
+      "longDescription": "Shringar Silk Saree 080046 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Shringar /IMG_20260722_080046.png"
+  },
+  {
+    "item_key": "product-shresta-shringar-0077",
+    "family_key": "silk_saree",
+    "title": "Shringar Silk Saree 080122",
+    "subtitle": "Shringar style 080122",
+    "description": "Shringar saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 370,
+    "is_featured": false,
+    "media_asset_key": "saree-shringar-0077",
+    "metadata": {
+      "sku": "SHRESTA-SHRINGAR-004",
+      "slug": "shresta-shringar-004",
+      "badges": [
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Shringar"
+      ],
+      "rating": 4.6,
+      "attributes": {
+        "weave": "Shringar",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "shringar",
+      "reviewCount": 105,
+      "stockQuantity": 1,
+      "longDescription": "Shringar Silk Saree 080122 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Shringar /IMG_20260722_080122.png"
+  },
+  {
+    "item_key": "product-shresta-shringar-0078",
+    "family_key": "silk_saree",
+    "title": "Shringar Silk Saree 080748",
+    "subtitle": "Shringar style 080748",
+    "description": "Shringar saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 430,
+    "is_featured": false,
+    "media_asset_key": "saree-shringar-0078",
+    "metadata": {
+      "sku": "SHRESTA-SHRINGAR-005",
+      "slug": "shresta-shringar-005",
+      "badges": [
+        "Pure Silk",
+        "Festival Edit",
+        "Collection Shringar"
+      ],
+      "rating": 4.7,
+      "attributes": {
+        "weave": "Shringar",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "shringar",
+      "reviewCount": 116,
+      "stockQuantity": 1,
+      "longDescription": "Shringar Silk Saree 080748 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Shringar /IMG_20260722_080748.png"
+  },
+  {
+    "item_key": "product-shresta-shringar-0079",
+    "family_key": "silk_saree",
+    "title": "Shringar Silk Saree 075743",
+    "subtitle": "Shringar style 075743",
+    "description": "Shringar saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 480,
+    "is_featured": false,
+    "media_asset_key": "saree-shringar-0079",
+    "metadata": {
+      "sku": "SHRESTA-SHRINGAR-006",
+      "slug": "shresta-shringar-006",
+      "badges": [
+        "Pure Silk",
+        "Party Edit",
+        "Collection Shringar"
+      ],
+      "rating": 4.8,
+      "attributes": {
+        "weave": "Shringar",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "shringar",
+      "reviewCount": 127,
+      "stockQuantity": 1,
+      "longDescription": "Shringar Silk Saree 075743 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Shringar /IMG_20260730_075743.png"
+  },
+  {
+    "item_key": "product-shresta-shringar-0080",
+    "family_key": "silk_saree",
+    "title": "Shringar Silk Saree 075825",
+    "subtitle": "Shringar style 075825",
+    "description": "Shringar saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 530,
+    "is_featured": false,
+    "media_asset_key": "saree-shringar-0080",
+    "metadata": {
+      "sku": "SHRESTA-SHRINGAR-007",
+      "slug": "shresta-shringar-007",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Daily Wear Edit",
+        "Collection Shringar"
+      ],
+      "rating": 4.9,
+      "attributes": {
+        "weave": "Shringar",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "shringar",
+      "reviewCount": 138,
+      "stockQuantity": 1,
+      "longDescription": "Shringar Silk Saree 075825 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Shringar /IMG_20260730_075825.png"
+  },
+  {
+    "item_key": "product-shresta-shringar-0081",
+    "family_key": "silk_saree",
+    "title": "Shringar Silk Saree 081054",
+    "subtitle": "Shringar style 081054",
+    "description": "Shringar saree with premium silk texture, elegant fall, and occasion-ready finish by SHRESTA EXCLUSIVE.",
+    "cta_label": null,
+    "cta_href": null,
+    "sort_order": 580,
+    "is_featured": false,
+    "media_asset_key": "saree-shringar-0081",
+    "metadata": {
+      "sku": "SHRESTA-SHRINGAR-008",
+      "slug": "shresta-shringar-008",
+      "badges": [
+        "New Arrival",
+        "Pure Silk",
+        "Wedding Edit",
+        "Collection Shringar"
+      ],
+      "rating": 4.1,
+      "attributes": {
+        "weave": "Shringar",
+        "family": "Silk Saree",
+        "referenceCategory": "sarees"
+      },
+      "pricePaise": 1200000,
+      "seedSource": "assets-catalog-shresta",
+      "productType": "shringar",
+      "reviewCount": 149,
+      "stockQuantity": 1,
+      "longDescription": "Shringar Silk Saree 081054 is selected for SHRESTA EXCLUSIVE with attention to weave character, drape comfort, and festive styling confidence. Suitable for celebrations, festive occasions, and elegant day-to-evening wear.",
+      "compareAtPricePaise": 1500000
+    },
+    "is_active": true,
+    "image_path": "assets/Shringar /IMG_20260730_081054.png"
+  }
+]

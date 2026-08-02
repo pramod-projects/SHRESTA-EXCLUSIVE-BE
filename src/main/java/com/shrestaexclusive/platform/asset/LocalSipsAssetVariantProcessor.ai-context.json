@@ -1,0 +1,15 @@
+{
+  "class": "LocalSipsAssetVariantProcessor",
+  "module": "asset",
+  "purpose": "Local image processor that generates responsive variants and LQIP placeholders from an original asset.",
+  "businessRules": [
+    "Always include the original asset as a variant record.",
+    "Generate thumbnail, small, medium, and large JPEG variants under the original asset version path.",
+    "Generate WebP and AVIF variants only when local tooling is available.",
+    "Generate a small JPEG data URL for LQIP rendering.",
+    "Variant URL paths are object keys; variants are published to the configured S3-compatible object store, and final public URLs are built by StorefrontMediaUrlBuilder."
+  ],
+  "futureIntegration": [
+    "This processor can be replaced by an async worker or cloud image-processing service without changing controller contracts."
+  ]
+}

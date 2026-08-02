@@ -1,0 +1,13 @@
+{
+  "class": "TransitionPlan",
+  "module": "db.migration.framework",
+  "purpose": "Immutable value object that describes the full migration history for one PostgreSQL table as an ordered list of versioned Transitions.",
+  "businessRules": [
+    "Each TransitionPlan belongs to exactly one table, identified by tableName.",
+    "Transitions are declared with fromVersions (list of acceptable source versions), toVersion, and the SQL statements to execute.",
+    "fromVersions uses List.of(-1) to represent 'table not yet created' (matching the Haskell euler-lsp convention of version -1 for absent tables).",
+    "Transitions must be declared in ascending toVersion order.",
+    "Built via TransitionPlan.forTable(tableName).transition(...).build()."
+  ],
+  "haskellEquivalent": "buildTransitionPlan tableName $ do transition [fromVers] toVer [sql...]"
+}

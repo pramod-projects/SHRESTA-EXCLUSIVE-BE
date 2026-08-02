@@ -1,0 +1,14 @@
+{
+  "class": "V1__Schema",
+  "module": "db.migration",
+  "purpose": "Flyway Java migration entry point that runs the full initial schema by delegating to MigrationRunner with the ordered list of all 27 table TransitionPlans.",
+  "businessRules": [
+    "Must live in package db.migration (no com.shrestaexclusive prefix) for Flyway classpath:db/migration scanning to discover it.",
+    "Passes all TransitionPlans to MigrationRunner.run() in dependency order: extensions → category → media → storefront → store locator → admin → customer identity (includes UatSeedAccountsMigration) → customer chat → customer orders → customer order drafts.",
+    "MigrationRunner handles per-table version tracking; this class simply lists plans.",
+    "To add a future column or table: create a new V2__<Description>.java and add only the relevant TransitionPlan(s) — do not modify this file.",
+    "Each table's full SQL history lives in its own *Migration class under db.migration.tables.",
+    "UatSeedAccountsMigration is included in the customer identity group — it creates the uat_seed_accounts table used by CustomerAuthService for static-OTP dev/UAT login."
+  ],
+  "haskellEquivalent": "mainMigration / executeTransitionPlanList mainTransitionPlanList in Server.Migrations.Run"
+}

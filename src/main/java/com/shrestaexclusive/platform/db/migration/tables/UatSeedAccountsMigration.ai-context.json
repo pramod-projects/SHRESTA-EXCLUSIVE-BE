@@ -1,0 +1,15 @@
+{
+  "class": "UatSeedAccountsMigration",
+  "module": "db.migration.tables",
+  "purpose": "TransitionPlan for the uat_seed_accounts table — a UAT/dev-only control table used by CustomerAuthService to authenticate test users with a static OTP, without real OTP delivery.",
+  "businessRules": [
+    "Returns a static TransitionPlan via transitionPlan() factory method.",
+    "Initial transition: fromVersions=[-1] to toVersion=0 (table creation).",
+    "Called by V1__Schema in the customer identity group alongside CustomerAccountsMigration and CustomerAuthIdentitiesMigration.",
+    "The table is only meaningful in local/dev/uat profiles; CustomerAuthService guards usage with environment profile checks.",
+    "DatabaseSeeder also issues CREATE TABLE IF NOT EXISTS uat_seed_accounts on every boot so the table is safe to use even on DBs where V1 ran before this plan was added.",
+    "Rows are seeded by DatabaseSeeder.seedDevAuthAccounts() from auth/dev-accounts.json using the otp_code field.",
+    "CustomerAuthService joins: uat_seed_accounts → customer_accounts (via identity_email = primary_email) → customer_auth_identities (via customer_id). All three tables must have matching rows for login to succeed."
+  ],
+  "ownedTable": "uat_seed_accounts"
+}

@@ -1,0 +1,66 @@
+[
+  {
+    "asset_key": "shresta-logo-light",
+    "alt_text": "SHRESTA EXCLUSIVE logo",
+    "width_px": 1024,
+    "height_px": 256,
+    "delivery_mode": "s3-compatible",
+    "usage_type": "brand",
+    "storage_provider": "s3-compatible",
+    "storage_key": "logos/SHRESTA_LOGO_LIGHT.png",
+    "category_family_key": null,
+    "category_product_type_key": null,
+    "product_sku": null,
+    "content_type": "image/png",
+    "status": "READY",
+    "tags": [
+      "BRAND",
+      "LOGO"
+    ],
+    "seo_title": "SHRESTA EXCLUSIVE",
+    "image_path": "logos/SHRESTA_LOGO_LIGHT.png"
+  },
+  {
+    "asset_key": "shresta-brand-mark-light",
+    "alt_text": "SHRESTA EXCLUSIVE brand mark",
+    "width_px": 512,
+    "height_px": 512,
+    "delivery_mode": "s3-compatible",
+    "usage_type": "brand",
+    "storage_provider": "s3-compatible",
+    "storage_key": "logos/SHRESTA_BRAND_MARK_LIGHT.png",
+    "category_family_key": null,
+    "category_product_type_key": null,
+    "product_sku": null,
+    "content_type": "image/png",
+    "status": "READY",
+    "tags": [
+      "BRAND",
+      "MARK"
+    ],
+    "seo_title": "SHRESTA Brand Mark",
+    "image_path": "logos/SHRESTA_BRAND_MARK_LIGHT.png"
+  },
+  {
+    "asset_key": "shresta-logo-dark",
+    "alt_text": "SHRESTA EXCLUSIVE dark logo",
+    "width_px": 1024,
+    "height_px": 256,
+    "delivery_mode": "s3-compatible",
+    "usage_type": "brand",
+    "storage_provider": "s3-compatible",
+    "storage_key": "logos/SHRESTA_LOGO_DARK.png",
+    "category_family_key": null,
+    "category_product_type_key": null,
+    "product_sku": null,
+    "content_type": "image/png",
+    "status": "READY",
+    "tags": [
+      "BRAND",
+      "LOGO",
+      "DARK"
+    ],
+    "seo_title": "SHRESTA Dark Logo",
+    "image_path": "logos/SHRESTA_LOGO_DARK.png"
+  }
+]

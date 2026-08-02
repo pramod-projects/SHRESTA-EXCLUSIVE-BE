@@ -1,0 +1,21 @@
+{
+  "module": "storefront-stores",
+  "purpose": "KV-first application service that assembles the customer store locator response from DB-owned store/service network tables.",
+  "ownedTables": [
+    "storefront_store_sections",
+    "store_locations"
+  ],
+  "apiSurface": [
+    "GET /api/v1/storefront/stores"
+  ],
+  "businessRules": [
+    "Public store locator reads are KV-first with DB fallback.",
+    "Store locator KV uses active:v2 so customer-copy cleanup does not reuse stale Redis payloads.",
+    "Cities, states, and service mode filters are derived from active DB rows, not frontend constants.",
+    "Store/service cards can represent physical stores, service desks, or opening-soon service points through the status field."
+  ],
+  "dependencies": [
+    "KvReadThroughCache",
+    "StorefrontStoresRepository"
+  ]
+}

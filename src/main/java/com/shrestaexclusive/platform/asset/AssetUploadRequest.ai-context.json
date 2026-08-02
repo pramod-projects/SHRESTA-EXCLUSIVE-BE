@@ -1,0 +1,15 @@
+{
+  "class": "AssetUploadRequest",
+  "module": "asset",
+  "purpose": "Multipart admin asset upload metadata contract.",
+  "ownedRules": [
+    "Upload metadata may bind an original image to categoryFamilyKey, categoryProductTypeKey, productSku, altText, tags, and SEO fields.",
+    "Tags are normalized through AssetTagRules during record construction before repository persistence.",
+    "Upload tags must follow the media_assets.tags contract: uppercase token values, 40 characters per tag, 16 tags maximum."
+  ],
+  "usedBy": [
+    "AdminAssetController",
+    "AssetService",
+    "JdbcAssetRepository"
+  ]
+}

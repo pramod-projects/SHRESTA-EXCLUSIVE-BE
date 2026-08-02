@@ -1,0 +1,11 @@
+{
+  "class": "Transition",
+  "module": "db.migration.framework",
+  "purpose": "Immutable record representing a single schema step: one or more acceptable source versions, a target version, and the SQL statements to execute.",
+  "businessRules": [
+    "fromVersions is a list to allow multiple source versions to converge to the same target (e.g. squashed migrations).",
+    "sql is a list of statements executed in order within a single JDBC transaction.",
+    "Records are value objects; equality is by field content."
+  ],
+  "haskellEquivalent": "transition [fromVersions] toVersion [sqlStatements]"
+}

@@ -1,0 +1,13 @@
+{
+  "interface": "IdempotentMutationCoordinator",
+  "module": "mutation",
+  "purpose": "Application boundary for idempotent and locked mutating operations.",
+  "businessRules": [
+    "Every protected mutation supplies a scope, idempotency key, request fingerprint, lock key, response type, and mutation supplier.",
+    "Successful results may be replayed for the same idempotency key and request fingerprint.",
+    "Different payloads for the same idempotency key must be rejected."
+  ],
+  "headers": [
+    "Idempotency-Key"
+  ]
+}

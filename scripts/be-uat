@@ -1,0 +1,82 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+REPO_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
+. "$SCRIPT_DIR/be-env.sh"
+
+ENV_FILE="$REPO_ROOT/.env.uat"
+if [ ! -f "$ENV_FILE" ]; then
+  echo "ERROR: $ENV_FILE not found." >&2
+  echo "       Copy .env.uat.example to .env.uat and fill in all secrets." >&2
+  exit 1
+fi
+set -a; . "$ENV_FILE"; set +a
+
+# ── Docker daemon ─────────────────────────────────────────────────────────────
+if ! docker info >/dev/null 2>&1; then
+  echo "ERROR: Docker daemon is not running." >&2
+  echo "       On macOS with Colima, run: colima start" >&2
+  echo "       Then retry: ./scripts/be-uat" >&2
+  exit 1
+fi
+
+# ── Compose command detection (v2 plugin vs v1 binary) ────────────────────────
+if docker compose version >/dev/null 2>&1; then
+  _compose() { docker compose "$@"; }
+elif command -v docker-compose >/dev/null 2>&1; then
+  _compose() { docker-compose "$@"; }
+else
+  echo "ERROR: Neither 'docker compose' nor 'docker-compose' is available." >&2
+  exit 1
+fi
+
+# ── Docker services ───────────────────────────────────────────────────────────
+# Ensure PostgreSQL, Redis, and MinIO are up before attempting to start the JAR.
+COMPOSE_FILE="$REPO_ROOT/docker-compose.dev.yml"
+if [ -f "$COMPOSE_FILE" ]; then
+  POSTGRES_RUNNING=$(_compose -f "$COMPOSE_FILE" ps --status running --quiet postgres 2>/dev/null || true)
+  if [ -z "$POSTGRES_RUNNING" ]; then
+    echo "Docker services not running. Starting PostgreSQL, Redis, and MinIO..." >&2
+    _compose -f "$COMPOSE_FILE" up -d
+    echo "Waiting for PostgreSQL to be ready..." >&2
+    i=0
+    until _compose -f "$COMPOSE_FILE" exec -T postgres \
+        pg_isready -U shresta_app -d shresta -q 2>/dev/null; do
+      i=$((i + 1))
+      if [ "$i" -ge 30 ]; then
+        echo "ERROR: PostgreSQL did not become ready within 30 seconds." >&2
+        exit 1
+      fi
+      sleep 1
+    done
+    echo "PostgreSQL is ready." >&2
+  else
+    echo "Docker services already running." >&2
+  fi
+else
+  echo "WARNING: $COMPOSE_FILE not found — skipping Docker service check." >&2
+fi
+
+# ── Port check ────────────────────────────────────────────────────────────────
+_PORT=${SERVER_PORT:-8090}
+if lsof -i "TCP:$_PORT" -sTCP:LISTEN -t >/dev/null 2>&1; then
+  echo "ERROR: Port $_PORT is already in use." >&2
+  echo "       Kill the process with: lsof -ti TCP:$_PORT | xargs kill -9" >&2
+  echo "       Then retry: ./scripts/be-uat" >&2
+  exit 1
+fi
+
+JAR=$(ls "$REPO_ROOT/build/libs/shresta-be-"*.jar 2>/dev/null | tail -1)
+if [ -z "$JAR" ]; then
+  echo "No jar found. Building..." >&2
+  "$SCRIPT_DIR/be-gradle" --project-dir "$REPO_ROOT" clean bootJar --no-daemon
+  JAR=$(ls "$REPO_ROOT/build/libs/shresta-be-"*.jar | tail -1)
+elif [ -n "$(find "$REPO_ROOT/src" -name '*.java' -newer "$JAR" 2>/dev/null | head -1)" ]; then
+  echo "Source files changed since last build. Rebuilding..." >&2
+  "$SCRIPT_DIR/be-gradle" --project-dir "$REPO_ROOT" clean bootJar --no-daemon
+  JAR=$(ls "$REPO_ROOT/build/libs/shresta-be-"*.jar | tail -1)
+fi
+
+export SPRING_PROFILES_ACTIVE=uat
+exec "$JAVA_HOME/bin/java" -jar "$JAR" "$@"

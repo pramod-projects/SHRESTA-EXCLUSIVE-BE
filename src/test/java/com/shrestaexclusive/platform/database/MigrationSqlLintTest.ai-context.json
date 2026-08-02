@@ -1,0 +1,17 @@
+{
+  "class": "MigrationSqlLintTest",
+  "module": "database",
+  "purpose": "Guards Flyway SQL assumptions that have caused startup or environment-safety regressions.",
+  "businessRules": [
+    "Category configuration is seeded by Flyway before backend startup is production-ready.",
+    "Seed SQL must qualify overlapping family and seed columns such as display_name and sort_order.",
+    "Shared UAT login seed data must live under db/dev-uat-migration and must not be part of the production migration location.",
+    "The shared UAT OTP must remain exactly six digits."
+  ],
+  "relatedFiles": [
+    "src/main/resources/db/migration/V1__category_configuration_foundation.sql",
+    "src/main/resources/db/migration/V9__customer_identity_sessions.sql",
+    "src/main/resources/db/dev-uat-migration/R__seed_uat_login_accounts.sql",
+    "src/main/resources/application.yml"
+  ]
+}

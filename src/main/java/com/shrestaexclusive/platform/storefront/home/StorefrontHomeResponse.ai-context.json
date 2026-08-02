@@ -1,0 +1,10 @@
+{
+  "class": "StorefrontHomeResponse",
+  "module": "storefront",
+  "purpose": "Public storefront home read model returned by GET /api/v1/storefront/home.",
+  "businessRules": [
+    "ProductCard carries product identity, SKU, slug, customer-facing description, customer-facing longDescription, family, type, pricing, ratings, badges, and media.",
+    "FeaturedCollection carries computed itemCount and optional productBadgeFilters so all curated collection counts use generic backend rules.",
+    "Media assets include versioned URLs, LQIP, dimensions, delivery mode, and optimized variants for responsive frontend rendering."
+  ]
+}

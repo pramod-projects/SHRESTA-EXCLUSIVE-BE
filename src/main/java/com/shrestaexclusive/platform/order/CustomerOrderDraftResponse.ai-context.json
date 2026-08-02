@@ -1,0 +1,11 @@
+{
+  "class": "CustomerOrderDraftResponse",
+  "module": "order",
+  "purpose": "Checkout order ID response returned when an authenticated customer proceeds from cart to checkout.",
+  "businessRules": [
+    "orderId is the UUID-backed checkout draft ID, valid only for the returned expiresAt window.",
+    "orderNumber is a customer-readable draft number and is not the final placed order number.",
+    "cartSignature is server-computed from normalized product IDs and quantities and is used to detect cart changes.",
+    "lines and totals are backend-resolved snapshots and must be treated as the checkout quote for the draft window."
+  ]
+}

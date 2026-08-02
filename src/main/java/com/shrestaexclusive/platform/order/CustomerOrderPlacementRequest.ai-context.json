@@ -1,0 +1,11 @@
+{
+  "class": "CustomerOrderPlacementRequest",
+  "module": "order",
+  "purpose": "Validated customer checkout payload accepted by POST /api/v1/customer/orders.",
+  "businessRules": [
+    "Contains draftOrderId, product IDs, quantities, customer contact, shipping address, delivery mode, payment method, and acceptedTerms only.",
+    "draftOrderId is mandatory at service level and must reference an ACTIVE, unexpired customer_order_drafts row for the same authenticated customer and cart signature.",
+    "Does not accept price, total, product name, SKU, category, or media values from the browser.",
+    "Validation rejects empty carts, invalid contact/address data, and unsupported enum values before service placement."
+  ]
+}

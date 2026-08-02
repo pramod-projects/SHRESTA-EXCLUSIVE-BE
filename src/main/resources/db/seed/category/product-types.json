@@ -1,0 +1,90 @@
+[
+  {
+    "family_key": "silk_saree",
+    "type_key": "kalamkari",
+    "display_name": "Kalamkari",
+    "is_active": true,
+    "sort_order": 10,
+    "metadata": {}
+  },
+  {
+    "family_key": "silk_saree",
+    "type_key": "karishma",
+    "display_name": "Karishma",
+    "is_active": true,
+    "sort_order": 20,
+    "metadata": {}
+  },
+  {
+    "family_key": "silk_saree",
+    "type_key": "leela",
+    "display_name": "Leela",
+    "is_active": true,
+    "sort_order": 30,
+    "metadata": {}
+  },
+  {
+    "family_key": "silk_saree",
+    "type_key": "meenakari",
+    "display_name": "Meenakari",
+    "is_active": true,
+    "sort_order": 40,
+    "metadata": {}
+  },
+  {
+    "family_key": "silk_saree",
+    "type_key": "monalisa",
+    "display_name": "Monalisa",
+    "is_active": true,
+    "sort_order": 50,
+    "metadata": {}
+  },
+  {
+    "family_key": "silk_saree",
+    "type_key": "mysore_silk_crepe",
+    "display_name": "Mysore Silk Crepe",
+    "is_active": true,
+    "sort_order": 60,
+    "metadata": {}
+  },
+  {
+    "family_key": "silk_saree",
+    "type_key": "nidhi",
+    "display_name": "Nidhi",
+    "is_active": true,
+    "sort_order": 70,
+    "metadata": {}
+  },
+  {
+    "family_key": "silk_saree",
+    "type_key": "platina",
+    "display_name": "Platina",
+    "is_active": true,
+    "sort_order": 80,
+    "metadata": {}
+  },
+  {
+    "family_key": "silk_saree",
+    "type_key": "radha",
+    "display_name": "Radha",
+    "is_active": true,
+    "sort_order": 90,
+    "metadata": {}
+  },
+  {
+    "family_key": "silk_saree",
+    "type_key": "sandhya",
+    "display_name": "Sandhya",
+    "is_active": true,
+    "sort_order": 100,
+    "metadata": {}
+  },
+  {
+    "family_key": "silk_saree",
+    "type_key": "shringar",
+    "display_name": "Shringar",
+    "is_active": true,
+    "sort_order": 110,
+    "metadata": {}
+  }
+]

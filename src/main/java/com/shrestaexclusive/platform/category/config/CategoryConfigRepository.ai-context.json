@@ -1,0 +1,18 @@
+{
+  "class": "CategoryConfigRepository",
+  "module": "category",
+  "purpose": "Read-side repository boundary for category configuration rows owned by the category module.",
+  "businessRules": [
+    "Controllers call services, not repositories.",
+    "Category read APIs are assembled from PostgreSQL configuration tables seeded and evolved by Flyway.",
+    "The repository returns canonical keys and configuration rows without category-specific Java enums."
+  ],
+  "ownedTables": [
+    "category_family_config",
+    "category_product_type_config",
+    "category_attribute_config",
+    "category_filter_config",
+    "category_tax_config",
+    "category_styling_config"
+  ]
+}

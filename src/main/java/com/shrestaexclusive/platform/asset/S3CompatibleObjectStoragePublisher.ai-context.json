@@ -1,0 +1,14 @@
+{
+  "file": "S3CompatibleObjectStoragePublisher.java",
+  "purpose": "Publishes locally generated original and variant image files into an S3-compatible object store without requiring AWS-specific infrastructure in local/UAT.",
+  "owned_by": "asset",
+  "depends_on": [
+    "AssetStorageProperties",
+    "java.net.http.HttpClient"
+  ],
+  "rules": [
+    "Publishing is disabled unless shresta.assets.object-upload-enabled is true.",
+    "Local/UAT uses MinIO with path-style S3 URLs; production can use AWS S3 or another S3-compatible object store through environment variables.",
+    "Every uploaded object uses long-lived immutable cache control because versioned object keys and media URL query parameters provide cache busting."
+  ]
+}

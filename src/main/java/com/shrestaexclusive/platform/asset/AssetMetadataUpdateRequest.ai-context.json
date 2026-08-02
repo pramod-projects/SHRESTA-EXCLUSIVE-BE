@@ -1,0 +1,16 @@
+{
+  "class": "AssetMetadataUpdateRequest",
+  "module": "asset",
+  "purpose": "Admin asset metadata mutation payload for reviewed update requests and direct admin asset API updates.",
+  "ownedRules": [
+    "Supports updating or clearing category family, subcategory, product SKU, tags, SEO title, and SEO description while preserving omitted fields.",
+    "Tags are normalized and validated through AssetTagRules during record construction.",
+    "Bean validation mirrors the tag contract with 40-character values, 16 tags maximum, and uppercase A-Z/0-9/hyphen/underscore tokens."
+  ],
+  "usedBy": [
+    "AdminAssetController",
+    "AdminChangeRequestApplier",
+    "AssetService",
+    "JdbcAssetRepository"
+  ]
+}

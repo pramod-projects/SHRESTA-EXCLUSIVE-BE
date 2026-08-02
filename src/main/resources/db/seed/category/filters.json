@@ -1,0 +1,38 @@
+[
+  {
+    "family_key": "silk_saree",
+    "filter_key": "weave_collection",
+    "display_name": "Collection",
+    "frontend_control": "checkbox",
+    "backend_mapping": "attribute_facets.weave_collection",
+    "is_active": true,
+    "sort_order": 10
+  },
+  {
+    "family_key": "silk_saree",
+    "filter_key": "fabric",
+    "display_name": "Fabric",
+    "frontend_control": "checkbox",
+    "backend_mapping": "attribute_facets.fabric",
+    "is_active": true,
+    "sort_order": 20
+  },
+  {
+    "family_key": "silk_saree",
+    "filter_key": "occasion",
+    "display_name": "Occasion",
+    "frontend_control": "checkbox",
+    "backend_mapping": "attribute_facets.occasion",
+    "is_active": true,
+    "sort_order": 30
+  },
+  {
+    "family_key": "silk_saree",
+    "filter_key": "blouse_included",
+    "display_name": "Blouse Included",
+    "frontend_control": "toggle",
+    "backend_mapping": "attribute_facets.blouse_included",
+    "is_active": true,
+    "sort_order": 40
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "class": "MigrationRunner",
+  "module": "db.migration.framework",
+  "purpose": "Stateless engine that applies a list of TransitionPlans to the database, tracking per-table versions in shresta_table_migration_versions.",
+  "ownedTables": [
+    "shresta_table_migration_versions"
+  ],
+  "businessRules": [
+    "On first run, creates shresta_table_migration_versions (table_name PK, version INTEGER, applied_at TIMESTAMPTZ) if absent.",
+    "getTableVersion returns -1 when no row exists for a table, matching the Haskell convention for 'not yet migrated'.",
+    "walkPlanList iterates all plans with retry to resolve cross-table dependency ordering at runtime.",
+    "walkPlan skips transitions whose fromVersions do not include the current table version; logs 'perform' or 'skip' for each step.",
+    "setTableVersion upserts via ON CONFLICT (table_name) DO UPDATE so version tracking is idempotent.",
+    "All SQL from each Transition is executed within a single JDBC autoCommit=false transaction."
+  ],
+  "haskellEquivalent": "executeTransitionPlanList / walkPlanList / walkPlan / getTableVersion / setTableVersion in Server.Migrations.Run"
+}

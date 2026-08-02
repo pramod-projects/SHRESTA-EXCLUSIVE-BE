@@ -1,0 +1,71 @@
+[
+  {
+    "family_key": "silk_saree",
+    "attribute_key": "weave_collection",
+    "display_name": "Weave Collection",
+    "data_type": "enum",
+    "is_required": true,
+    "is_filterable": true,
+    "is_searchable": true,
+    "is_active": true,
+    "allowed_values": [
+      "kalamkari",
+      "karishma",
+      "leela",
+      "meenakari",
+      "monalisa",
+      "mysore_silk_crepe",
+      "nidhi",
+      "platina",
+      "radha",
+      "sandhya",
+      "shringar"
+    ],
+    "sort_order": 10
+  },
+  {
+    "family_key": "silk_saree",
+    "attribute_key": "fabric",
+    "display_name": "Fabric",
+    "data_type": "enum",
+    "is_required": false,
+    "is_filterable": true,
+    "is_searchable": true,
+    "is_active": true,
+    "allowed_values": [
+      "silk",
+      "silk_blend",
+      "crepe_silk"
+    ],
+    "sort_order": 20
+  },
+  {
+    "family_key": "silk_saree",
+    "attribute_key": "occasion",
+    "display_name": "Occasion",
+    "data_type": "multi_enum",
+    "is_required": false,
+    "is_filterable": true,
+    "is_searchable": true,
+    "is_active": true,
+    "allowed_values": [
+      "wedding",
+      "festival",
+      "party",
+      "daily_wear"
+    ],
+    "sort_order": 30
+  },
+  {
+    "family_key": "silk_saree",
+    "attribute_key": "blouse_included",
+    "display_name": "Blouse Included",
+    "data_type": "boolean",
+    "is_required": false,
+    "is_filterable": true,
+    "is_searchable": false,
+    "is_active": true,
+    "allowed_values": [],
+    "sort_order": 40
+  }
+]

@@ -1,0 +1,57 @@
+[
+  {
+    "type": "KALAMKARI",
+    "MRP": "18500",
+    "SP": "15000"
+  },
+  {
+    "type": "KARISHMA",
+    "MRP": "18500",
+    "SP": "15000"
+  },
+  {
+    "type": "LEELA",
+    "MRP": "15000",
+    "SP": "12000"
+  },
+  {
+    "type": "MEENAKARI",
+    "MRP": "10000",
+    "SP": "7000"
+  },
+  {
+    "type": "MONALISA",
+    "MRP": "15000",
+    "SP": "12000"
+  },
+  {
+    "type": "MYSORE_SILK_CREPE",
+    "MRP": "3999",
+    "SP": "2599"
+  },
+  {
+    "type": "NIDHI",
+    "MRP": "3999",
+    "SP": "2599"
+  },
+  {
+    "type": "PLATINA",
+    "MRP": "3999",
+    "SP": "2599"
+  },
+  {
+    "type": "RADHA",
+    "MRP": "15000",
+    "SP": "12000"
+  },
+  {
+    "type": "SANDHYA",
+    "MRP": "10000",
+    "SP": "7000"
+  },
+  {
+    "type": "SHRINGAR",
+    "MRP": "15000",
+    "SP": "12000"
+  }
+]

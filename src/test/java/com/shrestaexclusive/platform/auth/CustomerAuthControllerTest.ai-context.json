@@ -1,0 +1,11 @@
+{
+  "module": "customer-auth-tests",
+  "file": "CustomerAuthControllerTest.java",
+  "purpose": "Verifies the non-production customer login API accepts the shared UAT account shape and rejects malformed OTP input.",
+  "coverage": [
+    "Six digit OTP request contract",
+    "No-store cache headers",
+    "Invalid login payload handling"
+  ],
+  "lastUpdated": "2026-07-05"
+}

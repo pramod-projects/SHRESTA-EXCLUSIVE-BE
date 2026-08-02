@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+REPO_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
+
+if [ -f "$REPO_ROOT/.env" ]; then
+  set -a
+  . "$REPO_ROOT/.env"
+  set +a
+fi
+
+cd "$REPO_ROOT"
+docker-compose -f docker-compose.dev.yml up -d minio
+docker-compose -f docker-compose.dev.yml up minio-setup
+
+SHRESTA_MEDIA_ASSET_BASE_URL=${SHRESTA_MEDIA_ASSET_BASE_URL:-http://localhost:9010/shresta-local-assets} \
+  "$SCRIPT_DIR/verify-shresta-media-s3"

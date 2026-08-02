@@ -1,0 +1,9 @@
+{
+  "module": "storefront-stores",
+  "purpose": "Public controller for the backend-owned store locator payload consumed by SHRESTA-WEB-FE /stores.",
+  "routes": [
+    "GET /api/v1/storefront/stores"
+  ],
+  "cachePolicy": "Public 60 second HTTP cache with must-revalidate; deeper read-through caching is handled by StorefrontStoresService.",
+  "responseEnvelope": "ApiResponse<StorefrontStoresResponse>"
+}

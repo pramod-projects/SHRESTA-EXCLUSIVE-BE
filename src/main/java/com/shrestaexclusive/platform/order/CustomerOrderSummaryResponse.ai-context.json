@@ -1,0 +1,10 @@
+{
+  "class": "CustomerOrderSummaryResponse",
+  "module": "order",
+  "purpose": "Customer-safe lightweight order row for profile/order history surfaces.",
+  "businessRules": [
+    "Returned only for the authenticated customer owner.",
+    "Summaries expose status, total paise, delivery/payment modes, item count, and placement timestamp without full address/contact snapshots.",
+    "Full immutable line snapshots remain available through CustomerOrderResponse detail reads."
+  ]
+}

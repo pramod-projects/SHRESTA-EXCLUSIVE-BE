@@ -1,0 +1,27 @@
+{
+  "class": "CustomerOrderService",
+  "module": "order",
+  "purpose": "Transactional service for authenticated checkout draft creation, final customer order placement, and customer-owned order status reads.",
+  "ownedTables": [
+    "customer_order_drafts",
+    "customer_order_draft_items",
+    "customer_orders",
+    "customer_order_items",
+    "customer_order_status_events",
+    "storefront_home_items",
+    "media_assets",
+    "media_asset_variants"
+  ],
+  "businessRules": [
+    "Never trust browser-submitted prices, totals, product names, SKUs, or media.",
+    "Proceed-to-checkout creates or reuses an ACTIVE 15-minute customer_order_drafts row for the authenticated customer and exact normalized cart signature.",
+    "Before creating a new draft, expired ACTIVE drafts are marked EXPIRED and changed-cart ACTIVE drafts are marked INVALIDATED.",
+    "Final order placement requires draftOrderId and validates that the draft is ACTIVE, unexpired, customer-owned, and has the same cart signature as the submitted lines.",
+    "A successfully placed order marks the checkout draft CONVERTED in the same transaction as customer_orders/customer_order_items/status events.",
+    "Load active product-card records from backend storefront tables and snapshot SKU, slug, family, type, media, unit price, and line price into order items.",
+    "Merge duplicate product lines and cap line quantity before persistence.",
+    "Write initial ORDER_STATUS, PAYMENT_STATUS, and FULFILLMENT_STATUS events in the same transaction as the order.",
+    "Return order status only for the authenticated customer owner.",
+    "List profile order summaries by customer_orders.customer_id so every order history row is owned by the authenticated customerId, independent of whether the customer logged in by email or phone."
+  ]
+}

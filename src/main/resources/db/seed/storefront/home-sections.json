@@ -1,0 +1,94 @@
+[
+  {
+    "section_key": "brand",
+    "section_type": "brand",
+    "eyebrow": null,
+    "title": "SHRESTA EXCLUSIVE",
+    "description": "A saree-first luxury house for curated silk and festive drapes.",
+    "sort_order": 10,
+    "metadata": {},
+    "is_active": true
+  },
+  {
+    "section_key": "navigation",
+    "section_type": "navigation",
+    "eyebrow": null,
+    "title": "Primary Navigation",
+    "description": "Customer-facing storefront navigation.",
+    "sort_order": 20,
+    "metadata": {},
+    "is_active": true
+  },
+  {
+    "section_key": "hero",
+    "section_type": "hero_carousel",
+    "eyebrow": "SHRESTA EXCLUSIVE saree collections",
+    "title": "Sarees Only. Curated Beautifully.",
+    "description": "Premium saree edits crafted for weddings, festivities, and statement everyday elegance.",
+    "sort_order": 30,
+    "metadata": {},
+    "is_active": true
+  },
+  {
+    "section_key": "trust_badges",
+    "section_type": "trust_badges",
+    "eyebrow": null,
+    "title": "Trust Badges",
+    "description": "Confidence signals for saree shopping.",
+    "sort_order": 40,
+    "metadata": {},
+    "is_active": true
+  },
+  {
+    "section_key": "featured_collections",
+    "section_type": "collection_grid",
+    "eyebrow": "Shop by weave",
+    "title": "Signature Saree Collections",
+    "description": "Explore SHRESTA sarees by collection story, fabric expression, and celebration mood.",
+    "sort_order": 50,
+    "metadata": {},
+    "is_active": true
+  },
+  {
+    "section_key": "why_shresta",
+    "section_type": "feature_grid",
+    "eyebrow": null,
+    "title": "Why SHRESTA?",
+    "description": "A saree-first curation built for quality, confidence, and timeless styling.",
+    "sort_order": 60,
+    "metadata": {},
+    "is_active": true
+  },
+  {
+    "section_key": "bestsellers",
+    "section_type": "product_grid",
+    "eyebrow": null,
+    "title": "Bestsellers",
+    "description": "Most loved SHRESTA sarees from the latest catalog.",
+    "sort_order": 70,
+    "metadata": {},
+    "is_active": true
+  },
+  {
+    "section_key": "material_showcase",
+    "section_type": "material_showcase",
+    "eyebrow": "Craft and drape",
+    "title": "Designed For Saree Lovers",
+    "description": "From festive radiance to subtle daywear, SHRESTA sarees are selected to move beautifully.",
+    "sort_order": 80,
+    "metadata": {},
+    "is_active": true
+  },
+  {
+    "section_key": "newsletter",
+    "section_type": "newsletter",
+    "eyebrow": "Be first to new drops",
+    "title": "Join The SHRESTA Circle",
+    "description": "Get launch updates, styling notes, and limited saree edit announcements.",
+    "sort_order": 90,
+    "metadata": {
+      "ctaLabel": "Subscribe"
+    },
+    "is_active": true
+  }
+]

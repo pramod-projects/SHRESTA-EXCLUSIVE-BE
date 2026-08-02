@@ -1,0 +1,25 @@
+{
+  "class": "StorefrontHomeService",
+  "module": "storefront",
+  "purpose": "Application service that assembles the backend-owned storefront home response from PostgreSQL and media records.",
+  "ownedTables": [
+    "storefront_home_sections",
+    "storefront_home_items",
+    "media_assets",
+    "media_asset_variants"
+  ],
+  "businessRules": [
+    "Public storefront home reads are KV-first with DB fallback.",
+    "Home response includes brand, navigation, hero, trust, featured collections, bestsellers, why SHRESTA, material stories, and newsletter sections.",
+    "ProductCard responses include customer-facing short descriptions from storefront_home_items.description and long descriptions from metadata.longDescription.",
+    "Featured collection item counts are computed from active backend product-card records in the storefront response.",
+    "Any collection can provide metadata.productBadgeFilters; counts are then derived from backend product badges/tags with normalized token matching rather than slug-specific code or static metadata counts.",
+    "Storefront home KV uses active:v8 so reference-catalog seed expansion, copy normalization, and product response-shape changes do not reuse stale Redis payloads.",
+    "Media assets include CDN-compatible backend-versioned URLs, versions, dimensions, delivery mode, LQIP, and responsive variants.",
+    "Storefront section/item writes refresh home KV only after database commit."
+  ],
+  "apiSurface": [
+    "GET /api/v1/storefront/home",
+    "/api/v1/admin/storefront/home"
+  ]
+}

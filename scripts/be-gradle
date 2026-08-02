@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+. "$SCRIPT_DIR/be-env.sh"
+
+exec "$WORKSPACE_ROOT/.tools/gradle/gradle-8.10/bin/gradle" "$@"

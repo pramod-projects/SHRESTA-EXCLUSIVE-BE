@@ -1,0 +1,15 @@
+{
+  "file": "AdminAssetIntegrationTest.java",
+  "module": "asset",
+  "purpose": "Verifies the admin asset API against a real PostgreSQL 16 container with Flyway seed data applied.",
+  "coveredRules": [
+    "Admin asset management exposes catalog-managed images only: category, product, and asset-manager uploads.",
+    "System brand chrome such as the SHRESTA logo must not appear in admin DAM/PIM asset search results."
+  ],
+  "dependencies": [
+    "PostgreSQL 16 Testcontainers",
+    "SpringBootTest",
+    "Flyway",
+    "TestRestTemplate"
+  ]
+}

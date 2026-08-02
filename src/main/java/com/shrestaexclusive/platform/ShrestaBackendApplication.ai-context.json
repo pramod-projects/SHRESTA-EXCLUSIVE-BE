@@ -1,0 +1,10 @@
+{
+  "class": "ShrestaBackendApplication",
+  "module": "platform",
+  "purpose": "Spring Boot entrypoint for the SHRESTA backend modular monolith.",
+  "businessRules": [
+    "Backend runs as one deployable artifact in Phase 1.",
+    "Module boundaries are enforced by package ownership and architecture tests as modules are added."
+  ],
+  "aiHint": "Do not add business logic to this class. Application behavior belongs in module services."
+}

@@ -1,0 +1,9 @@
+[
+  {
+    "primary_email": "testuser@gmail.com",
+    "display_name": "SHRESTA UAT Test User",
+    "status": "ACTIVE",
+    "otp_code": "123456",
+    "description": "Default UAT test account - testuser@gmail.com / 123456"
+  }
+]

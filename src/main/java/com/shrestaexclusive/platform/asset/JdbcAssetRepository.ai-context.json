@@ -1,0 +1,23 @@
+{
+  "class": "JdbcAssetRepository",
+  "module": "asset",
+  "purpose": "PostgreSQL repository for media asset search, detail reads, uploaded asset persistence, variant persistence, metadata updates, archive, and bulk category assignment.",
+  "ownedTables": [
+    "media_assets",
+    "media_asset_variants"
+  ],
+  "businessRules": [
+    "Search/detail responses must include backend-built media URLs, version cache busting, dimensions, variants, category family, category product type, SKU, tags, SEO fields, and optimization statistics.",
+    "Admin-managed asset queries and mutations are restricted to media_assets.usage_type in category, product, or asset-manager; brand/system assets are not returned or mutated through DAM APIs.",
+    "Uploaded and replaced assets persist object keys plus s3-compatible provider/delivery metadata; StorefrontMediaUrlBuilder creates final public URLs.",
+    "Variant replacement deletes current variant rows before inserting the regenerated version set because the unique constraint is asset/variant/format scoped.",
+    "Nullable search filters must be cast to text in SQL before IS NULL/comparison checks so PostgreSQL can infer parameter types when admin filters are empty.",
+    "Original asset URLs and generated variant URLs are both built through StorefrontMediaUrlBuilder with the media asset version.",
+    "Archive is a soft operational removal through status/is_active, not a hard purge."
+  ],
+  "dependencies": [
+    "NamedParameterJdbcTemplate",
+    "ObjectMapper",
+    "StorefrontMediaUrlBuilder"
+  ]
+}

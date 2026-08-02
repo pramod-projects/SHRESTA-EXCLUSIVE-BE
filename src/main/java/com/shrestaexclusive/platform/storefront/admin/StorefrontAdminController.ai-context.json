@@ -1,0 +1,16 @@
+{
+  "class": "StorefrontAdminController",
+  "module": "storefront",
+  "purpose": "Admin HTTP boundary for reading and updating storefront home sections and items.",
+  "apiSurface": [
+    "GET /api/v1/admin/storefront/home",
+    "PATCH /api/v1/admin/storefront/home/sections/{sectionKey}",
+    "PATCH /api/v1/admin/storefront/home/items/{itemKey}"
+  ],
+  "businessRules": [
+    "Admin key is required before storefront admin data is exposed.",
+    "Section and item mutations require Idempotency-Key and a storefront home Redis lock.",
+    "Mutations return the refreshed storefront home response from backend truth.",
+    "Admin responses are private no-store API envelopes with trace IDs."
+  ]
+}

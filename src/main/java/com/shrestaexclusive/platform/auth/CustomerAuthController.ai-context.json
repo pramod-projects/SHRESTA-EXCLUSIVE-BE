@@ -1,0 +1,22 @@
+{
+  "module": "customer-auth",
+  "file": "CustomerAuthController.java",
+  "purpose": "Non-production customer login API for the seeded UAT account used by checkout and account smoke testing.",
+  "routes": [
+    "POST /api/v1/auth/customer/login",
+    "POST /api/v1/auth/customer/logout",
+    "GET /api/v1/customer/profile"
+  ],
+  "dataOwnership": [
+    "Reads the local/dev/UAT-only uat_seed_accounts table.",
+    "Projects valid UAT identities into production customer identity tables.",
+    "Creates real customer_sessions rows and stores only token hashes.",
+    "Profile reads are resolved from the active backend session token."
+  ],
+  "securityRules": [
+    "The endpoint is disabled unless an active Spring profile is local, dev, or uat.",
+    "OTP must be exactly six digits.",
+    "Responses are no-store/private."
+  ],
+  "lastUpdated": "2026-07-05"
+}

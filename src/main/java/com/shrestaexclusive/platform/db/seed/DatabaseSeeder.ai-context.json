@@ -1,0 +1,34 @@
+{
+  "class": "DatabaseSeeder",
+  "module": "db.seed",
+  "purpose": "ApplicationRunner that seeds all reference and test data into the database on startup in non-prod environments by reading JSON files from classpath:db/seed/.",
+  "businessRules": [
+    "Active only on profiles: local, dev, uat. Never runs in prod.",
+    "Runs after Flyway migrations (Order.MAX_VALUE) so all tables exist before seeding.",
+    "Every upsert uses ON CONFLICT DO UPDATE making seeding fully idempotent; safe to run on every restart.",
+    "Seed order matches FK dependency: families → product-types → attributes → filters → tax → styling → media assets → media variants → storefront sections → storefront items → store sections → store locations → products → dev auth accounts.",
+    "image_path field in JSON is metadata only (human reference to shresta-media paths); it is not inserted into the database.",
+    "JSON files are read from classpath:db/seed/<path>.json via ClassPathResource and parsed with Jackson ObjectMapper.",
+    "jsonb() helper serializes nested objects/arrays to a JSON string for ::jsonb cast columns.",
+    "seedDevAuthAccounts() issues CREATE TABLE IF NOT EXISTS uat_seed_accounts before upserting, making it safe even if V1 was applied before the table was added to the migration plan.",
+    "seedDevAuthAccounts() seeds all three auth tables in order: customer_accounts → customer_auth_identities (email identity, is_verified=TRUE) → uat_seed_accounts (static OTP from otp_code field in dev-accounts.json).",
+    "The otp_code field in auth/dev-accounts.json drives the static OTP used by CustomerAuthService for UAT/dev login; default fallback is '123456' if the field is absent."
+  ],
+  "seedFiles": [
+    "category/families.json",
+    "category/product-types.json",
+    "category/attributes.json",
+    "category/filters.json",
+    "category/tax.json",
+    "category/styling.json",
+    "media/reference-assets.json",
+    "media/product-assets.json",
+    "media/variants.json",
+    "storefront/home-sections.json",
+    "storefront/home-items.json",
+    "store/locator-sections.json",
+    "store/locations.json",
+    "products/items.json",
+    "auth/dev-accounts.json"
+  ]
+}

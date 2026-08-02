@@ -1,0 +1,10 @@
+{
+  "class": "CustomerOrderResponse",
+  "module": "order",
+  "purpose": "Customer-safe order placement/status response returned after persistence.",
+  "businessRules": [
+    "Expose backend-owned order number, customer identity summary, order/payment/fulfillment statuses, paise totals, contact and address snapshots, immutable line snapshots, and append-only status events.",
+    "All money values remain BIGINT paise.",
+    "Response data is safe for the authenticated customer owner and should be treated as truth by the frontend."
+  ]
+}

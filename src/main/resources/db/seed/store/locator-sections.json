@@ -1,0 +1,13 @@
+[
+  {
+    "section_key": "store_locator",
+    "eyebrow": "SHRESTA EXCLUSIVE service network",
+    "title": "Store Locator",
+    "description": "Find SHRESTA saree service coverage, pickup windows, and style support near you.",
+    "metadata": {
+      "serviceNote": "SHRESTA keeps service hours and fulfillment details aligned across every touchpoint."
+    },
+    "is_active": true,
+    "sort_order": 10
+  }
+]

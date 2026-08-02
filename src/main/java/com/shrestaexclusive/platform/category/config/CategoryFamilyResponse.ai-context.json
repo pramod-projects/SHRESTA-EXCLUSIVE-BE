@@ -1,0 +1,11 @@
+{
+  "class": "CategoryFamilyResponse",
+  "module": "category",
+  "purpose": "Public read contract for category configuration exposed to catalog, search, admin, and frontend consumers.",
+  "businessRules": [
+    "Category behavior is configuration-driven and must not be hard-coded per launch category.",
+    "Category keys and filter keys remain lowercase snake_case.",
+    "Taxes are expressed as GST basis points, never floating percentages."
+  ],
+  "apiSurface": ["/api/v1/categories"]
+}

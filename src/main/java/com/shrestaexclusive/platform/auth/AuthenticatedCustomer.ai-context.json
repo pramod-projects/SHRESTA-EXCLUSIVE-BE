@@ -1,0 +1,10 @@
+{
+  "class": "AuthenticatedCustomer",
+  "module": "auth",
+  "purpose": "Customer identity projection returned after validating an opaque customer session token.",
+  "businessRules": [
+    "Contains only the customer fields needed by downstream authenticated customer APIs.",
+    "Session token material is never exposed through this record.",
+    "Order placement uses this projection as the authenticated customer owner."
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "class": "CustomerOrderDraftItemsMigration",
+  "module": "db.migration.tables",
+  "purpose": "TransitionPlan for the customer_order_draft_items table. Cart line items of a checkout draft; quantities are backend-validated at order placement.",
+  "businessRules": [
+    "Returns a static TransitionPlan via transitionPlan() factory method.",
+    "Initial transition: fromVersions=[-1] to toVersion=0 (table creation + indexes).",
+    "Future schema changes are added as new transitions (fromVersions=[0] to toVersion=1, etc.) without modifying the existing transition.",
+    "Called by V1__Schema (initial setup) or a future VN__*.java migration for incremental changes.",
+    "MigrationRunner skips transitions whose fromVersions do not match the current DB version for this table."
+  ],
+  "ownedTable": "customer_order_draft_items"
+}

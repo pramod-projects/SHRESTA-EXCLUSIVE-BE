@@ -1,0 +1,27 @@
+{
+  "class": "AssetService",
+  "module": "asset",
+  "purpose": "Application service for asset reads, uploads, metadata changes, archiving, permanent delete, and bulk category assignment.",
+  "ownedTables": [
+    "media_assets",
+    "media_asset_variants"
+  ],
+  "businessRules": [
+    "Asset search/detail reads are KV-first with PostgreSQL fallback.",
+    "Asset search/detail responses carry versioned media URLs for originals and variants.",
+    "Admin asset workflows are limited to catalog-managed media and must not expose brand/system chrome as editable DAM records.",
+    "Asset search and mutation contracts carry categoryFamilyKey and categoryProductTypeKey so images can be managed at taxonomy-family and subcategory granularity.",
+    "Uploads store the original, create a DB record, generate variants, persist variant metadata, and mark the asset ready.",
+    "Image replacement preserves the existing asset key, locks the row, writes a new versioned original object key, regenerates variants/LQIP, bumps asset version, and returns S3-compatible URLs.",
+    "Metadata updates, archive/remove, permanent delete, and bulk assignment flows publish media table KV invalidation only after commit.",
+    "Permanent delete clears storefront media references before deleting the media asset row and cascade-owned variants.",
+    "Storefront home KV is refreshed after asset mutations because storefront media depends on media tables."
+  ],
+  "dependencies": [
+    "AssetRepository",
+    "AssetStorageService",
+    "AssetVariantProcessor",
+    "KvReadThroughCache",
+    "StorefrontHomeService"
+  ]
+}

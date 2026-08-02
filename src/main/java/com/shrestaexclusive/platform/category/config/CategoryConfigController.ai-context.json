@@ -1,0 +1,11 @@
+{
+  "class": "CategoryConfigController",
+  "module": "category",
+  "purpose": "Public category configuration API used by storefront, search, catalog, recommendations, and admin clients.",
+  "businessRules": [
+    "API responses use the standard ApiResponse envelope.",
+    "The API exposes configuration-driven category contracts rather than hard-coded category-specific behavior.",
+    "Trace IDs are propagated through the API envelope when present."
+  ],
+  "apiSurface": ["GET /api/v1/categories"]
+}

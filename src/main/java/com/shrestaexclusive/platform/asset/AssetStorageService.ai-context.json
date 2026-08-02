@@ -1,0 +1,16 @@
+{
+  "class": "AssetStorageService",
+  "module": "asset",
+  "purpose": "Stores original image uploads/replacements, publishes originals to S3-compatible object storage when enabled, and returns object-storage metadata for DB persistence.",
+  "businessRules": [
+    "Only non-empty image uploads are accepted.",
+    "Original images are stored under versioned asset paths separate from generated variants.",
+    "Asset keys are slugged from original filenames and suffixed for uniqueness.",
+    "Replacement uploads preserve the asset key and write a new vN object path.",
+    "SHA-256, byte size, dimensions, content type, object key, storage provider, delivery mode, and version are captured for each original."
+  ],
+  "futureIntegration": [
+    "Local storage root is the image-processing work area; generated objects are published to the configured S3-compatible object store.",
+    "StorefrontMediaUrlBuilder maps object keys to the configured S3-compatible public media base URL."
+  ]
+}

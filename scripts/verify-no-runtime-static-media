@@ -1,0 +1,54 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+REPO_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
+
+cd "$REPO_ROOT"
+
+FAILED=0
+TMP_MEDIA=$(mktemp)
+TMP_STATIC_REFS=$(mktemp)
+trap 'rm -f "$TMP_MEDIA" "$TMP_STATIC_REFS"' EXIT
+
+find src -type f \( \
+  -iname '*.png' -o \
+  -iname '*.jpg' -o \
+  -iname '*.jpeg' -o \
+  -iname '*.webp' -o \
+  -iname '*.avif' -o \
+  -iname '*.gif' -o \
+  -iname '*.svg' \
+\) | sort > "$TMP_MEDIA"
+
+if [ -s "$TMP_MEDIA" ]; then
+  echo "Runtime source media files are not allowed in SHRESTA-BE." >&2
+  echo "Keep image/video binaries in seed/shresta-media/ for object-storage seeding." >&2
+  cat "$TMP_MEDIA" >&2
+  FAILED=1
+fi
+
+if [ -d "src/main/resources/static/shresta-media" ] || [ -d "src/main/resources/static/shresta-assets" ]; then
+  echo "Spring Boot static media directories are not allowed." >&2
+  echo "Images must be served from the configured S3-compatible public media origin." >&2
+  FAILED=1
+fi
+
+if find src/main/java src/main/resources/application.yml -type f -print0 \
+  | xargs -0 grep -nE '(^|[^[:alnum:]_-])/(shresta-media|shresta-assets)(/|$)|backend-static|backend-local' \
+  > "$TMP_STATIC_REFS" 2>/dev/null; then
+  echo "Runtime code/config contains backend-local/static media references." >&2
+  cat "$TMP_STATIC_REFS" >&2
+  FAILED=1
+fi
+
+if [ ! -d "seed/shresta-media" ]; then
+  echo "Missing seed/shresta-media. Seed media must exist there before being copied to object storage." >&2
+  FAILED=1
+fi
+
+if [ "$FAILED" -ne 0 ]; then
+  exit 1
+fi
+
+echo "Verified: SHRESTA-BE has no runtime static media assets or backend-local media serving references."
