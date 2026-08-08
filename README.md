@@ -5,6 +5,66 @@ Backend repository operational notes for local development, verification, and pr
 ## Dependencies
 
 Use Java 21 or newer, Docker, Docker Compose, and the repository wrapper scripts.
+Gradle is executed via `gradlew` (generated in-repo), so a global Gradle install is not required.
+
+### macOS install commands
+
+Install core backend dependencies:
+
+```bash
+brew update
+brew install --cask temurin@21
+brew install docker docker-compose colima cloudflared
+```
+
+Start Docker runtime on macOS:
+
+```bash
+colima start
+```
+
+### Linux (Ubuntu/Debian) install commands
+
+Install Java 21, Docker, Docker Compose plugin, and cloudflared:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y openjdk-21-jdk ca-certificates curl gnupg lsb-release
+
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo usermod -aG docker "$USER"
+
+curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg \
+  | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
+echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main" \
+  | sudo tee /etc/apt/sources.list.d/cloudflared.list >/dev/null
+sudo apt-get update
+sudo apt-get install -y cloudflared
+```
+
+After group changes on Linux, sign out/sign in (or reboot) before running Docker without sudo.
+
+For a fresh clone on macOS, install Java 21 first:
+
+```bash
+brew install --cask temurin@21
+```
+
+Then verify Java 21 is selected:
+
+```bash
+/usr/libexec/java_home -V
+export JAVA_HOME=$(/usr/libexec/java_home -v 21)
+java -version
+```
 
 ```bash
 java -version
@@ -56,6 +116,8 @@ Keep secrets out of commits. Use environment variables, a local `.env`, or the d
 
 ## Local Services
 
+### Option A (recommended): Docker services
+
 Start PostgreSQL, Redis, and local S3-compatible object storage:
 
 ```bash
@@ -81,6 +143,60 @@ docker-compose -f docker-compose.dev.yml down -v && docker-compose -f docker-com
 ```
 
 After a full reset, restart the backend; Flyway and DatabaseSeeder rebuild everything automatically.
+
+### Option B: Native install (PostgreSQL + Redis + MinIO)
+
+macOS:
+
+```bash
+brew update
+brew install postgresql@16 redis minio/stable/minio minio/stable/mc
+brew services start postgresql@16
+brew services start redis
+mkdir -p "$HOME/minio-data"
+MINIO_ROOT_USER=shresta_minio MINIO_ROOT_PASSWORD=shresta-local-minio-password \
+  minio server "$HOME/minio-data" --address ":9010" --console-address ":9011"
+```
+
+Linux (Ubuntu/Debian):
+
+```bash
+sudo apt-get update
+sudo apt-get install -y postgresql postgresql-contrib redis-server curl
+sudo systemctl enable --now postgresql
+sudo systemctl enable --now redis-server
+
+curl -LO https://dl.min.io/server/minio/release/linux-amd64/minio
+chmod +x minio
+sudo mv minio /usr/local/bin/minio
+mkdir -p "$HOME/minio-data"
+MINIO_ROOT_USER=shresta_minio MINIO_ROOT_PASSWORD=shresta-local-minio-password \
+  minio server "$HOME/minio-data" --address ":9010" --console-address ":9011"
+```
+
+Create MinIO bucket and access alias:
+
+```bash
+mc alias set local http://127.0.0.1:9010 shresta_minio shresta-local-minio-password
+mc mb --ignore-existing local/shresta-local-assets
+```
+
+Create backend DB/user in local PostgreSQL:
+
+```bash
+psql postgres <<'SQL'
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'shresta_app') THEN
+    CREATE ROLE shresta_app LOGIN PASSWORD 'change-me';
+  END IF;
+END
+$$;
+
+CREATE DATABASE shresta OWNER shresta_app;
+GRANT ALL PRIVILEGES ON DATABASE shresta TO shresta_app;
+SQL
+```
 
 ## Database
 
@@ -184,6 +300,44 @@ The script builds the jar automatically if one does not exist. To force a rebuil
 
 Upload the matching product images to the UAT bucket before starting so all media URLs resolve correctly.
 
+## Persistent UP/DOWN stack (BE + FE + cloudflared)
+
+From this repository root (`SHRESTA-EXCLUSIVE-BE`), use:
+
+```bash
+./up
+./status
+./FE_URL
+./stack-control.sh logs be
+./stack-control.sh logs fe
+./stack-control.sh logs cloudflared-proxy
+./stack-control.sh logs cloudflared
+./down
+```
+
+Behavior:
+
+- `UP` starts backend (`./scripts/be-uat`), frontend (`npm run start` in sibling FE repo), local cloudflared proxy (`node ./scripts/cloudflared-proxy.mjs`), and cloudflared (`cloudflared tunnel --url http://127.0.0.1:3310 --no-autoupdate`).
+- The cloudflared public URL now serves both FE pages and media files/videos from MinIO on the same domain/path (`/shresta-local-assets/...`).
+- Services run through `nohup`, so they keep running when terminal closes or screen locks.
+- They stop only when you run `DOWN`, manually kill processes, or machine shuts down.
+- Requires sibling repos in the same parent folder: `SHRESTA-EXCLUSIVE-BE` and `SHRESTA-EXCLUSIVE-WEB-FE`.
+
+Get the live cloudflared public URL:
+
+```bash
+./FE_URL
+
+# or, directly from logs:
+grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' .logs/cloudflared.log | tail -n 1
+```
+
+Open media via that URL (example):
+
+```text
+https://<your-trycloudflare-url>/shresta-local-assets/logos/SHRESTA.mp4
+```
+
 ## Production
 
 Set up the env file once:
@@ -216,7 +370,7 @@ The script builds the jar automatically if one does not exist. To force a rebuil
 | `JWT_PRIVATE_KEY_BASE64` | Customer JWT signing |
 | `RAZORPAY_KEY_ID` | Payment initiation |
 | `RAZORPAY_KEY_SECRET` | Payment API authentication |
-| `RAZORPAY_WEBHOOK_SECRET` | Payment webhook verification |
+| `SHRESTA_RAZORPAY_WEBHOOK_SECRET` (or `RAZORPAY_WEBHOOK_SECRET`) | Payment webhook verification |
 | `SHRESTA_ASSET_OBJECT_ACCESS_KEY` | Media upload to S3 |
 | `SHRESTA_ASSET_OBJECT_SECRET_KEY` | Media upload to S3 |
 
@@ -265,6 +419,14 @@ If Java is not found:
 
 ```bash
 ./scripts/be-java -version
+```
+
+If Java 11 is picked, switch to Java 21 before running Gradle scripts:
+
+```bash
+export JAVA_HOME=$(/usr/libexec/java_home -v 21)
+java -version
+./scripts/be-gradle --version
 ```
 
 If Gradle cannot connect to PostgreSQL or Redis:

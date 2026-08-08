@@ -30,7 +30,8 @@ public record StorefrontHomeResponse(
             String itemKey,
             String name,
             String tagline,
-            MediaAsset logo
+            MediaAsset logo,
+            String demoVideoUrl
     ) {
     }
 

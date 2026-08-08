@@ -35,7 +35,7 @@ public final class StorefrontHomeFixtures {
         );
 
         return new StorefrontHomeResponse(
-                new Brand("brand-shresta-exclusive", "SHRESTA EXCLUSIVE", "Premium quick commerce", media),
+                new Brand("brand-shresta-exclusive", "SHRESTA EXCLUSIVE", "Premium quick commerce", media, null),
                 List.of(new NavigationItem("Shop", "/products")),
                 List.of(),
                 List.of(),

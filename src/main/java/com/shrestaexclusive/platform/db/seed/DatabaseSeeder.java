@@ -1,13 +1,10 @@
 package com.shrestaexclusive.platform.db.seed;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -19,6 +16,10 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Seeds the database from JSON files in classpath:db/seed/.
@@ -60,6 +61,7 @@ public class DatabaseSeeder implements ApplicationRunner {
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
         log.info("[seed] Starting database seeding for non-prod environment");
+        ensureCustomerMessagingTables();
         seedCategoryFamilies();
         seedCategoryProductTypes();
         seedCategoryAttributes();
@@ -77,6 +79,62 @@ public class DatabaseSeeder implements ApplicationRunner {
         seedDevAuthAccounts();
         log.info("[seed] Database seeding complete");
     }
+
+        private void ensureCustomerMessagingTables() {
+        jdbc.getJdbcOperations().execute("""
+            CREATE TABLE IF NOT EXISTS customer_sms_messages (
+                id                 UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+                customer_id        UUID         NOT NULL REFERENCES customer_accounts(id) ON DELETE CASCADE,
+                mobile_number      VARCHAR(16)  NOT NULL,
+                purpose            VARCHAR(40)  NOT NULL,
+                message_body       TEXT         NOT NULL,
+                status             VARCHAR(24)  NOT NULL DEFAULT 'PENDING',
+                provider_used      VARCHAR(24),
+                provider_priority  VARCHAR(80)  NOT NULL DEFAULT 'SPRINGEDGE,MSG91',
+                sent_at            TIMESTAMPTZ,
+                failure_reason     VARCHAR(255),
+                created_at         TIMESTAMPTZ  NOT NULL DEFAULT now(),
+                updated_at         TIMESTAMPTZ  NOT NULL DEFAULT now(),
+                CONSTRAINT chk_customer_sms_status CHECK (status IN ('PENDING','SENT','FAILED','SKIPPED')),
+                CONSTRAINT chk_customer_sms_provider CHECK (provider_used IS NULL OR provider_used IN ('SPRINGEDGE','MSG91'))
+            )
+            """);
+
+        jdbc.getJdbcOperations().execute("""
+            CREATE TABLE IF NOT EXISTS customer_sms_attempts (
+                id                  UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+                sms_message_id      UUID         NOT NULL REFERENCES customer_sms_messages(id) ON DELETE CASCADE,
+                customer_id         UUID         NOT NULL REFERENCES customer_accounts(id) ON DELETE CASCADE,
+                provider            VARCHAR(24)  NOT NULL,
+                status              VARCHAR(24)  NOT NULL,
+                provider_message_id VARCHAR(120),
+                http_status         INTEGER,
+                request_payload     TEXT,
+                response_payload    TEXT,
+                error_message       VARCHAR(500),
+                attempted_at        TIMESTAMPTZ  NOT NULL DEFAULT now(),
+                CONSTRAINT chk_customer_sms_attempt_provider CHECK (provider IN ('SPRINGEDGE','MSG91')),
+                CONSTRAINT chk_customer_sms_attempt_status CHECK (status IN ('SUCCESS','FAILED'))
+            )
+            """);
+
+        jdbc.getJdbcOperations().execute("""
+            CREATE INDEX IF NOT EXISTS idx_customer_sms_messages_customer
+            ON customer_sms_messages (customer_id, created_at DESC)
+            """);
+        jdbc.getJdbcOperations().execute("""
+            CREATE INDEX IF NOT EXISTS idx_customer_sms_messages_status
+            ON customer_sms_messages (status, created_at DESC)
+            """);
+        jdbc.getJdbcOperations().execute("""
+            CREATE INDEX IF NOT EXISTS idx_customer_sms_attempts_message
+            ON customer_sms_attempts (sms_message_id, attempted_at)
+            """);
+        jdbc.getJdbcOperations().execute("""
+            CREATE INDEX IF NOT EXISTS idx_customer_sms_attempts_customer
+            ON customer_sms_attempts (customer_id, attempted_at DESC)
+            """);
+        }
 
     // =========================================================================
     // Category
@@ -556,10 +614,10 @@ public class DatabaseSeeder implements ApplicationRunner {
                 // JSONB field — will be overridden by explicit .addValue in caller if needed
                 try {
                     p.addValue(entry.getKey(), objectMapper.writeValueAsString(val));
-                } catch (Exception e) {
+                } catch (JsonProcessingException e) {
                     p.addValue(entry.getKey(), val.toString());
                 }
-            } else if (val instanceof Number n && !(val instanceof Integer) && !(val instanceof Long)) {
+            } else if (val instanceof Number && !(val instanceof Integer) && !(val instanceof Long)) {
                 p.addValue(entry.getKey(), new BigDecimal(val.toString()));
             } else {
                 p.addValue(entry.getKey(), val);
@@ -578,7 +636,7 @@ public class DatabaseSeeder implements ApplicationRunner {
         if (val instanceof String s) return s;
         try {
             return objectMapper.writeValueAsString(val);
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             return "{}";
         }
     }

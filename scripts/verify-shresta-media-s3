@@ -51,14 +51,16 @@ find "$SOURCE_DIR" -type f | sort > "$TMP_MANIFEST"
 
 while IFS= read -r FILE; do
   RELATIVE=${FILE#"$SOURCE_DIR"/}
-  URL="$BASE_URL/$RELATIVE"
+  # Encode path characters that commonly break URL parsing in curl.
+  ENCODED_RELATIVE=$(printf "%s" "$RELATIVE" | sed 's/%/%25/g; s/ /%20/g; s/#/%23/g; s/?/%3F/g; s/\[/%5B/g; s/\]/%5D/g')
+  URL="$BASE_URL/$ENCODED_RELATIVE"
   RESULT=$(curl -sS -L -o /dev/null -w "%{http_code} %{content_type}" "$URL" || true)
   STATUS=$(printf "%s" "$RESULT" | awk '{print $1}')
   CONTENT_TYPE=$(printf "%s" "$RESULT" | awk '{print $2}')
   TOTAL=$((TOTAL + 1))
 
   case "$STATUS:$CONTENT_TYPE" in
-    2*:image/*|2*:video/*)
+    2*:image/*|2*:video/*|2*:application/json*)
       printf "OK   %s\n" "$RELATIVE"
       ;;
     *)

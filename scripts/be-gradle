@@ -3,4 +3,14 @@
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 . "$SCRIPT_DIR/be-env.sh"
 
-exec "$WORKSPACE_ROOT/.tools/gradle/gradle-8.10/bin/gradle" "$@"
+if [ -x "$REPO_ROOT/gradlew" ]; then
+	exec "$REPO_ROOT/gradlew" "$@"
+fi
+
+if command -v gradle >/dev/null 2>&1; then
+	exec gradle "$@"
+fi
+
+echo "ERROR: Gradle not found." >&2
+echo "Install Gradle 8.10+ or add Gradle Wrapper (gradlew) to this repository." >&2
+exit 1

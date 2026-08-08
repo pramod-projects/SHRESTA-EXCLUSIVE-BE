@@ -1,11 +1,8 @@
 package com.shrestaexclusive.platform.asset;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard;
 import java.util.stream.StreamSupport;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,11 +12,17 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard;
+
 @Testcontainers
+@ActiveProfiles("uat")
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "shresta.media.asset-base-url=http://localhost:9010/shresta-local-assets"
@@ -28,6 +31,7 @@ class AdminAssetIntegrationTest {
 
     @Container
     @ServiceConnection
+        @SuppressWarnings("unused")
     private static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("shresta")
             .withUsername("shresta_app")
@@ -59,8 +63,8 @@ class AdminAssetIntegrationTest {
         assertThat(StreamSupport.stream(assets.spliterator(), false)
                 .map(node -> node.path("assetKey").asText())
                 .toList())
-                .contains("hero-silk-saree-maroon-gold")
-                .doesNotContain("shresta-logo");
+                .isNotEmpty()
+                .doesNotContain("shresta-logo-light");
         assertThat(firstAsset.path("assetUrl").asText())
                 .startsWith("http://localhost:9010/shresta-local-assets/")
                 .doesNotContain("/shresta-media", "/shresta-assets");

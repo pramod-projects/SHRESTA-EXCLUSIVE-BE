@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.util.StringUtils;
 
 @Service
 public class StorefrontHomeService {
@@ -154,7 +155,7 @@ public class StorefrontHomeService {
 
     private Brand brand(StorefrontDataset dataset) {
         ItemRow item = requiredFirst(dataset, "brand");
-        return new Brand(item.itemKey(), item.title(), item.description(), media(item.media()));
+        return new Brand(item.itemKey(), item.title(), item.description(), media(item.media()), resolveDemoVideoUrl(item.demoVideoUrl()));
     }
 
     private List<NavigationItem> navigation(StorefrontDataset dataset) {
@@ -223,10 +224,17 @@ public class StorefrontHomeService {
                         stringList(item.metadata(), "badges"),
                         media(item.media()),
                         galleryImages(dataset, item.id()),
-                        item.demoVideoUrl() != null ? item.demoVideoUrl() : "",
+                        resolveDemoVideoUrl(item.demoVideoUrl()),
                         item.featured()
                 ))
                 .toList();
+    }
+
+    private String resolveDemoVideoUrl(String value) {
+        if (!StringUtils.hasText(value)) {
+            return null;
+        }
+        return media.assetUrl(value);
     }
 
     private List<MediaAsset> galleryImages(StorefrontDataset dataset, UUID itemId) {

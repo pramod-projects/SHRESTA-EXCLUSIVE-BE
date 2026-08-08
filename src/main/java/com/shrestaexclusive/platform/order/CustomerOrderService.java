@@ -1,17 +1,9 @@
 package com.shrestaexclusive.platform.order;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shrestaexclusive.platform.auth.AuthenticatedCustomer;
-import com.shrestaexclusive.platform.order.CustomerOrderResponse.ContactSnapshot;
-import com.shrestaexclusive.platform.order.CustomerOrderResponse.LineItem;
-import com.shrestaexclusive.platform.order.CustomerOrderResponse.ShippingAddressSnapshot;
-import com.shrestaexclusive.platform.order.CustomerOrderResponse.StatusEvent;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.SecureRandom;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -30,14 +22,29 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shrestaexclusive.platform.auth.AuthenticatedCustomer;
+import com.shrestaexclusive.platform.notification.CustomerNotificationService;
+import com.shrestaexclusive.platform.order.CustomerOrderResponse.ContactSnapshot;
+import com.shrestaexclusive.platform.order.CustomerOrderResponse.LineItem;
+import com.shrestaexclusive.platform.order.CustomerOrderResponse.ShippingAddressSnapshot;
+import com.shrestaexclusive.platform.order.CustomerOrderResponse.StatusEvent;
+
 @Service
 public class CustomerOrderService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CustomerOrderService.class);
 
     private static final long FREE_DELIVERY_THRESHOLD_PAISE = 49_900L;
     private static final long STANDARD_DELIVERY_PAISE = 4_900L;
@@ -51,18 +58,34 @@ public class CustomerOrderService {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
+    private final CustomerNotificationService notificationService;
     private final Clock clock;
     private final SecureRandom secureRandom = new SecureRandom();
 
     @Autowired
-    public CustomerOrderService(NamedParameterJdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
-        this(jdbcTemplate, objectMapper, Clock.systemUTC());
+    public CustomerOrderService(
+            NamedParameterJdbcTemplate jdbcTemplate,
+            ObjectMapper objectMapper,
+            CustomerNotificationService notificationService
+    ) {
+        this(jdbcTemplate, objectMapper, Clock.systemUTC(), notificationService);
     }
 
+    @SuppressWarnings("unused")
     CustomerOrderService(NamedParameterJdbcTemplate jdbcTemplate, ObjectMapper objectMapper, Clock clock) {
+        this(jdbcTemplate, objectMapper, clock, null);
+    }
+
+    CustomerOrderService(
+            NamedParameterJdbcTemplate jdbcTemplate,
+            ObjectMapper objectMapper,
+            Clock clock,
+            CustomerNotificationService notificationService
+    ) {
         this.jdbcTemplate = jdbcTemplate;
         this.objectMapper = objectMapper;
         this.clock = clock;
+        this.notificationService = notificationService;
     }
 
     @Transactional
@@ -145,6 +168,16 @@ public class CustomerOrderService {
         insertStatusEvent(orderId, "PAYMENT_STATUS", null, "PENDING", "SYSTEM", null, "Payment handoff is pending gateway integration.", now);
         insertStatusEvent(orderId, "FULFILLMENT_STATUS", null, "PENDING", "SYSTEM", null, "Fulfillment allocation pending.", now);
         convertDraft(customer.customerId(), draftOrderId, orderId, now);
+
+        if (notificationService != null) {
+            try {
+                String sms = "SHRESTA order " + orderNumber + " placed successfully. We will notify you on status updates.";
+                notificationService.sendGeneralNotification(customer.customerId(), request.contact().phone(), sms);
+            } catch (RuntimeException exception) {
+                LOG.warn("order-notification-sms failed orderNumber={} customerId={} reason={}",
+                        orderNumber, customer.customerId(), exception.getMessage());
+            }
+        }
 
         return findOrderForCustomer(customer.customerId(), orderNumber);
     }
@@ -244,18 +277,34 @@ public class CustomerOrderService {
                          order_row.payment_method, order_row.placed_at
                 ORDER BY order_row.placed_at DESC
                 LIMIT 50
-                """, new MapSqlParameterSource("customerId", customerId), (rs, rowNum) -> new CustomerOrderSummaryResponse(
-                rs.getString("order_number"),
-                rs.getString("status"),
-                rs.getString("payment_status"),
-                rs.getString("fulfillment_status"),
-                rs.getString("currency"),
-                rs.getLong("total_paise"),
-                rs.getString("delivery_mode"),
-                rs.getString("payment_method"),
-                rs.getInt("item_count"),
-                rs.getTimestamp("placed_at").toInstant()
-        ));
+                """, new MapSqlParameterSource("customerId", customerId), (rs, rowNum) -> {
+                String orderStatus = rs.getString("status");
+                String paymentStatus = rs.getString("payment_status");
+                String fulfillmentStatus = rs.getString("fulfillment_status");
+                CustomerOrderTrackingStageResolver.TrackingStage stage = CustomerOrderTrackingStageResolver.resolve(
+                    orderStatus,
+                    paymentStatus,
+                    fulfillmentStatus
+                );
+
+                return new CustomerOrderSummaryResponse(
+                    rs.getString("order_number"),
+                    orderStatus,
+                    paymentStatus,
+                    fulfillmentStatus,
+                    stage.code(),
+                    stage.label(),
+                    stage.index(),
+                    stage.meaning(),
+                    stage.terminal(),
+                    rs.getString("currency"),
+                    rs.getLong("total_paise"),
+                    rs.getString("delivery_mode"),
+                    rs.getString("payment_method"),
+                    rs.getInt("item_count"),
+                    rs.getTimestamp("placed_at").toInstant()
+                );
+            });
     }
 
     @Transactional(readOnly = true)
@@ -272,8 +321,14 @@ public class CustomerOrderService {
                 LIMIT 1
                 """, new MapSqlParameterSource()
                 .addValue("customerId", customerId)
-                .addValue("orderNumber", orderNumber), CustomerOrderService::mapOrder).stream().findFirst()
+                .addValue("orderNumber", orderNumber), (rs, rowNum) -> mapOrder(rs)).stream().findFirst()
                 .orElseThrow(() -> new CustomerOrderNotFoundException(orderNumber));
+
+        CustomerOrderTrackingStageResolver.TrackingStage stage = CustomerOrderTrackingStageResolver.resolve(
+            order.status(),
+            order.paymentStatus(),
+            order.fulfillmentStatus()
+        );
 
         return new CustomerOrderResponse(
                 order.orderNumber(),
@@ -282,6 +337,11 @@ public class CustomerOrderService {
                 order.status(),
                 order.paymentStatus(),
                 order.fulfillmentStatus(),
+            stage.code(),
+            stage.label(),
+            stage.index(),
+            stage.meaning(),
+            stage.terminal(),
                 order.currency(),
                 order.subtotalPaise(),
                 order.deliveryPaise(),
@@ -313,7 +373,7 @@ public class CustomerOrderService {
                 """, new MapSqlParameterSource()
                 .addValue("customerId", customerId)
                 .addValue("cartSignature", cartSignature)
-                .addValue("now", Timestamp.from(now)), CustomerOrderService::mapDraft).stream()
+                .addValue("now", Timestamp.from(now)), (rs, rowNum) -> mapDraft(rs)).stream()
                 .findFirst()
                 .map(this::draftResponse)
                 .orElse(null);
@@ -329,7 +389,7 @@ public class CustomerOrderService {
                 LIMIT 1
                 """, new MapSqlParameterSource()
                 .addValue("customerId", customerId)
-                .addValue("draftId", draftId), CustomerOrderService::mapDraft).stream().findFirst()
+                .addValue("draftId", draftId), (rs, rowNum) -> mapDraft(rs)).stream().findFirst()
                 .orElseThrow(() -> new CustomerOrderPlacementException("Checkout order ID could not be found."));
 
         return draftResponse(draft);
@@ -743,7 +803,7 @@ public class CustomerOrderService {
         };
     }
 
-    private static OrderRow mapOrder(ResultSet rs, int rowNum) throws SQLException {
+    private static OrderRow mapOrder(ResultSet rs) throws SQLException {
         return new OrderRow(
                 rs.getObject("id", UUID.class),
                 rs.getString("order_number"),
@@ -766,7 +826,7 @@ public class CustomerOrderService {
         );
     }
 
-    private static DraftRow mapDraft(ResultSet rs, int rowNum) throws SQLException {
+    private static DraftRow mapDraft(ResultSet rs) throws SQLException {
         return new DraftRow(
                 rs.getObject("id", UUID.class),
                 rs.getString("draft_number"),

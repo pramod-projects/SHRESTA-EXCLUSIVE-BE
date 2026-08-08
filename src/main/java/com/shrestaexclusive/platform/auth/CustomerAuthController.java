@@ -29,6 +29,13 @@ public class CustomerAuthController {
                 .body(ApiResponse.ok(service.login(request), traceId()));
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse<CustomerRegistrationResponse>> register(@Valid @RequestBody CustomerRegistrationRequest request) {
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.noStore().cachePrivate())
+                .body(ApiResponse.ok(service.register(request), traceId()));
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<Void>> logout(@RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorization) {
         service.logout(bearerToken(authorization));

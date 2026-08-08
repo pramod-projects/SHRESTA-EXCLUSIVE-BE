@@ -32,6 +32,17 @@ spring:
       port: ${REDIS_PORT:6389}
       password: ${REDIS_PASSWORD:}
       timeout: ${REDIS_TIMEOUT:2s}
+  mail:
+    host: ${SHRESTA_MAIL_HOST:}
+    port: ${SHRESTA_MAIL_PORT:587}
+    username: ${SHRESTA_MAIL_USERNAME:}
+    password: ${SHRESTA_MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${SHRESTA_MAIL_SMTP_AUTH:false}
+          starttls:
+            enable: ${SHRESTA_MAIL_SMTP_STARTTLS:true}
 
 server:
   port: ${SERVER_PORT:8090}
@@ -51,6 +62,8 @@ management:
       enabled: true
     readinessstate:
       enabled: true
+    mail:
+      enabled: false
   info:
     env:
       enabled: true
@@ -130,11 +143,35 @@ shresta:
     locking:
       enabled: ${SHRESTA_MUTATION_LOCKING_ENABLED:true}
       ttl: ${SHRESTA_MUTATION_LOCK_TTL:30s}
+  sms:
+    enabled: ${SHRESTA_SMS_ENABLED:false}
+    spring-edge-endpoint: ${SHRESTA_SMS_SPRINGEDGE_ENDPOINT:https://instantalerts.co/api/web/send}
+    spring-edge-api-key: ${SHRESTA_SMS_SPRINGEDGE_API_KEY:}
+    spring-edge-sender: ${SHRESTA_SMS_SPRINGEDGE_SENDER:SHRSTA}
+    spring-edge-route: ${SHRESTA_SMS_SPRINGEDGE_ROUTE:transactional}
+    msg91-endpoint: ${SHRESTA_SMS_MSG91_ENDPOINT:https://api.msg91.com/api/v2/sendsms}
+    msg91-auth-key: ${SHRESTA_SMS_MSG91_AUTH_KEY:}
+    msg91-sender: ${SHRESTA_SMS_MSG91_SENDER:SHRSTA}
+    msg91-route: ${SHRESTA_SMS_MSG91_ROUTE:4}
+    msg91-country: ${SHRESTA_SMS_MSG91_COUNTRY:91}
+  mail:
+    enabled: ${SHRESTA_MAIL_ENABLED:false}
+    from-address: ${SHRESTA_MAIL_FROM:no-reply@shrestaexclusive.com}
+    registration-otp-subject: ${SHRESTA_MAIL_REGISTRATION_OTP_SUBJECT:Your SHRESTA registration OTP}
+    invoice-subject-prefix: ${SHRESTA_MAIL_INVOICE_SUBJECT_PREFIX:SHRESTA Invoice}
+  razorpay:
+    webhook:
+      enabled: ${SHRESTA_RAZORPAY_WEBHOOK_ENABLED:false}
+      secret: ${SHRESTA_RAZORPAY_WEBHOOK_SECRET:${RAZORPAY_WEBHOOK_SECRET:}}
 
 ---
 spring:
   config:
     activate:
       on-profile: "local | dev | uat"
+  flyway:
+    # Local databases may carry older migration lineage; keep non-prod restarts resilient.
+    validate-on-migrate: false
+    ignore-migration-patterns: "*:missing"
   # Seed data is now handled by DatabaseSeeder (reads db/seed/**/*.json).
   # No separate Flyway location needed for non-prod environments.

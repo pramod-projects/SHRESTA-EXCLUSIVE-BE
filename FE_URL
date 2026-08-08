@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+LOG_FILE="$SCRIPT_DIR/.logs/cloudflared.log"
+
+if [[ ! -f "$LOG_FILE" ]]; then
+  echo "cloudflared log not found: $LOG_FILE" >&2
+  echo "Start services first with: ./up" >&2
+  exit 1
+fi
+
+URL=$(grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' "$LOG_FILE" | tail -n 1 || true)
+
+if [[ -z "$URL" ]]; then
+  echo "No cloudflared URL found yet in $LOG_FILE" >&2
+  echo "If services are starting, wait a few seconds and retry." >&2
+  exit 1
+fi
+
+echo "$URL"

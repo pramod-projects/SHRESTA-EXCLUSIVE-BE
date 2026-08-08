@@ -11,7 +11,7 @@
     "sort_order": 10,
     "is_featured": false,
     "media_asset_key": "shresta-logo-light",
-    "demo_video_url": "logos/SHRESTA.mp4",
+    "demo_video_url": "logos/INTRO.mp4",
     "metadata": {},
     "is_active": true
   },
@@ -417,7 +417,7 @@
     "sort_order": 10,
     "is_featured": false,
     "media_asset_key": "shresta-brand-mark-light",
-    "demo_video_url": "logos/SHRESTA.mp4",
+    "demo_video_url": "logos/INTRO.mp4",
     "metadata": {
       "highlights": [
         "Brand film",
