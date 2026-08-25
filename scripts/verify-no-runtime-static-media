@@ -30,7 +30,7 @@ fi
 
 if [ -d "src/main/resources/static/shresta-media" ] || [ -d "src/main/resources/static/shresta-assets" ]; then
   echo "Spring Boot static media directories are not allowed." >&2
-  echo "Images must be served from the configured S3-compatible public media origin." >&2
+  echo "Images must be served from the configured Cloudflare media domain." >&2
   FAILED=1
 fi
 

@@ -1,0 +1,36 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+REPO_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
+. "$SCRIPT_DIR/be-env.sh"
+
+ENV_FILE="$REPO_ROOT/.env.dev"
+# DEV uses .env.dev, whose R2 protocol settings point to local MinIO.
+# UAT and PROD have separate launchers and must never fall back to these local values.
+if [ ! -f "$ENV_FILE" ]; then
+  echo "ERROR: $ENV_FILE not found." >&2
+  echo "       Copy .env.dev.example to .env.dev and fill in local values." >&2
+  exit 1
+fi
+set -a; . "$ENV_FILE"; set +a
+
+_PORT=${SERVER_PORT:-8090}
+if lsof -i "TCP:$_PORT" -sTCP:LISTEN -t >/dev/null 2>&1; then
+  echo "ERROR: Port $_PORT is already in use." >&2
+  exit 1
+fi
+
+JAR=$(ls "$REPO_ROOT/build/libs/shresta-be-"*.jar 2>/dev/null | tail -1)
+if [ -z "$JAR" ]; then
+  "$SCRIPT_DIR/be-gradle" --project-dir "$REPO_ROOT" clean bootJar --no-daemon
+  JAR=$(ls "$REPO_ROOT/build/libs/shresta-be-"*.jar | tail -1)
+elif [ -n "$(find "$REPO_ROOT/src" -name '*.java' -newer "$JAR" 2>/dev/null | head -1)" ]; then
+  "$SCRIPT_DIR/be-gradle" --project-dir "$REPO_ROOT" clean bootJar --no-daemon
+  JAR=$(ls "$REPO_ROOT/build/libs/shresta-be-"*.jar | tail -1)
+fi
+
+# The dev Spring profile enables seed data and tolerant non-production migration checks.
+# SHRESTA_ENVIRONMENT_MODE=DEV remains the public deployment identity.
+export SPRING_PROFILES_ACTIVE=dev
+exec "$JAVA_HOME/bin/java" -jar "$JAR" "$@"

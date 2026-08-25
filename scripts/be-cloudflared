@@ -1,0 +1,71 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+REPO_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
+. "$SCRIPT_DIR/be-env.sh"
+
+environment=$(printf '%s' "${1:-}" | tr '[:lower:]' '[:upper:]')
+action=${2:-run}
+case "$environment" in
+  UAT)
+    env_file="$REPO_ROOT/.env.uat"
+    expected_api_url="https://uat-api.shrestaexclusive.com"
+    expected_tunnel_name="shresta-uat-api"
+    ;;
+  PROD)
+    env_file="$REPO_ROOT/.env.prod"
+    expected_api_url="https://api.shrestaexclusive.com"
+    expected_tunnel_name="shresta-prod-api"
+    ;;
+  DEV)
+    echo "ERROR: DEV is localhost-only and must not start a Cloudflare tunnel." >&2
+    exit 1
+    ;;
+  *)
+    echo "Usage: $0 <uat|prod> [--check]" >&2
+    exit 1
+    ;;
+esac
+
+if [ "$action" != "run" ] && [ "$action" != "--check" ]; then
+  echo "Usage: $0 <uat|prod> [--check]" >&2
+  exit 1
+fi
+
+if [ ! -f "$env_file" ]; then
+  echo "ERROR: Required environment file not found: $env_file" >&2
+  exit 1
+fi
+
+set -a
+. "$env_file"
+set +a
+
+if [ "${SHRESTA_API_URL:-}" != "$expected_api_url" ]; then
+  echo "ERROR: SHRESTA_API_URL must be $expected_api_url for $environment." >&2
+  exit 1
+fi
+
+if [ "${SHRESTA_CLOUDFLARE_TUNNEL_NAME:-}" != "$expected_tunnel_name" ]; then
+  echo "ERROR: SHRESTA_CLOUDFLARE_TUNNEL_NAME must be $expected_tunnel_name for $environment." >&2
+  exit 1
+fi
+
+if ! command -v cloudflared >/dev/null 2>&1; then
+  echo "ERROR: cloudflared is required for $environment." >&2
+  exit 1
+fi
+
+if [ "$action" = "--check" ]; then
+  if ! cloudflared tunnel --config "$SCRIPT_DIR/cloudflared-backend.yml" info "$expected_tunnel_name" >/dev/null 2>&1; then
+    echo "ERROR: Cloudflare tunnel '$expected_tunnel_name' does not exist or is not accessible." >&2
+    exit 1
+  fi
+  echo "Cloudflare tunnel preflight passed: $expected_tunnel_name ($expected_api_url)"
+  exit 0
+fi
+
+backend_port=${SERVER_PORT:-8090}
+echo "Starting $expected_tunnel_name: $expected_api_url -> http://127.0.0.1:$backend_port"
+exec cloudflared tunnel --config "$SCRIPT_DIR/cloudflared-backend.yml" run --url "http://127.0.0.1:$backend_port" "$expected_tunnel_name"

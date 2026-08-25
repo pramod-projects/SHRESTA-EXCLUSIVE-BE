@@ -9,7 +9,7 @@ import java.util.Map;
  * Gallery slots: {@code galleryAssetKeys} holds up to 4 entries indexed 0-3 (sort_order 1-4).
  * A null or blank entry clears that slot. A null list skips all gallery updates.
  * <p>
- * Demo video: {@code demoVideoUrl} null = skip update, blank = clear the URL, non-blank = set URL.
+ * Product video: {@code demoVideoAssetKey} null = skip update, blank = clear, non-blank = link a READY owned asset.
  */
 public record StorefrontHomeItemUpdateCommand(
         String itemKey,
@@ -22,12 +22,8 @@ public record StorefrontHomeItemUpdateCommand(
         Integer sortOrder,
         Boolean featured,
         Map<String, Object> metadata,
-        String mediaUrl,
-        String mediaAltText,
-        Integer mediaWidthPx,
-        Integer mediaHeightPx,
-        String mediaDeliveryMode,
+        String mediaAssetKey,
         List<String> galleryAssetKeys,
-        String demoVideoUrl
+        String demoVideoAssetKey
 ) {
 }

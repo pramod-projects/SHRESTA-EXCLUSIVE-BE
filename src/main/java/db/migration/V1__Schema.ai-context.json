@@ -8,7 +8,7 @@
     "MigrationRunner handles per-table version tracking; this class simply lists plans.",
     "To add a future column or table: create a new V2__<Description>.java and add only the relevant TransitionPlan(s) — do not modify this file.",
     "Each table's full SQL history lives in its own *Migration class under db.migration.tables.",
-    "UatSeedAccountsMigration is included in the customer identity group — it creates the uat_seed_accounts table used by CustomerAuthService for static-OTP dev/UAT login."
+    "UatSeedAccountsMigration creates the static-OTP control table; local/DEV seed a fixture and UAT requires explicit provisioning."
   ],
   "haskellEquivalent": "mainMigration / executeTransitionPlanList mainTransitionPlanList in Server.Migrations.Run"
 }

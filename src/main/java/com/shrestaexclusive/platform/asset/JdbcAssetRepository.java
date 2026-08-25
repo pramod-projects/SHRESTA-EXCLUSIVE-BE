@@ -1,24 +1,39 @@
 package com.shrestaexclusive.platform.asset;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shrestaexclusive.platform.storefront.media.StorefrontMediaUrlBuilder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedHashMap;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shrestaexclusive.platform.storefront.media.StorefrontMediaUrlBuilder;
+
 @Repository
 class JdbcAssetRepository implements AssetRepository {
+
+    private record SystemMediaCounts(
+            long total,
+            long imageTotal,
+            long videoTotal,
+            long otherTotal,
+            long referencedTotal,
+            long unreferencedTotal
+    ) {
+    }
 
     private static final TypeReference<List<String>> STRING_LIST = new TypeReference<>() {
     };
@@ -28,6 +43,8 @@ class JdbcAssetRepository implements AssetRepository {
     private final ObjectMapper objectMapper;
     private final StorefrontMediaUrlBuilder mediaUrlBuilder;
 
+    @Autowired
+    @SuppressWarnings("unused")
     JdbcAssetRepository(
             NamedParameterJdbcTemplate jdbcTemplate,
             ObjectMapper objectMapper,
@@ -39,6 +56,330 @@ class JdbcAssetRepository implements AssetRepository {
     }
 
     @Override
+    public boolean productMediaTargetExists(String productId, String actor) {
+        List<UUID> products = jdbcTemplate.queryForList("""
+            SELECT item.id
+            FROM storefront_home_items item
+            JOIN storefront_home_sections section ON section.id = item.section_id
+            WHERE item.item_key = :productId
+              AND section.section_key = 'bestsellers'
+              AND item.is_active = TRUE
+            FOR UPDATE OF item
+            """, new MapSqlParameterSource("productId", productId), UUID.class);
+        if (!products.isEmpty()) {
+            return true;
+        }
+        List<UUID> reservations = jdbcTemplate.queryForList("""
+            SELECT id
+                FROM product_media_reservations
+                WHERE product_id = :productId
+                  AND reserved_by = :actor
+                  AND status = 'ACTIVE'
+                  AND expires_at > now()
+            FOR UPDATE
+                """, new MapSqlParameterSource()
+                .addValue("productId", productId)
+            .addValue("actor", actor), UUID.class);
+        return !reservations.isEmpty();
+    }
+
+    @Override
+    public void insertProductMediaReservation(UUID reservationId, String productId, String actor, Instant expiresAt) {
+        jdbcTemplate.update("""
+                INSERT INTO product_media_reservations (id, product_id, reserved_by, expires_at)
+                VALUES (:id, :productId, :actor, :expiresAt)
+                """, new MapSqlParameterSource()
+                .addValue("id", reservationId)
+                .addValue("productId", productId)
+                .addValue("actor", actor)
+                .addValue("expiresAt", OffsetDateTime.ofInstant(expiresAt, ZoneOffset.UTC)));
+    }
+
+    @Override
+    public void consumeProductMediaReservation(String productId) {
+        jdbcTemplate.update("""
+                UPDATE product_media_reservations
+                SET status = 'CONSUMED', consumed_at = now()
+                WHERE product_id = :productId AND status IN ('ACTIVE', 'SUBMITTED')
+                """, new MapSqlParameterSource("productId", productId));
+    }
+
+        @Override
+        public boolean activeProductMediaReservationExists(String productId) {
+                List<UUID> reservations = jdbcTemplate.queryForList("""
+                                SELECT id
+                                FROM product_media_reservations
+                                WHERE product_id = :productId
+                                    AND status = 'ACTIVE'
+                                    AND expires_at > now()
+                                FOR UPDATE
+                                """, new MapSqlParameterSource("productId", productId), UUID.class);
+                return !reservations.isEmpty();
+        }
+
+        @Override
+        public boolean readyProductMediaMatches(String productId, UUID mediaId, String assetKey, String mediaType) {
+                List<UUID> media = jdbcTemplate.queryForList("""
+                                SELECT id
+                                FROM media_assets
+                                WHERE id = :mediaId
+                                    AND asset_key = :assetKey
+                                    AND product_sku = :productId
+                                    AND media_type = :mediaType
+                                    AND status = 'READY'
+                                    AND is_active = TRUE
+                                FOR UPDATE
+                                """, new MapSqlParameterSource()
+                                .addValue("mediaId", mediaId)
+                                .addValue("assetKey", assetKey)
+                                .addValue("productId", productId)
+                                .addValue("mediaType", mediaType), UUID.class);
+                return !media.isEmpty();
+        }
+
+            @Override
+            public boolean readyDisplayMediaMatches(UUID mediaId, String assetKey, String mediaType, String actor) {
+                List<UUID> media = jdbcTemplate.queryForList("""
+                        SELECT id
+                        FROM media_assets
+                        WHERE id = :mediaId
+                            AND asset_key = :assetKey
+                            AND media_type = :mediaType
+                            AND status = 'READY'
+                            AND is_active = TRUE
+                            AND (CAST(:actor AS text) IS NULL OR uploaded_by = :actor)
+                        FOR UPDATE
+                        """, new MapSqlParameterSource()
+                        .addValue("mediaId", mediaId)
+                        .addValue("assetKey", assetKey)
+                        .addValue("mediaType", mediaType)
+                        .addValue("actor", actor), UUID.class);
+                return !media.isEmpty();
+            }
+
+        @Override
+        public List<String> findProductMediaAssetKeys(String productId) {
+                return jdbcTemplate.queryForList("""
+                                SELECT media.asset_key
+                                FROM media_assets media
+                                WHERE media.product_sku = :productId
+                                    AND media.media_type IN ('PRODUCT_IMAGE', 'PRODUCT_VIDEO')
+                                    AND media.is_active = TRUE
+                                    AND NOT EXISTS (
+                                            SELECT 1 FROM admin_change_requests request
+                                            WHERE request.status = 'PENDING_REVIEW'
+                                                AND request.request_type = 'storefront-product-media-link'
+                                                AND request.payload ->> 'assetKey' = media.asset_key
+                                    )
+                                """, new MapSqlParameterSource("productId", productId), String.class);
+        }
+
+                @Override
+                public List<String> findAbandonedDisplayAssetKeys(Instant createdBefore, int limit) {
+                                return jdbcTemplate.queryForList("""
+                                                                SELECT media.asset_key
+                                                                FROM media_assets media
+                                                                WHERE media.media_type IN ('DISPLAY_IMAGE', 'DISPLAY_VIDEO')
+                                                                    AND media.status = 'READY'
+                                                                    AND media.is_active = TRUE
+                                                                    AND media.created_at < :createdBefore
+                                                                    AND NOT EXISTS (
+                                                                            SELECT 1 FROM storefront_home_items item
+                                                                            WHERE item.media_asset_id = media.id OR item.video_media_asset_id = media.id
+                                                                    )
+                                                                    AND NOT EXISTS (
+                                                                            SELECT 1 FROM admin_change_requests request
+                                                                            WHERE request.status = 'PENDING_REVIEW'
+                                                                                AND request.request_type IN (
+                                                                                    'storefront-display-media',
+                                                                                    'storefront-display-image',
+                                                                                    'storefront-display-video'
+                                                                                )
+                                                                                AND (request.payload ->> 'imageAssetKey' = media.asset_key
+                                                                                         OR request.payload ->> 'videoAssetKey' = media.asset_key)
+                                                                    )
+                                                                    AND NOT EXISTS (
+                                                                            SELECT 1 FROM admin_change_requests request
+                                                                            WHERE request.status = 'PENDING_REVIEW'
+                                                                                AND request.request_type = 'storefront-product-media-link'
+                                                                                AND request.payload ->> 'assetKey' = media.asset_key
+                                                                    )
+                                                                ORDER BY media.created_at
+                                                                LIMIT :limit
+                                                                FOR UPDATE SKIP LOCKED
+                                                                """, new MapSqlParameterSource()
+                                                                .addValue("createdBefore", Timestamp.from(createdBefore))
+                                                                .addValue("limit", limit), String.class);
+                }
+
+    @Override
+    public long countProductMedia(String productId, String mediaType) {
+        Long count = jdbcTemplate.queryForObject("""
+                SELECT count(*)
+                FROM media_assets media
+                WHERE media.product_sku = :productId
+                  AND media.media_type = :mediaType
+                  AND media.is_active = TRUE
+                  AND (media.status = 'READY'
+                       OR (media.status = 'PENDING_UPLOAD' AND media.upload_expires_at > now()))
+                  AND NOT EXISTS (
+                      SELECT 1 FROM storefront_home_items item
+                      WHERE item.media_asset_id = media.id OR item.video_media_asset_id = media.id
+                  )
+                  AND NOT EXISTS (
+                      SELECT 1 FROM storefront_home_item_gallery gallery
+                      WHERE gallery.media_asset_id = media.id AND gallery.is_active = TRUE
+                  )
+                  AND NOT EXISTS (
+                      SELECT 1 FROM admin_change_requests request
+                      WHERE request.status = 'PENDING_REVIEW'
+                        AND (
+                            request.payload ->> 'newAssetKey' = media.asset_key
+                            OR request.payload ->> 'galleryAssetKey' = media.asset_key
+                            OR request.payload ->> 'demoVideoAssetKey' = media.asset_key
+                            OR request.payload ->> 'mediaAssetKey' = media.asset_key
+                            OR jsonb_exists(COALESCE(request.payload -> 'galleryAssetKeys', '[]'::jsonb), media.asset_key)
+                        )
+                  )
+                """, new MapSqlParameterSource()
+                .addValue("productId", productId)
+                .addValue("mediaType", mediaType), Long.class);
+        return count == null ? 0 : count;
+    }
+
+        @Override
+        public boolean submittedProductMediaReservationExists(String productId) {
+                List<UUID> reservations = jdbcTemplate.queryForList("""
+                                SELECT id
+                                FROM product_media_reservations
+                                WHERE product_id = :productId AND status = 'SUBMITTED'
+                                FOR UPDATE
+                                """, new MapSqlParameterSource("productId", productId), UUID.class);
+                return !reservations.isEmpty();
+        }
+
+        @Override
+        public boolean submitProductMediaReservation(String productId, String actor) {
+                return jdbcTemplate.update("""
+                                UPDATE product_media_reservations
+                                SET status = 'SUBMITTED'
+                                WHERE product_id = :productId
+                                    AND reserved_by = :actor
+                                    AND status = 'ACTIVE'
+                                    AND expires_at > now()
+                                """, new MapSqlParameterSource()
+                                .addValue("productId", productId)
+                                .addValue("actor", actor)) == 1;
+        }
+
+    @Override
+    public MediaUploadRecord insertPendingUpload(
+            UUID assetId,
+            String assetKey,
+            String objectKey,
+            MediaUploadAuthorizationRequest request,
+            String actor,
+            Instant expiresAt
+    ) {
+        Integer widthPx = request.widthPx();
+        Integer heightPx = request.heightPx();
+        jdbcTemplate.update("""
+                INSERT INTO media_assets (
+                    id, asset_key, asset_url, alt_text, width_px, height_px, delivery_mode,
+                    usage_type, storage_provider, storage_key, product_sku, content_type,
+                    byte_size, status, media_type, upload_expires_at, uploaded_by, original_filename
+                ) VALUES (
+                    :id, :assetKey, :objectKey, :altText, :widthPx, :heightPx, 'cloudflare-r2',
+                    'asset-manager', 'cloudflare-r2', :objectKey, :productId, :contentType,
+                    :byteSize, 'PENDING_UPLOAD', :mediaType, :expiresAt, :actor, :originalFilename
+                )
+                """, new MapSqlParameterSource()
+                .addValue("id", assetId)
+                .addValue("assetKey", assetKey)
+                .addValue("objectKey", objectKey)
+                .addValue("altText", firstText(request.altText(), request.originalFilename()))
+                .addValue("widthPx", widthPx == null ? Integer.valueOf(1) : widthPx)
+                .addValue("heightPx", heightPx == null ? Integer.valueOf(1) : heightPx)
+                .addValue("productId", emptyToNull(request.productId()))
+                .addValue("contentType", request.contentType())
+                .addValue("byteSize", request.byteSize())
+                .addValue("mediaType", request.mediaType())
+                .addValue("expiresAt", OffsetDateTime.ofInstant(expiresAt, ZoneOffset.UTC))
+                .addValue("actor", emptyToNull(actor))
+                .addValue("originalFilename", request.originalFilename()));
+        return new MediaUploadRecord(assetId, assetId.toString(), assetKey, objectKey, request.productId(),
+                request.mediaType(), request.contentType(), request.byteSize(), expiresAt, "PENDING_UPLOAD");
+    }
+
+    @Override
+    public List<String> findExpiredActiveProductReservations(int limit) {
+        return jdbcTemplate.queryForList("""
+                SELECT product_id
+                FROM product_media_reservations
+                WHERE status = 'ACTIVE' AND expires_at <= now()
+                ORDER BY expires_at
+                LIMIT :limit
+                FOR UPDATE SKIP LOCKED
+                """, new MapSqlParameterSource("limit", limit), String.class);
+    }
+
+    @Override
+    public void expireProductMediaReservation(String productId) {
+        jdbcTemplate.update("""
+                UPDATE product_media_reservations
+                SET status = 'EXPIRED'
+                WHERE product_id = :productId AND status = 'ACTIVE'
+                """, new MapSqlParameterSource("productId", productId));
+    }
+
+    @Override
+    public MediaUploadRecord pendingUploadForUpdate(String mediaId, String actor) {
+        UUID id;
+        try {
+            id = UUID.fromString(mediaId);
+        } catch (IllegalArgumentException exception) {
+            throw new AssetNotFoundException(mediaId);
+        }
+        List<MediaUploadRecord> uploads = jdbcTemplate.query("""
+                SELECT id, asset_key, storage_key, product_sku, media_type, content_type,
+                       byte_size, upload_expires_at, status
+                FROM media_assets
+                                WHERE id = :id
+                                    AND uploaded_by = :actor
+                                    AND is_active = TRUE
+                FOR UPDATE
+                                """, new MapSqlParameterSource()
+                                .addValue("id", id)
+                                .addValue("actor", actor), (rs, rowNum) -> new MediaUploadRecord(
+                rs.getObject("id", UUID.class),
+                rs.getObject("id", UUID.class).toString(),
+                rs.getString("asset_key"),
+                rs.getString("storage_key"),
+                rs.getString("product_sku"),
+                rs.getString("media_type"),
+                rs.getString("content_type"),
+                rs.getLong("byte_size"),
+                rs.getObject("upload_expires_at", OffsetDateTime.class).toInstant(),
+                rs.getString("status")
+        ));
+        if (uploads.isEmpty()) {
+            throw new AssetNotFoundException(mediaId);
+        }
+        return uploads.getFirst();
+    }
+
+    @Override
+    public void completeUpload(UUID assetId, String etag) {
+        jdbcTemplate.update("""
+                UPDATE media_assets
+                SET status = 'READY', object_etag = :etag, processing_error = NULL, updated_at = now()
+                WHERE id = :assetId AND status = 'PENDING_UPLOAD'
+                """, new MapSqlParameterSource()
+                .addValue("assetId", assetId)
+                .addValue("etag", etag));
+    }
+
+    @Override
     public AssetSearchResponse search(String query, String categoryFamilyKey, String categoryProductTypeKey, String productSku, String status, int page, int size) {
         MapSqlParameterSource parameters = searchParameters(query, categoryFamilyKey, categoryProductTypeKey, productSku, status)
                 .addValue("limit", size)
@@ -47,10 +388,23 @@ class JdbcAssetRepository implements AssetRepository {
         List<AssetBaseRow> assets = jdbcTemplate.query("""
                 SELECT id, asset_key, original_filename, asset_url, alt_text, category_family_key,
                        category_product_type_key, product_sku, status, version, width_px, height_px, byte_size, content_type,
-                       delivery_mode, lqip_data_url, tags, seo_title, seo_description
+                       delivery_mode, tags, seo_title, seo_description
                 FROM media_assets
                 WHERE is_active = TRUE
+                                    AND status = 'READY'
                   AND usage_type IN (:adminManagedUsageTypes)
+                                    AND (
+                                                EXISTS (
+                                                        SELECT 1 FROM storefront_home_items item
+                                                        WHERE item.media_asset_id = media_assets.id
+                                                             OR item.video_media_asset_id = media_assets.id
+                                                )
+                                                OR EXISTS (
+                                                        SELECT 1 FROM storefront_home_item_gallery gallery
+                                                        WHERE gallery.media_asset_id = media_assets.id
+                                                            AND gallery.is_active = TRUE
+                                                )
+                                    )
                   AND (CAST(:query AS text) IS NULL OR asset_key ILIKE CAST(:query AS text) OR alt_text ILIKE CAST(:query AS text) OR original_filename ILIKE CAST(:query AS text))
                   AND (CAST(:categoryFamilyKey AS text) IS NULL OR category_family_key = CAST(:categoryFamilyKey AS text))
                   AND (CAST(:categoryProductTypeKey AS text) IS NULL OR category_product_type_key = CAST(:categoryProductTypeKey AS text))
@@ -60,19 +414,77 @@ class JdbcAssetRepository implements AssetRepository {
                 LIMIT :limit OFFSET :offset
                 """, parameters, this::assetBaseRow);
 
-        long total = jdbcTemplate.queryForObject("""
+        long total = Objects.requireNonNull(jdbcTemplate.queryForObject("""
                 SELECT count(*)
                 FROM media_assets
                 WHERE is_active = TRUE
+                                    AND status = 'READY'
                   AND usage_type IN (:adminManagedUsageTypes)
+                                    AND (
+                                                EXISTS (
+                                                        SELECT 1 FROM storefront_home_items item
+                                                        WHERE item.media_asset_id = media_assets.id
+                                                             OR item.video_media_asset_id = media_assets.id
+                                                )
+                                                OR EXISTS (
+                                                        SELECT 1 FROM storefront_home_item_gallery gallery
+                                                        WHERE gallery.media_asset_id = media_assets.id
+                                                            AND gallery.is_active = TRUE
+                                                )
+                                    )
                   AND (CAST(:query AS text) IS NULL OR asset_key ILIKE CAST(:query AS text) OR alt_text ILIKE CAST(:query AS text) OR original_filename ILIKE CAST(:query AS text))
                   AND (CAST(:categoryFamilyKey AS text) IS NULL OR category_family_key = CAST(:categoryFamilyKey AS text))
                   AND (CAST(:categoryProductTypeKey AS text) IS NULL OR category_product_type_key = CAST(:categoryProductTypeKey AS text))
                   AND (CAST(:productSku AS text) IS NULL OR product_sku = CAST(:productSku AS text))
                   AND (CAST(:status AS text) IS NULL OR status = CAST(:status AS text))
-                """, parameters, Long.class);
+                """, parameters, Long.class), "Approved media count query returned no row");
 
-        return new AssetSearchResponse(toResponses(assets), page, size, total);
+        SystemMediaCounts systemCounts = Objects.requireNonNull(jdbcTemplate.queryForObject("""
+                WITH active_ready_media AS (
+                    SELECT media.asset_key,
+                          CASE
+                             WHEN media.media_type IN ('PRODUCT_IMAGE', 'DISPLAY_IMAGE')
+                                 OR media.content_type LIKE 'image/%' THEN 'IMAGE'
+                             WHEN media.media_type IN ('PRODUCT_VIDEO', 'DISPLAY_VIDEO')
+                                 OR media.content_type LIKE 'video/%' THEN 'VIDEO'
+                             ELSE 'OTHER'
+                          END AS media_kind,
+                           EXISTS (
+                               SELECT 1
+                               FROM storefront_home_items item
+                               WHERE item.media_asset_id = media.id
+                                  OR item.video_media_asset_id = media.id
+                           ) OR EXISTS (
+                               SELECT 1
+                               FROM storefront_home_item_gallery gallery
+                               WHERE gallery.media_asset_id = media.id
+                                 AND gallery.is_active = TRUE
+                           ) AS is_referenced
+                    FROM media_assets media
+                    WHERE media.is_active = TRUE
+                      AND media.status = 'READY'
+                )
+                SELECT count(DISTINCT asset_key) AS total,
+                       count(DISTINCT asset_key) FILTER (WHERE media_kind = 'IMAGE') AS image_total,
+                       count(DISTINCT asset_key) FILTER (WHERE media_kind = 'VIDEO') AS video_total,
+                       count(DISTINCT asset_key) FILTER (WHERE media_kind = 'OTHER') AS other_total,
+                       count(DISTINCT asset_key) FILTER (WHERE is_referenced) AS referenced_total,
+                       count(DISTINCT asset_key) FILTER (WHERE NOT is_referenced) AS unreferenced_total
+                FROM active_ready_media
+                """, new MapSqlParameterSource(), (rs, rowNum) -> new SystemMediaCounts(
+                        rs.getLong("total"),
+                        rs.getLong("image_total"),
+                        rs.getLong("video_total"),
+                        rs.getLong("other_total"),
+                        rs.getLong("referenced_total"),
+                        rs.getLong("unreferenced_total")
+                    )), "System media count query returned no row");
+
+        return new AssetSearchResponse(
+                toResponses(assets), page, size, total,
+                systemCounts.total(), systemCounts.imageTotal(), systemCounts.videoTotal(),
+                systemCounts.otherTotal(), systemCounts.referencedTotal(), systemCounts.unreferencedTotal()
+        );
     }
 
     @Override
@@ -80,7 +492,7 @@ class JdbcAssetRepository implements AssetRepository {
         List<AssetBaseRow> assets = jdbcTemplate.query("""
                 SELECT id, asset_key, original_filename, asset_url, alt_text, category_family_key,
                        category_product_type_key, product_sku, status, version, width_px, height_px, byte_size, content_type,
-                       delivery_mode, lqip_data_url, tags, seo_title, seo_description
+                       delivery_mode, tags, seo_title, seo_description
                 FROM media_assets
                 WHERE asset_key = :assetKey
                   AND is_active = TRUE
@@ -95,149 +507,13 @@ class JdbcAssetRepository implements AssetRepository {
     }
 
     @Override
-    public UUID insertUploadedAsset(StoredAsset storedAsset, AssetUploadRequest request) {
-        UUID assetId = UUID.randomUUID();
-        jdbcTemplate.update("""
-                INSERT INTO media_assets (
-                    id, asset_key, original_filename, asset_url, alt_text, width_px, height_px,
-                    delivery_mode, usage_type, storage_provider, storage_key, category_family_key,
-                    category_product_type_key, product_sku, content_type, byte_size, checksum_sha256, status, tags,
-                    seo_title, seo_description
-                )
-                VALUES (
-                    :id, :assetKey, :originalFilename, :assetUrl, :altText, :widthPx, :heightPx,
-                    :deliveryMode, 'asset-manager', :storageProvider, :storageKey, :categoryFamilyKey,
-                    :categoryProductTypeKey, :productSku, :contentType, :byteSize, :checksumSha256, 'PROCESSING', CAST(:tagsJson AS jsonb),
-                    :seoTitle, :seoDescription
-                )
-                """, new MapSqlParameterSource()
-                .addValue("id", assetId)
-                .addValue("assetKey", storedAsset.assetKey())
-                .addValue("originalFilename", storedAsset.originalFilename())
-                .addValue("assetUrl", storedAsset.assetUrl())
-                .addValue("deliveryMode", storedAsset.deliveryMode())
-                .addValue("storageProvider", storedAsset.storageProvider())
-                .addValue("altText", firstText(request.altText(), storedAsset.originalFilename()))
-                .addValue("widthPx", storedAsset.widthPx())
-                .addValue("heightPx", storedAsset.heightPx())
-                .addValue("storageKey", storedAsset.storageKey())
-                .addValue("categoryFamilyKey", emptyToNull(request.categoryFamilyKey()))
-                .addValue("categoryProductTypeKey", emptyToNull(request.categoryProductTypeKey()))
-                .addValue("productSku", emptyToNull(request.productSku()))
-                .addValue("contentType", storedAsset.contentType())
-                .addValue("byteSize", storedAsset.byteSize())
-                .addValue("checksumSha256", storedAsset.checksumSha256())
-                .addValue("tagsJson", json(request.tags() == null ? List.of() : request.tags()))
-                .addValue("seoTitle", emptyToNull(request.seoTitle()))
-                .addValue("seoDescription", emptyToNull(request.seoDescription())));
-
-        return assetId;
-    }
-
-    @Override
-    public AssetReplacementTarget replacementTargetForUpdate(String assetKey) {
-        List<AssetReplacementTarget> targets = jdbcTemplate.query("""
-                SELECT id, version + 1 AS next_version
+    public Optional<String> findContentTypeByAssetKey(String assetKey) {
+        return jdbcTemplate.queryForList("""
+                SELECT content_type
                 FROM media_assets
                 WHERE asset_key = :assetKey
                   AND is_active = TRUE
-                  AND usage_type IN (:adminManagedUsageTypes)
-                FOR UPDATE
-                """, adminManagedAssetKey(assetKey), (rs, rowNum) -> new AssetReplacementTarget(
-                rs.getObject("id", UUID.class),
-                rs.getInt("next_version")
-        ));
-
-        if (targets.isEmpty()) {
-            throw new AssetNotFoundException(assetKey);
-        }
-        return targets.getFirst();
-    }
-
-    @Override
-    public void replaceOriginal(UUID assetId, StoredAsset storedAsset) {
-        jdbcTemplate.update("""
-                UPDATE media_assets
-                SET original_filename = :originalFilename,
-                    asset_url = :assetUrl,
-                    alt_text = COALESCE(NULLIF(alt_text, ''), :altText),
-                    width_px = :widthPx,
-                    height_px = :heightPx,
-                    delivery_mode = :deliveryMode,
-                    storage_provider = :storageProvider,
-                    storage_key = :storageKey,
-                    content_type = :contentType,
-                    byte_size = :byteSize,
-                    checksum_sha256 = :checksumSha256,
-                    status = 'PROCESSING',
-                    processing_error = NULL,
-                    version = :version,
-                    updated_at = now()
-                WHERE id = :assetId
-                  AND is_active = TRUE
-                  AND usage_type IN (:adminManagedUsageTypes)
-                """, new MapSqlParameterSource()
-                .addValue("assetId", assetId)
-                .addValue("adminManagedUsageTypes", ADMIN_MANAGED_USAGE_TYPES)
-                .addValue("originalFilename", storedAsset.originalFilename())
-                .addValue("assetUrl", storedAsset.assetUrl())
-                .addValue("altText", storedAsset.originalFilename())
-                .addValue("widthPx", storedAsset.widthPx())
-                .addValue("heightPx", storedAsset.heightPx())
-                .addValue("deliveryMode", storedAsset.deliveryMode())
-                .addValue("storageProvider", storedAsset.storageProvider())
-                .addValue("storageKey", storedAsset.storageKey())
-                .addValue("contentType", storedAsset.contentType())
-                .addValue("byteSize", storedAsset.byteSize())
-                .addValue("checksumSha256", storedAsset.checksumSha256())
-                .addValue("version", storedAsset.version()));
-    }
-
-    @Override
-    public void replaceVariants(UUID assetId, List<GeneratedVariant> variants, String lqipDataUrl) {
-        jdbcTemplate.update("""
-                DELETE FROM media_asset_variants
-                WHERE asset_id = :assetId
-                """, new MapSqlParameterSource("assetId", assetId));
-
-        for (GeneratedVariant variant : variants) {
-            jdbcTemplate.update("""
-                    INSERT INTO media_asset_variants (
-                        asset_id, variant_key, format, width_px, height_px, byte_size,
-                        storage_key, url_path, content_type
-                    )
-                    VALUES (
-                        :assetId, :variantKey, :format, :widthPx, :heightPx, :byteSize,
-                        :storageKey, :urlPath, :contentType
-                    )
-                    """, new MapSqlParameterSource()
-                    .addValue("assetId", assetId)
-                    .addValue("variantKey", variant.variantKey())
-                    .addValue("format", variant.format())
-                    .addValue("widthPx", variant.widthPx())
-                    .addValue("heightPx", variant.heightPx())
-                    .addValue("byteSize", variant.byteSize())
-                    .addValue("storageKey", variant.storageKey())
-                    .addValue("urlPath", variant.urlPath())
-                    .addValue("contentType", variant.contentType()));
-        }
-
-        jdbcTemplate.update("""
-                UPDATE media_assets
-                SET lqip_data_url = COALESCE(:lqipDataUrl, lqip_data_url), updated_at = now()
-                WHERE id = :assetId
-                """, new MapSqlParameterSource()
-                .addValue("assetId", assetId)
-                .addValue("lqipDataUrl", lqipDataUrl));
-    }
-
-    @Override
-    public void markReady(UUID assetId) {
-        jdbcTemplate.update("""
-                UPDATE media_assets
-                SET status = 'READY', processing_error = NULL, updated_at = now()
-                WHERE id = :assetId
-                """, new MapSqlParameterSource("assetId", assetId));
+                """, new MapSqlParameterSource("assetKey", assetKey), String.class).stream().filter(Objects::nonNull).findFirst();
     }
 
     @Override
@@ -315,24 +591,158 @@ class JdbcAssetRepository implements AssetRepository {
     @Override
     public List<String> findStorageKeysByAssetKey(String assetKey) {
         return jdbcTemplate.queryForList("""
-                SELECT ma.storage_key
-                FROM media_assets ma
-                WHERE ma.asset_key = :assetKey
-                  AND ma.storage_key IS NOT NULL
-                UNION ALL
-                SELECT mav.storage_key
-                FROM media_asset_variants mav
-                JOIN media_assets ma ON mav.asset_id = ma.id
-                WHERE ma.asset_key = :assetKey
-                  AND mav.storage_key IS NOT NULL
+                                SELECT storage_key
+                                FROM media_assets
+                                WHERE asset_key = :assetKey AND storage_key IS NOT NULL
                 """,
                 new MapSqlParameterSource("assetKey", assetKey),
                 String.class);
     }
 
+        @Override
+        public boolean isReferencedByStorefront(String assetKey) {
+                Boolean referenced = jdbcTemplate.queryForObject("""
+                                SELECT EXISTS (
+                                        SELECT 1
+                                        FROM media_assets media
+                                        WHERE media.asset_key = :assetKey
+                                            AND (
+                                                EXISTS (SELECT 1 FROM storefront_home_items item
+                                                                 WHERE item.media_asset_id = media.id OR item.video_media_asset_id = media.id)
+                                                OR EXISTS (SELECT 1 FROM storefront_home_item_gallery gallery
+                                                                     WHERE gallery.media_asset_id = media.id AND gallery.is_active = TRUE)
+                                            )
+                                )
+                                """, new MapSqlParameterSource("assetKey", assetKey), Boolean.class);
+                return Boolean.TRUE.equals(referenced);
+        }
+
+    private static final String STOREFRONT_REFERENCE_PREDICATE = """
+            EXISTS (
+                SELECT 1 FROM storefront_home_items item
+                WHERE item.media_asset_id = media_assets.id
+                   OR item.video_media_asset_id = media_assets.id
+            )
+            OR EXISTS (
+                SELECT 1 FROM storefront_home_item_gallery gallery
+                WHERE gallery.media_asset_id = media_assets.id
+                  AND gallery.is_active = TRUE
+            )
+            """;
+
+    @Override
+    public StorefrontUnreferencedAssetsResponse searchStorefrontUnreferenced(String query, String status, int page, int size) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("query", StringUtils.hasText(query) ? "%" + query.trim() + "%" : null)
+                .addValue("status", emptyToNull(status))
+                .addValue("adminManagedUsageTypes", ADMIN_MANAGED_USAGE_TYPES)
+                .addValue("limit", size)
+                .addValue("offset", (long) page * size);
+
+        List<AssetBaseRow> assets = jdbcTemplate.query("""
+                SELECT id, asset_key, original_filename, asset_url, alt_text, category_family_key,
+                       category_product_type_key, product_sku, status, version, width_px, height_px, byte_size, content_type,
+                       delivery_mode, tags, seo_title, seo_description
+                FROM media_assets
+                WHERE is_active = TRUE
+                  AND status = COALESCE(CAST(:status AS text), 'READY')
+                  AND usage_type IN (:adminManagedUsageTypes)
+                  AND NOT (""" + STOREFRONT_REFERENCE_PREDICATE + """
+                  )
+                  AND (CAST(:query AS text) IS NULL OR asset_key ILIKE CAST(:query AS text) OR alt_text ILIKE CAST(:query AS text) OR original_filename ILIKE CAST(:query AS text))
+                ORDER BY updated_at DESC, asset_key
+                LIMIT :limit OFFSET :offset
+                """, parameters, this::assetBaseRow);
+
+        long total = Objects.requireNonNull(jdbcTemplate.queryForObject("""
+                SELECT count(*)
+                FROM media_assets
+                WHERE is_active = TRUE
+                  AND status = COALESCE(CAST(:status AS text), 'READY')
+                  AND usage_type IN (:adminManagedUsageTypes)
+                  AND NOT (""" + STOREFRONT_REFERENCE_PREDICATE + """
+                  )
+                  AND (CAST(:query AS text) IS NULL OR asset_key ILIKE CAST(:query AS text) OR alt_text ILIKE CAST(:query AS text) OR original_filename ILIKE CAST(:query AS text))
+                """, parameters, Long.class), "Unreferenced media count query returned no row");
+
+        return new StorefrontUnreferencedAssetsResponse(toResponses(assets), page, size, total);
+    }
+
+    @Override
+    public boolean storefrontProductMediaLinkEligible(String itemKey, String assetKey, String mediaType) {
+        Boolean eligible = jdbcTemplate.queryForObject("""
+                SELECT EXISTS (
+                    SELECT 1
+                    FROM storefront_home_items item
+                    JOIN storefront_home_sections section ON section.id = item.section_id,
+                         media_assets media
+                    WHERE item.item_key = :itemKey
+                      AND item.is_active = TRUE
+                      AND section.section_key = 'bestsellers'
+                      AND media.asset_key = :assetKey
+                      AND media.status = 'READY'
+                      AND media.is_active = TRUE
+                      AND (
+                          (media.product_sku = :itemKey AND media.media_type = :mediaType)
+                          OR (
+                              NOT EXISTS (
+                                  SELECT 1 FROM storefront_home_items ref
+                                  WHERE ref.media_asset_id = media.id OR ref.video_media_asset_id = media.id
+                              )
+                              AND NOT EXISTS (
+                                  SELECT 1 FROM storefront_home_item_gallery gallery
+                                  WHERE gallery.media_asset_id = media.id AND gallery.is_active = TRUE
+                              )
+                          )
+                      )
+                )
+                """, new MapSqlParameterSource()
+                .addValue("itemKey", itemKey)
+                .addValue("assetKey", assetKey)
+                .addValue("mediaType", mediaType), Boolean.class);
+        return Boolean.TRUE.equals(eligible);
+    }
+
+    @Override
+    public boolean reassignStorefrontProductMedia(String itemKey, String assetKey, String mediaType) {
+        return jdbcTemplate.update("""
+                UPDATE media_assets media
+                SET product_sku = :itemKey,
+                    media_type = :mediaType,
+                    updated_at = now()
+                WHERE media.asset_key = :assetKey
+                  AND media.status = 'READY'
+                  AND media.is_active = TRUE
+                  AND (
+                      (media.product_sku = :itemKey AND media.media_type = :mediaType)
+                      OR (
+                          NOT EXISTS (
+                              SELECT 1 FROM storefront_home_items ref
+                              WHERE ref.media_asset_id = media.id OR ref.video_media_asset_id = media.id
+                          )
+                          AND NOT EXISTS (
+                              SELECT 1 FROM storefront_home_item_gallery gallery
+                              WHERE gallery.media_asset_id = media.id AND gallery.is_active = TRUE
+                          )
+                      )
+                  )
+                """, new MapSqlParameterSource()
+                .addValue("itemKey", itemKey)
+                .addValue("assetKey", assetKey)
+                .addValue("mediaType", mediaType)) == 1;
+    }
+
     @Override
     public void deletePermanently(String assetKey) {
         MapSqlParameterSource parameters = adminManagedAssetKey(assetKey);
+        jdbcTemplate.update("""
+                DELETE FROM storefront_home_item_gallery gallery
+                USING media_assets media
+                WHERE gallery.media_asset_id = media.id
+                  AND gallery.is_active = FALSE
+                  AND media.asset_key = :assetKey
+                  AND media.usage_type IN (:adminManagedUsageTypes)
+                """, parameters);
         jdbcTemplate.update("""
                 UPDATE storefront_home_items item
                 SET media_asset_id = NULL, updated_at = now()
@@ -366,17 +776,11 @@ class JdbcAssetRepository implements AssetRepository {
     }
 
     private List<AssetResponse> toResponses(List<AssetBaseRow> assets) {
-        Map<UUID, List<AssetVariantResponse>> variantsByAsset = variantsByAsset(assets.stream()
-                .map(AssetBaseRow::id)
-                .toList());
-
         return assets.stream()
-                .map(asset -> {
-                    List<AssetVariantResponse> variants = variantsByAsset.getOrDefault(asset.id(), List.of());
-                    return new AssetResponse(
+            .map(asset -> new AssetResponse(
                             asset.assetKey(),
                             asset.originalFilename(),
-                            mediaUrlBuilder.assetUrl(asset.assetUrl(), asset.version()),
+                    mediaUrlBuilder.assetUrl(asset.assetUrl()),
                             asset.altText(),
                             asset.categoryFamilyKey(),
                             asset.categoryProductTypeKey(),
@@ -388,55 +792,11 @@ class JdbcAssetRepository implements AssetRepository {
                             asset.byteSize(),
                             asset.contentType(),
                             asset.deliveryMode(),
-                            asset.lqipDataUrl(),
                             asset.tags(),
                             asset.seoTitle(),
-                            asset.seoDescription(),
-                            variants,
-                            stats(asset.byteSize(), variants)
-                    );
-                })
+                                asset.seoDescription()
+                            ))
                 .toList();
-    }
-
-    private Map<UUID, List<AssetVariantResponse>> variantsByAsset(List<UUID> assetIds) {
-        if (assetIds.isEmpty()) {
-            return Map.of();
-        }
-
-        return jdbcTemplate.query("""
-                SELECT variant.asset_id, variant.variant_key, variant.format, variant.width_px, variant.height_px,
-                       variant.byte_size, variant.url_path, asset.version
-                FROM media_asset_variants variant
-                JOIN media_assets asset ON asset.id = variant.asset_id
-                WHERE variant.asset_id IN (:assetIds) AND variant.is_active = TRUE
-                ORDER BY asset_id, width_px, format
-                """, new MapSqlParameterSource("assetIds", assetIds), (rs, rowNum) -> Map.entry(
-                rs.getObject("asset_id", UUID.class),
-                new AssetVariantResponse(
-                        rs.getString("variant_key"),
-                        rs.getString("format"),
-                        rs.getInt("width_px"),
-                        rs.getInt("height_px"),
-                        rs.getLong("byte_size"),
-                        mediaUrlBuilder.assetUrl(rs.getString("url_path"), rs.getInt("version"))
-                )
-        )).stream().collect(Collectors.groupingBy(
-                Map.Entry::getKey,
-                LinkedHashMap::new,
-                Collectors.mapping(Map.Entry::getValue, Collectors.toList())
-        ));
-    }
-
-    private AssetOptimizationStats stats(long originalBytes, List<AssetVariantResponse> variants) {
-        long smallest = variants.stream()
-                .filter(variant -> variant.byteSize() > 0)
-                .mapToLong(AssetVariantResponse::byteSize)
-                .min()
-                .orElse(0L);
-        long saved = smallest == 0L ? 0L : Math.max(0L, originalBytes - smallest);
-        int percent = originalBytes == 0L ? 0 : (int) Math.round(saved * 100.0D / originalBytes);
-        return new AssetOptimizationStats(originalBytes, smallest, saved, percent, variants.size());
     }
 
     private MapSqlParameterSource searchParameters(String query, String categoryFamilyKey, String categoryProductTypeKey, String productSku, String status) {
@@ -456,6 +816,9 @@ class JdbcAssetRepository implements AssetRepository {
     }
 
     private AssetBaseRow assetBaseRow(ResultSet rs, int rowNum) throws SQLException {
+        if (rowNum < 0) {
+            throw new IllegalArgumentException("JDBC row index cannot be negative");
+        }
         return new AssetBaseRow(
                 rs.getObject("id", UUID.class),
                 rs.getString("asset_key"),
@@ -472,7 +835,6 @@ class JdbcAssetRepository implements AssetRepository {
                 rs.getLong("byte_size"),
                 rs.getString("content_type"),
                 rs.getString("delivery_mode"),
-                rs.getString("lqip_data_url"),
                 jsonStringList(rs, "tags"),
                 rs.getString("seo_title"),
                 rs.getString("seo_description")
@@ -524,7 +886,6 @@ class JdbcAssetRepository implements AssetRepository {
             long byteSize,
             String contentType,
             String deliveryMode,
-            String lqipDataUrl,
             List<String> tags,
             String seoTitle,
             String seoDescription

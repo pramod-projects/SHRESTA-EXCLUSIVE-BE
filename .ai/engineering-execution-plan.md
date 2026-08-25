@@ -124,14 +124,14 @@ Scope:
 - Category configuration admin APIs.
 - Product, variant, media, attribute, tax, and styling APIs.
 - PostgreSQL FTS search with inventory-aware filtering.
-- Cloudinary public_id validation and URL generation service.
+- Canonical Cloudflare custom-domain media URL validation.
 
 Acceptance Criteria:
 
 - Customer can authenticate by OTP and save an address with zone/warehouse pre-resolution.
 - Product APIs expose canonical `attribute_facets` strings, not Java enum casing.
 - Search returns only deliverable/in-stock primary results for the selected zone.
-- Cloudinary full URLs are never persisted.
+- R2 object keys are persisted; public URLs are built from `MEDIA_PUBLIC_BASE_URL`.
 - Admin role permissions are enforced and audited.
 
 Testing Strategy:
@@ -302,7 +302,7 @@ Scope:
 - RDS Multi-AZ PostgreSQL and ElastiCache Redis.
 - Kafka/MSK replacing in-process event transport while preserving event contracts.
 - Typesense replacing PostgreSQL FTS for search.
-- CloudFront CDN and AWS Secrets Manager.
+- Cloudflare CDN/custom media domain and environment-managed secrets.
 - PostGIS for indexed geospatial rider and warehouse queries.
 - Blue/green or canary deployments.
 

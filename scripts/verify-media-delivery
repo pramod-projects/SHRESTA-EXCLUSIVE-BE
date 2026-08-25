@@ -1,0 +1,68 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+REPO_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
+
+ENV_FILE="$REPO_ROOT/.env.dev"
+if [ -f "$ENV_FILE" ]; then
+  set -a
+  . "$ENV_FILE"
+  set +a
+fi
+
+SOURCE_DIR=${SHRESTA_MEDIA_SOURCE_DIR:-"$REPO_ROOT/seed/shresta-media"}
+BASE_URL=${MEDIA_PUBLIC_BASE_URL:-}
+
+if [ -z "$BASE_URL" ]; then
+  echo "MEDIA_PUBLIC_BASE_URL is required" >&2
+  exit 1
+fi
+
+if ! command -v curl >/dev/null 2>&1; then
+  echo "curl is required to verify SHRESTA media URLs" >&2
+  exit 1
+fi
+
+if [ ! -d "$SOURCE_DIR" ]; then
+  echo "Media source directory not found: $SOURCE_DIR" >&2
+  exit 1
+fi
+
+BASE_URL=$(printf "%s" "$BASE_URL" | sed 's#/$##')
+FAILED=0
+TOTAL=0
+TMP_MANIFEST=$(mktemp)
+trap 'rm -f "$TMP_MANIFEST"' EXIT
+
+find "$SOURCE_DIR" -type f \( \
+  -iname '*.avif' -o -iname '*.gif' -o -iname '*.jpeg' -o -iname '*.jpg' -o \
+  -iname '*.json' -o -iname '*.mp4' -o -iname '*.png' -o -iname '*.webp' \
+\) | sort > "$TMP_MANIFEST"
+
+while IFS= read -r FILE; do
+  RELATIVE=${FILE#"$SOURCE_DIR"/}
+  ENCODED_RELATIVE=$(printf "%s" "$RELATIVE" | sed 's/%/%25/g; s/ /%20/g; s/#/%23/g; s/?/%3F/g; s/\[/%5B/g; s/\]/%5D/g')
+  URL="$BASE_URL/$ENCODED_RELATIVE"
+  RESULT=$(curl -sS -L -o /dev/null -w "%{http_code} %{content_type}" "$URL" || true)
+  STATUS=$(printf "%s" "$RESULT" | awk '{print $1}')
+  CONTENT_TYPE=$(printf "%s" "$RESULT" | awk '{print $2}')
+  TOTAL=$((TOTAL + 1))
+
+  case "$STATUS:$CONTENT_TYPE" in
+    2*:image/*|2*:video/*|2*:application/json*)
+      printf "OK   %s\n" "$RELATIVE"
+      ;;
+    *)
+      printf "FAIL %s -> %s %s\n" "$RELATIVE" "$STATUS" "$CONTENT_TYPE" >&2
+      FAILED=$((FAILED + 1))
+      ;;
+  esac
+done < "$TMP_MANIFEST"
+
+if [ "$FAILED" -ne 0 ]; then
+  echo "$FAILED of $TOTAL SHRESTA media URLs failed verification" >&2
+  exit 1
+fi
+
+echo "Verified $TOTAL SHRESTA media URLs"

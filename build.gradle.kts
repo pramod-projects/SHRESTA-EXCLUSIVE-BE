@@ -20,9 +20,12 @@ configurations {
 }
 
 dependencies {
+    implementation(platform("software.amazon.awssdk:bom:2.31.77"))
+    implementation("software.amazon.awssdk:s3")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.flywaydb:flyway-core")
@@ -36,10 +39,13 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    jvmArgs("-Xshare:off")
+    systemProperty("shresta.scheduling.enabled", "false")
 
     val colimaDockerSocket = file("${System.getProperty("user.home")}/.colima/default/docker.sock")
     if (System.getenv("DOCKER_HOST").isNullOrBlank() && colimaDockerSocket.exists()) {
@@ -47,6 +53,23 @@ tasks.withType<Test> {
         environment("TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE", "/var/run/docker.sock")
         systemProperty("api.version", "1.41")
     }
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform {
+        excludeTags("live-email")
+    }
+}
+
+tasks.register<Test>("liveEmailProviderTest") {
+    group = "verification"
+    description = "Sends one guarded end-to-end verification email through one selected provider."
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
+    useJUnitPlatform {
+        includeTags("live-email")
+    }
+    shouldRunAfter(tasks.named("test"))
 }
 
 tasks.register<Exec>("verifyNoRuntimeStaticMedia") {

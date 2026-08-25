@@ -1,8 +1,5 @@
 package com.shrestaexclusive.platform.admin.changes;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -10,9 +7,14 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Repository
 class JdbcAdminChangeRequestRepository implements AdminChangeRequestRepository {
@@ -23,7 +25,8 @@ class JdbcAdminChangeRequestRepository implements AdminChangeRequestRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
 
-    JdbcAdminChangeRequestRepository(NamedParameterJdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
+    @SuppressWarnings("unused")
+    public JdbcAdminChangeRequestRepository(NamedParameterJdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.objectMapper = objectMapper;
     }
@@ -151,6 +154,9 @@ class JdbcAdminChangeRequestRepository implements AdminChangeRequestRepository {
     }
 
     private AdminChangeRequestResponse row(ResultSet rs, int rowNum) throws SQLException {
+        if (rowNum < 0) {
+            throw new SQLException("JDBC row index cannot be negative");
+        }
         return new AdminChangeRequestResponse(
                 rs.getString("request_key"),
                 rs.getString("request_type"),

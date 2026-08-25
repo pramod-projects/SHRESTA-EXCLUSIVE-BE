@@ -1,19 +1,19 @@
 package com.shrestaexclusive.platform.storefront.home;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import com.shrestaexclusive.platform.testsupport.ImmediateKvReadThroughCache;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeRepository.GalleryRow;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeRepository.ItemRow;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeRepository.MediaRow;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeRepository.SectionRow;
-import com.shrestaexclusive.platform.storefront.home.StorefrontHomeItemCreateCommand;
 import com.shrestaexclusive.platform.storefront.media.StorefrontMediaProperties;
 import com.shrestaexclusive.platform.storefront.media.StorefrontMediaUrlBuilder;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import org.junit.jupiter.api.Test;
+import com.shrestaexclusive.platform.testsupport.ImmediateKvReadThroughCache;
 
 class StorefrontHomeServiceTest {
 
@@ -29,7 +29,7 @@ class StorefrontHomeServiceTest {
 
         StorefrontHomeResponse response = service.getHome();
 
-        assertThat(response.brand().logo().url()).isEqualTo("http://localhost:9010/shresta-local-assets/shresta-logo.png?v=1");
+        assertThat(response.brand().logo().url()).isEqualTo("http://localhost:9010/shresta-local-assets/shresta-logo.png");
         assertThat(response.navigation()).extracting(StorefrontHomeResponse.NavigationItem::label)
                 .containsExactly("Shop");
         assertThat(response.heroSlides()).first()
@@ -55,6 +55,23 @@ class StorefrontHomeServiceTest {
                 .isEqualTo("A refined saree selection for weddings, festivals, and family occasions.");
         assertThat(response.materialShowcase().stories()).hasSize(1);
     }
+
+        @Test
+        void featuredCollectionCountPrefersProductTypeMappingBeforeBadgeFilters() {
+                StorefrontMediaProperties mediaProperties = new StorefrontMediaProperties();
+                mediaProperties.setAssetBaseUrl("http://localhost:9010/shresta-local-assets");
+                StorefrontHomeService service = new StorefrontHomeService(
+                                new ProductTypeFirstRepository(),
+                                new StorefrontMediaUrlBuilder(mediaProperties),
+                                new ImmediateKvReadThroughCache()
+                );
+
+                StorefrontHomeResponse response = service.getHome();
+
+                assertThat(response.featuredCollections()).singleElement()
+                                .extracting(StorefrontHomeResponse.FeaturedCollection::itemCount)
+                                .isEqualTo(1);
+        }
 
     private static final class StubRepository implements StorefrontHomeRepository {
 
@@ -140,7 +157,69 @@ class StorefrontHomeServiceTest {
         }
 
         private MediaRow media(String assetUrl) {
-            return new MediaRow("media", assetUrl, "Alt text", 800, 800, "s3-compatible-local", 1, "data:image/jpeg;base64,abc", List.of());
+            return new MediaRow("media", assetUrl, "Alt text", 800, 800, "s3-compatible-local", 1);
         }
     }
+
+        private static final class ProductTypeFirstRepository implements StorefrontHomeRepository {
+
+                @Override
+                public List<SectionRow> findActiveSections() {
+                        return List.of(
+                                        section("brand", "brand", null, "SHRESTA EXCLUSIVE", "Brand", 10, Map.of()),
+                                        section("navigation", "navigation", null, "Navigation", "Navigation", 20, Map.of()),
+                                        section("hero", "hero_carousel", "Hero", "Hero", "Hero", 30, Map.of()),
+                                        section("trust_badges", "trust_badges", null, "Trust", "Trust", 40, Map.of()),
+                                        section("featured_collections", "collection_grid", "Collections", "Collections", "Collections", 50, Map.of()),
+                                        section("why_shresta", "feature_grid", null, "Why Choose SHRESTA?", "Why", 60, Map.of()),
+                                        section("bestsellers", "product_grid", null, "Bestsellers", "Products", 70, Map.of()),
+                                        section("material_showcase", "material_showcase", "Materials", "Materials", "Material stories", 80, Map.of()),
+                                        section("newsletter", "newsletter", "Offer", "Join", "Newsletter", 90, Map.of("ctaLabel", "Subscribe"))
+                        );
+                }
+
+                @Override
+                public List<ItemRow> findActiveItems(List<String> sectionKeys) {
+                        return List.of(
+                                        item("brand", "brand-shresta-exclusive", null, "SHRESTA EXCLUSIVE", null, "Brand", null, null, 10, true, Map.of(), media("shresta-logo.png")),
+                                        item("navigation", "nav-shop", null, "Shop", null, null, null, "/products", 10, true, Map.of(), null),
+                                        item("featured_collections", "collection-kalankari", "silk_saree", "Kalankari", null, "Kalankari collection", null, null, 10, true, Map.of("slug", "kalankari", "productBadgeFilters", List.of("Collection Kalankari")), media("categories/silk-saree-maroon-gold.png")),
+                                        item("bestsellers", "product-shresta-kalankari-0001", "silk_saree", "Kalankari Saree", null, "Kalankari", null, null, 10, true, Map.of("sku", "SHRESTA-KALANKARI-0001", "slug", "kalankari-saree", "productType", "kalankari", "pricePaise", 1000L, "compareAtPricePaise", 1200L, "rating", 4.8, "reviewCount", 1, "badges", List.of("Collection Monalisa")), media("categories/silk-saree-maroon-gold.png")),
+                                        item("bestsellers", "product-shresta-monalisa-0001", "silk_saree", "Monalisa Saree", null, "Monalisa", null, null, 20, true, Map.of("sku", "SHRESTA-MONALISA-0001", "slug", "monalisa-saree", "productType", "monalisa", "pricePaise", 1000L, "compareAtPricePaise", 1200L, "rating", 4.7, "reviewCount", 1, "badges", List.of("Collection Kalankari")), media("categories/silk-saree-maroon-gold.png"))
+                        );
+                }
+
+                @Override
+                public void updateSection(StorefrontHomeSectionUpdateCommand command) {
+                }
+
+                @Override
+                public void updateItem(StorefrontHomeItemUpdateCommand command) {
+                }
+
+                @Override
+                public void createItem(StorefrontHomeItemCreateCommand command) {
+                }
+
+                @Override
+                public void updateGallerySlot(String itemKey, int slot, String assetKey) {
+                }
+
+                @Override
+                public Map<UUID, List<GalleryRow>> findGalleryByItemIds(List<UUID> itemIds) {
+                        return Map.of();
+                }
+
+                private SectionRow section(String key, String type, String eyebrow, String title, String description, int sortOrder, Map<String, Object> metadata) {
+                        return new SectionRow(UUID.randomUUID(), key, type, eyebrow, title, description, sortOrder, metadata);
+                }
+
+                private ItemRow item(String sectionKey, String itemKey, String familyKey, String title, String subtitle, String description, String ctaLabel, String ctaHref, int sortOrder, boolean featured, Map<String, Object> metadata, MediaRow media) {
+                        return new ItemRow(UUID.randomUUID(), sectionKey, itemKey, familyKey, title, subtitle, description, ctaLabel, ctaHref, sortOrder, featured, metadata, media, null);
+                }
+
+                private MediaRow media(String assetUrl) {
+                        return new MediaRow("media", assetUrl, "Alt text", 800, 800, "s3-compatible-local", 1);
+                }
+        }
 }

@@ -1,5 +1,7 @@
+# Local DEV dependencies only. UAT/PROD use managed PostgreSQL, Redis, and Cloudflare R2.
 services:
   postgres:
+    # Durable local application database; port 5442 avoids a common host PostgreSQL port.
     image: postgres:16-alpine
     container_name: shresta-postgres
     environment:
@@ -17,6 +19,7 @@ services:
       retries: 5
 
   redis:
+    # Local cache, idempotency, and mutation-lock store with persistence across restarts.
     image: redis:7-alpine
     container_name: shresta-redis
     command: ["redis-server", "--appendonly", "yes"]
@@ -31,30 +34,33 @@ services:
       retries: 5
 
   minio:
+    # DEV-only Cloudflare R2 substitute. It exercises the same S3 protocol and presigned PUT flow.
+    # Do not deploy MinIO in UAT/PROD; point those environments directly at Cloudflare R2.
     image: minio/minio:latest
     container_name: shresta-minio
     command: ["server", "/data", "--console-address", ":9001"]
     environment:
-      MINIO_ROOT_USER: ${SHRESTA_ASSET_OBJECT_ACCESS_KEY:?SHRESTA_ASSET_OBJECT_ACCESS_KEY is required}
-      MINIO_ROOT_PASSWORD: ${SHRESTA_ASSET_OBJECT_SECRET_KEY:?SHRESTA_ASSET_OBJECT_SECRET_KEY is required}
+      MINIO_ROOT_USER: ${R2_ACCESS_KEY_ID:?R2_ACCESS_KEY_ID is required}
+      MINIO_ROOT_PASSWORD: ${R2_SECRET_ACCESS_KEY:?R2_SECRET_ACCESS_KEY is required}
     ports:
+      # 9010 is the S3/public object API; 9011 is the local operator console.
       - "9010:9000"
       - "9011:9001"
     volumes:
       - shresta_minio_data:/data
 
   minio-setup:
+    # One-shot initializer: creates the DEV bucket, enables public reads, and seeds catalog media.
     image: minio/mc:latest
     container_name: shresta-minio-setup
     depends_on:
       - minio
     environment:
-      MINIO_ROOT_USER: ${SHRESTA_ASSET_OBJECT_ACCESS_KEY:?SHRESTA_ASSET_OBJECT_ACCESS_KEY is required}
-      MINIO_ROOT_PASSWORD: ${SHRESTA_ASSET_OBJECT_SECRET_KEY:?SHRESTA_ASSET_OBJECT_SECRET_KEY is required}
-      SHRESTA_MINIO_BUCKET: ${SHRESTA_ASSET_OBJECT_BUCKET:?SHRESTA_ASSET_OBJECT_BUCKET is required}
+      MINIO_ROOT_USER: ${R2_ACCESS_KEY_ID:?R2_ACCESS_KEY_ID is required}
+      MINIO_ROOT_PASSWORD: ${R2_SECRET_ACCESS_KEY:?R2_SECRET_ACCESS_KEY is required}
+      SHRESTA_MINIO_BUCKET: ${R2_BUCKET_NAME:?R2_BUCKET_NAME is required}
     volumes:
       - ./seed/shresta-media:/seed/shresta-media:ro
-      - ./var/shresta-assets:/seed/shresta-assets:ro
     entrypoint:
       - /bin/sh
       - -c
@@ -65,12 +71,10 @@ services:
         done
         mc mb -p "local/$$SHRESTA_MINIO_BUCKET"
         mc anonymous set download "local/$$SHRESTA_MINIO_BUCKET"
-        mc mirror --overwrite /seed/shresta-media "local/$$SHRESTA_MINIO_BUCKET"
-        if [ -d /seed/shresta-assets ]; then
-          mc mirror --overwrite /seed/shresta-assets "local/$$SHRESTA_MINIO_BUCKET"
-        fi
+        mc mirror --overwrite --exclude '*/.DS_Store' /seed/shresta-media "local/$$SHRESTA_MINIO_BUCKET"
 
 volumes:
+  # Named volumes preserve local state when containers are recreated.
   shresta_postgres_data:
   shresta_redis_data:
   shresta_minio_data:

@@ -41,6 +41,24 @@ _require_secret() {
   fi
 }
 
+_require_any_secret() {
+  _description="$1"
+  shift
+  _has_value=0
+  for _candidate in "$@"; do
+    _candidate_val=$(eval "printf '%s' \"\${${_candidate}:-}\"" 2>/dev/null || true)
+    if [ -n "$_candidate_val" ] && ! echo "$_candidate_val" | grep -qE "^YOUR_|^replace-in-real-env$"; then
+      _has_value=1
+      break
+    fi
+  done
+
+  if [ "$_has_value" -eq 0 ]; then
+    echo "  MISSING: ${_description} is not set (checked: $*)" >&2
+    MISSING=1
+  fi
+}
+
 echo "Checking required production secrets..." >&2
 _require_secret DATABASE_PASSWORD
 _require_secret REDIS_PASSWORD
@@ -49,9 +67,12 @@ _require_secret JWT_PUBLIC_KEY_BASE64
 _require_secret JWT_PRIVATE_KEY_BASE64
 _require_secret RAZORPAY_KEY_ID
 _require_secret RAZORPAY_KEY_SECRET
-_require_secret RAZORPAY_WEBHOOK_SECRET
-_require_secret SHRESTA_ASSET_OBJECT_ACCESS_KEY
-_require_secret SHRESTA_ASSET_OBJECT_SECRET_KEY
+_require_any_secret RAZORPAY_WEBHOOK_SECRET SHRESTA_RAZORPAY_WEBHOOK_SECRET RAZORPAY_WEBHOOK_SECRET
+_require_secret R2_ENDPOINT
+_require_secret R2_BUCKET_NAME
+_require_secret R2_ACCESS_KEY_ID
+_require_secret R2_SECRET_ACCESS_KEY
+_require_secret MEDIA_PUBLIC_BASE_URL
 
 if [ "$MISSING" -ne 0 ]; then
   echo "" >&2
@@ -60,6 +81,11 @@ if [ "$MISSING" -ne 0 ]; then
   exit 1
 fi
 echo "All required secrets are present." >&2
+
+# ── Provider integration readiness preflight ────────────────────────────────
+# Ensure API mode specific requirements are complete before startup so
+# credentials-only deployment fails fast on partial config.
+sh "$SCRIPT_DIR/verify-provider-readiness"
 
 # ── Port check ────────────────────────────────────────────────────────────────
 _PORT=${SERVER_PORT:-8090}

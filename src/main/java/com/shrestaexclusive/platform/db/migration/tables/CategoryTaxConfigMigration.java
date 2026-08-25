@@ -1,7 +1,8 @@
 package com.shrestaexclusive.platform.db.migration.tables;
 
-import com.shrestaexclusive.platform.db.migration.framework.TransitionPlan;
 import java.util.List;
+
+import com.shrestaexclusive.platform.db.migration.framework.TransitionPlan;
 
 public final class CategoryTaxConfigMigration {
 
@@ -26,6 +27,22 @@ public final class CategoryTaxConfigMigration {
                 )
                 """,
                 "CREATE INDEX idx_category_tax_family_active ON category_tax_config (family_id, is_active, effective_from)"
+            ))
+            .transition(List.of(0), 1, List.of(
+                """
+                DELETE FROM category_tax_config duplicate
+                USING category_tax_config retained
+                WHERE duplicate.family_id = retained.family_id
+                  AND duplicate.hsn_code = retained.hsn_code
+                  AND duplicate.effective_from = retained.effective_from
+                  AND (duplicate.updated_at, duplicate.created_at, duplicate.id)
+                      < (retained.updated_at, retained.created_at, retained.id)
+                """,
+                """
+                ALTER TABLE category_tax_config
+                ADD CONSTRAINT uq_category_tax_family_hsn_effective
+                UNIQUE (family_id, hsn_code, effective_from)
+                """
             ))
             .build();
     }

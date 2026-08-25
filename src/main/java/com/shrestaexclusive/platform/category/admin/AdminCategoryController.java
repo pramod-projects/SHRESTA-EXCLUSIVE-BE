@@ -1,22 +1,11 @@
 package com.shrestaexclusive.platform.category.admin;
 
-import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_KEY_HEADER;
-import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_ROLE_HEADER;
-import static com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator.IDEMPOTENCY_KEY_HEADER;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shrestaexclusive.platform.category.config.CategoryFamilyResponse;
-import com.shrestaexclusive.platform.common.api.ApiResponse;
-import com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator;
-import com.shrestaexclusive.platform.mutation.MutationFingerprint;
-import com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard;
-import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
+
 import org.slf4j.MDC;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
@@ -30,11 +19,24 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shrestaexclusive.platform.category.config.CategoryFamilyResponse;
+import com.shrestaexclusive.platform.common.api.ApiResponse;
+import com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator;
+import static com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator.IDEMPOTENCY_KEY_HEADER;
+import com.shrestaexclusive.platform.mutation.MutationFingerprint;
+import com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard;
+import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_KEY_HEADER;
+import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_ROLE_HEADER;
+
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/admin/catalog/categories")
 public class AdminCategoryController {
 
-    private static final Set<String> CATEGORY_ROLES = Set.of("CHANGE_SUBMITTER", "CHANGE_REVIEWER", "CHANGE_MANAGER");
+    private static final Set<String> CATEGORY_ROLES = Set.of("CHANGE_SUBMITTER", "CHANGE_APPROVER", "CHANGE_MANAGER", "CHANGE_ADMIN");
     private static final String CATEGORY_LOCK_KEY = "admin-categories:configuration";
     private static final TypeReference<List<CategoryFamilyResponse>> CATEGORY_RESPONSE = new TypeReference<>() {
     };

@@ -1,7 +1,13 @@
 package db.migration;
 
+import java.util.List;
+
+import org.flywaydb.core.api.migration.BaseJavaMigration;
+import org.flywaydb.core.api.migration.Context;
+
 import com.shrestaexclusive.platform.db.migration.framework.MigrationRunner;
 import com.shrestaexclusive.platform.db.migration.tables.AdminChangeRequestsMigration;
+import com.shrestaexclusive.platform.db.migration.tables.AdminUsersMigration;
 import com.shrestaexclusive.platform.db.migration.tables.CategoryAttributeConfigMigration;
 import com.shrestaexclusive.platform.db.migration.tables.CategoryFamilyConfigMigration;
 import com.shrestaexclusive.platform.db.migration.tables.CategoryFilterConfigMigration;
@@ -19,18 +25,19 @@ import com.shrestaexclusive.platform.db.migration.tables.CustomerOrderStatusEven
 import com.shrestaexclusive.platform.db.migration.tables.CustomerOrdersMigration;
 import com.shrestaexclusive.platform.db.migration.tables.CustomerOtpChallengesMigration;
 import com.shrestaexclusive.platform.db.migration.tables.CustomerSessionsMigration;
+import com.shrestaexclusive.platform.db.migration.tables.EmailDeliveryAttemptsMigration;
+import com.shrestaexclusive.platform.db.migration.tables.EmailOutboxMigration;
+import com.shrestaexclusive.platform.db.migration.tables.EmailWebhookEventsMigration;
 import com.shrestaexclusive.platform.db.migration.tables.ExtensionsMigration;
-import com.shrestaexclusive.platform.db.migration.tables.UatSeedAccountsMigration;
-import com.shrestaexclusive.platform.db.migration.tables.MediaAssetVariantsMigration;
 import com.shrestaexclusive.platform.db.migration.tables.MediaAssetsMigration;
+import com.shrestaexclusive.platform.db.migration.tables.NotificationConfigurationMigration;
+import com.shrestaexclusive.platform.db.migration.tables.RefundPolicyConfigurationMigration;
 import com.shrestaexclusive.platform.db.migration.tables.StoreLocationsMigration;
 import com.shrestaexclusive.platform.db.migration.tables.StorefrontHomeItemGalleryMigration;
 import com.shrestaexclusive.platform.db.migration.tables.StorefrontHomeItemsMigration;
 import com.shrestaexclusive.platform.db.migration.tables.StorefrontHomeSectionsMigration;
 import com.shrestaexclusive.platform.db.migration.tables.StorefrontStoreSectionsMigration;
-import java.util.List;
-import org.flywaydb.core.api.migration.BaseJavaMigration;
-import org.flywaydb.core.api.migration.Context;
+import com.shrestaexclusive.platform.db.migration.tables.UatSeedAccountsMigration;
 
 /**
  * Flyway entry point — runs the full schema migration.
@@ -67,7 +74,6 @@ public class V1__Schema extends BaseJavaMigration {
 
             // ── 2. Media ─────────────────────────────────────────────────────
             MediaAssetsMigration.transitionPlan(),
-            MediaAssetVariantsMigration.transitionPlan(),
 
             // ── 3. Storefront home ───────────────────────────────────────────
             StorefrontHomeSectionsMigration.transitionPlan(),
@@ -79,6 +85,7 @@ public class V1__Schema extends BaseJavaMigration {
             StoreLocationsMigration.transitionPlan(),
 
             // ── 5. Admin ─────────────────────────────────────────────────────
+            AdminUsersMigration.transitionPlan(),
             AdminChangeRequestsMigration.transitionPlan(),
 
             // ── 6. Customer identity ─────────────────────────────────────────
@@ -86,7 +93,7 @@ public class V1__Schema extends BaseJavaMigration {
             CustomerAuthIdentitiesMigration.transitionPlan(),
             CustomerOtpChallengesMigration.transitionPlan(),
             CustomerSessionsMigration.transitionPlan(),
-            UatSeedAccountsMigration.transitionPlan(),   // UAT/dev static-OTP control table
+            UatSeedAccountsMigration.transitionPlan(),   // Static-OTP schema; default rows are local/DEV only
 
             // ── 7. Customer chat ─────────────────────────────────────────────
             CustomerChatSessionsMigration.transitionPlan(),
@@ -99,7 +106,14 @@ public class V1__Schema extends BaseJavaMigration {
 
             // ── 9. Customer order drafts ─────────────────────────────────────
             CustomerOrderDraftsMigration.transitionPlan(),
-            CustomerOrderDraftItemsMigration.transitionPlan()
+            CustomerOrderDraftItemsMigration.transitionPlan(),
+
+            // ── 10. Transactional email ─────────────────────────────────────
+            NotificationConfigurationMigration.transitionPlan(),
+            RefundPolicyConfigurationMigration.transitionPlan(),
+            EmailOutboxMigration.transitionPlan(),
+            EmailDeliveryAttemptsMigration.transitionPlan(),
+            EmailWebhookEventsMigration.transitionPlan()
         ));
     }
 }

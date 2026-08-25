@@ -1,17 +1,5 @@
 package com.shrestaexclusive.platform.storefront.admin;
 
-import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_KEY_HEADER;
-import static com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator.IDEMPOTENCY_KEY_HEADER;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shrestaexclusive.platform.common.api.ApiResponse;
-import com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator;
-import com.shrestaexclusive.platform.mutation.MutationFingerprint;
-import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse;
-import com.shrestaexclusive.platform.storefront.home.StorefrontHomeService;
-import jakarta.validation.Valid;
-import java.time.Duration;
 import org.slf4j.MDC;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +10,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shrestaexclusive.platform.common.api.ApiResponse;
+import com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator;
+import static com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator.IDEMPOTENCY_KEY_HEADER;
+import com.shrestaexclusive.platform.mutation.MutationFingerprint;
+import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_KEY_HEADER;
+import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse;
+import com.shrestaexclusive.platform.storefront.home.StorefrontHomeService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/admin/storefront/home")
@@ -53,7 +53,7 @@ public class StorefrontAdminController {
             @RequestHeader(value = ADMIN_KEY_HEADER, required = false) String adminKey
     ) {
         accessGuard.requireAdminKey(adminKey);
-        return noStore(service.getHome());
+        return noStore(service.getAdminHome());
     }
 
     @PatchMapping("/sections/{sectionKey}")

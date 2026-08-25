@@ -5,9 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 
 /**
@@ -104,7 +102,7 @@ public final class MigrationRunner {
      * whose fromVersions contains the current version, skips the rest.
      * Persists the final reached version after processing.
      *
-     * @return true if at least one transition was executed (progress happened)
+    * @return true if a transition ran or the persisted version is already terminal
      */
     private static boolean walkPlan(Connection conn, TransitionPlan plan) throws SQLException {
         int current = getTableVersion(conn, plan.tableName());
@@ -133,7 +131,12 @@ public final class MigrationRunner {
         setTableVersion(conn, plan.tableName(), current);
         log("    Finished at version: " + current);
 
-        return progressHappened;
+        int finalVersion = current;
+        boolean terminalVersion = plan.transitions().stream()
+            .anyMatch(transition -> transition.toVersion() == finalVersion)
+            && plan.transitions().stream()
+            .noneMatch(transition -> transition.fromVersions().contains(finalVersion));
+        return progressHappened || terminalVersion;
     }
 
     // =========================================================================

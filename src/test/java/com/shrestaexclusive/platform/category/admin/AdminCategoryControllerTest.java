@@ -1,9 +1,21 @@
 package com.shrestaexclusive.platform.category.admin;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -14,17 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.shrestaexclusive.platform.category.config.CategoryFamilyResponse;
 import com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator;
 import com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(AdminCategoryController.class)
 class AdminCategoryControllerTest {
@@ -42,6 +43,7 @@ class AdminCategoryControllerTest {
     private IdempotentMutationCoordinator mutations;
 
     @BeforeEach
+        @SuppressWarnings("unused")
     void executeMutations() {
         when(mutations.run(any(), any(), any(), any(), any(), any()))
                 .thenAnswer(invocation -> ((Supplier<?>) invocation.getArgument(5)).get());

@@ -1,7 +1,8 @@
 package com.shrestaexclusive.platform.db.migration.tables;
 
-import com.shrestaexclusive.platform.db.migration.framework.TransitionPlan;
 import java.util.List;
+
+import com.shrestaexclusive.platform.db.migration.framework.TransitionPlan;
 
 /**
  * media_assets includes the shresta_valid_asset_tags function that must exist before
@@ -54,16 +55,20 @@ public final class MediaAssetsMigration {
                     checksum_sha256           VARCHAR(64),
                     status                    VARCHAR(32) NOT NULL DEFAULT 'READY',
                     version                   INTEGER     NOT NULL DEFAULT 1,
-                    lqip_data_url             TEXT,
                     tags                      JSONB       NOT NULL DEFAULT '[]'::jsonb,
                     seo_title                 VARCHAR(180),
                     seo_description           VARCHAR(300),
                     processing_error          TEXT,
+                    media_type               VARCHAR(32),
+                    upload_expires_at         TIMESTAMPTZ,
+                    uploaded_by               VARCHAR(320),
+                    object_etag               VARCHAR(160),
                     archived_at               TIMESTAMPTZ,
                     created_at                TIMESTAMPTZ NOT NULL DEFAULT now(),
                     updated_at                TIMESTAMPTZ NOT NULL DEFAULT now(),
                     CONSTRAINT chk_media_asset_key_format    CHECK (asset_key ~ '^[a-z][a-z0-9_-]*$'),
-                    CONSTRAINT chk_media_asset_status        CHECK (status IN ('UPLOADED','PROCESSING','READY','FAILED','ARCHIVED')),
+                    CONSTRAINT chk_media_asset_status        CHECK (status IN ('PENDING_UPLOAD','READY','FAILED','ARCHIVED')),
+                    CONSTRAINT chk_media_asset_media_type    CHECK (media_type IS NULL OR media_type IN ('PRODUCT_IMAGE','PRODUCT_VIDEO','DISPLAY_IMAGE')),
                     CONSTRAINT chk_media_asset_version       CHECK (version > 0),
                     CONSTRAINT chk_media_asset_byte_size     CHECK (byte_size >= 0),
                     CONSTRAINT chk_media_assets_tag_contract CHECK (shresta_valid_asset_tags(tags))
@@ -75,6 +80,25 @@ public final class MediaAssetsMigration {
                 "CREATE INDEX idx_media_assets_product         ON media_assets (product_sku, is_active, updated_at DESC)",
                 "CREATE INDEX idx_media_assets_product_type    ON media_assets (category_product_type_key, is_active, updated_at DESC)",
                 "CREATE INDEX idx_media_assets_tags            ON media_assets USING GIN (tags)"
+            ))
+            .transition(List.of(0), 1, List.of(
+                "ALTER TABLE media_assets ADD COLUMN IF NOT EXISTS media_type VARCHAR(32)",
+                "ALTER TABLE media_assets ADD COLUMN IF NOT EXISTS upload_expires_at TIMESTAMPTZ",
+                "ALTER TABLE media_assets ADD COLUMN IF NOT EXISTS uploaded_by VARCHAR(320)",
+                "ALTER TABLE media_assets ADD COLUMN IF NOT EXISTS object_etag VARCHAR(160)",
+                "ALTER TABLE media_assets DROP CONSTRAINT IF EXISTS chk_media_asset_status",
+                "UPDATE media_assets SET status = 'READY' WHERE status IN ('UPLOADED', 'PROCESSING')",
+                "ALTER TABLE media_assets ADD CONSTRAINT chk_media_asset_status CHECK (status IN ('PENDING_UPLOAD','READY','FAILED','ARCHIVED'))",
+                "ALTER TABLE media_assets DROP CONSTRAINT IF EXISTS chk_media_asset_media_type",
+                "ALTER TABLE media_assets ADD CONSTRAINT chk_media_asset_media_type CHECK (media_type IS NULL OR media_type IN ('PRODUCT_IMAGE','PRODUCT_VIDEO','DISPLAY_IMAGE'))",
+                "DROP TABLE IF EXISTS media_asset_variants"
+            ))
+            .transition(List.of(1), 2, List.of(
+                "ALTER TABLE media_assets DROP COLUMN IF EXISTS lqip_data_url"
+            ))
+            .transition(List.of(2), 3, List.of(
+                "ALTER TABLE media_assets DROP CONSTRAINT IF EXISTS chk_media_asset_media_type",
+                "ALTER TABLE media_assets ADD CONSTRAINT chk_media_asset_media_type CHECK (media_type IS NULL OR media_type IN ('PRODUCT_IMAGE','PRODUCT_VIDEO','DISPLAY_IMAGE','DISPLAY_VIDEO'))"
             ))
             .build();
     }

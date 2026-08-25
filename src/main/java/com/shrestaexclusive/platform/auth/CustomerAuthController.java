@@ -1,16 +1,18 @@
 package com.shrestaexclusive.platform.auth;
 
-import com.shrestaexclusive.platform.common.api.ApiResponse;
-import jakarta.validation.Valid;
 import org.slf4j.MDC;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.shrestaexclusive.platform.common.api.ApiResponse;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/auth/customer")
@@ -22,11 +24,25 @@ public class CustomerAuthController {
         this.service = service;
     }
 
+    @PostMapping("/otp/request")
+    public ResponseEntity<ApiResponse<CustomerOtpResponse>> requestOtp(@Valid @RequestBody CustomerOtpRequest request) {
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.noStore().cachePrivate())
+                .body(ApiResponse.ok(service.requestOtp(request), traceId()));
+    }
+
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<CustomerLoginResponse>> login(@Valid @RequestBody CustomerLoginRequest request) {
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.noStore().cachePrivate())
                 .body(ApiResponse.ok(service.login(request), traceId()));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse<CustomerRegistrationResponse>> register(@Valid @RequestBody CustomerRegistrationRequest request) {
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.noStore().cachePrivate())
+                .body(ApiResponse.ok(service.register(request), traceId()));
     }
 
     @PostMapping("/logout")

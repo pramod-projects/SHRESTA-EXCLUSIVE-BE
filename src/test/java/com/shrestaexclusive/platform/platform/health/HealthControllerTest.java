@@ -1,15 +1,20 @@
 package com.shrestaexclusive.platform.platform.health;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(HealthController.class)
+@WebMvcTest(
+    controllers = HealthController.class,
+    properties = {
+        "shresta.environment.mode=DEV",
+        "spring.thymeleaf.check-template-location=false"
+    }
+)
 class HealthControllerTest {
 
     @Autowired
@@ -23,6 +28,7 @@ class HealthControllerTest {
                 .andExpect(jsonPath("$.data.service").value("shresta-be"))
                 .andExpect(jsonPath("$.data.moneyUnit").value("paise"))
                 .andExpect(jsonPath("$.data.cartState").value("redis-primary"))
-                .andExpect(jsonPath("$.data.paymentTruth").value("razorpay-webhook"));
+                .andExpect(jsonPath("$.data.paymentTruth").value("razorpay-webhook"))
+                .andExpect(jsonPath("$.data.environmentMode").value("DEV"));
     }
 }

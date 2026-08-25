@@ -45,6 +45,9 @@ public final class CustomerOrdersMigration {
                 "CREATE INDEX idx_customer_orders_customer_created ON customer_orders (customer_id, created_at DESC)",
                 "CREATE INDEX idx_customer_orders_status_created   ON customer_orders (status, created_at DESC)"
             ))
+            .transition(List.of(0), 1, List.of(
+                "ALTER TABLE customer_orders ADD COLUMN IF NOT EXISTS is_test BOOLEAN NOT NULL DEFAULT FALSE"
+            ))
             .build();
     }
 }

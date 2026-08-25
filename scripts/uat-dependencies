@@ -1,0 +1,210 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+ENV_FILE="$REPO_ROOT/.env.uat"
+RUN_DIR="$REPO_ROOT/.run"
+OWNERSHIP_MARKER="$RUN_DIR/uat-dependencies-owned"
+POSTGRES_CONTAINER="shresta-uat-postgres"
+REDIS_CONTAINER="shresta-uat-redis"
+
+if [[ ! -f "$ENV_FILE" ]]; then
+  echo "ERROR: Required environment file not found: $ENV_FILE" >&2
+  exit 1
+fi
+
+set -a
+source "$ENV_FILE"
+set +a
+
+if [[ ! "${DATABASE_URL:-}" =~ ^jdbc:postgresql://([^/:?]+):([0-9]+)/([^?]+) ]]; then
+  echo "ERROR: DATABASE_URL must use jdbc:postgresql://host:port/database format." >&2
+  exit 1
+fi
+
+DATABASE_HOST="${BASH_REMATCH[1]}"
+DATABASE_PORT="${BASH_REMATCH[2]}"
+DATABASE_NAME="${BASH_REMATCH[3]}"
+
+is_loopback() {
+  [[ "$1" == "127.0.0.1" || "$1" == "localhost" || "$1" == "::1" ]]
+}
+
+container_exists() {
+  docker inspect "$1" >/dev/null 2>&1
+}
+
+container_health() {
+  docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' "$1" 2>/dev/null || true
+}
+
+wait_for_container() {
+  local container="$1"
+  local attempt health
+  for ((attempt = 1; attempt <= 60; attempt++)); do
+    health="$(container_health "$container")"
+    if [[ "$health" == "healthy" || "$health" == "running" ]]; then
+      return 0
+    fi
+    if [[ "$health" == "unhealthy" || "$health" == "exited" || "$health" == "dead" ]]; then
+      echo "ERROR: $container entered state '$health'." >&2
+      docker logs --tail 20 "$container" >&2 || true
+      return 1
+    fi
+    sleep 1
+  done
+  echo "ERROR: $container did not become healthy within 60s." >&2
+  return 1
+}
+
+require_docker() {
+  if ! command -v docker >/dev/null 2>&1 || ! docker info >/dev/null 2>&1; then
+    echo "ERROR: Docker is required for loopback UAT dependencies." >&2
+    return 1
+  fi
+}
+
+check_remote_endpoint() {
+  local label="$1"
+  local host="$2"
+  local port="$3"
+  if ! command -v nc >/dev/null 2>&1; then
+    echo "ERROR: nc is required to preflight remote UAT dependencies." >&2
+    return 1
+  fi
+  if ! nc -z -w 3 "$host" "$port" >/dev/null 2>&1; then
+    echo "ERROR: $label is not reachable at its configured host and port." >&2
+    return 1
+  fi
+  echo "[$label] remote endpoint reachable"
+}
+
+check_loopback_endpoint() {
+  local label="$1"
+  local host="$2"
+  local port="$3"
+  if ! nc -z -w 3 "$host" "$port" >/dev/null 2>&1; then
+    echo "ERROR: $label did not publish its configured loopback port." >&2
+    echo "       Remove a stale $label container if .env.uat changed its port, then retry." >&2
+    return 1
+  fi
+}
+
+start_postgres() {
+  if ! is_loopback "$DATABASE_HOST"; then
+    check_remote_endpoint "uat-postgres" "$DATABASE_HOST" "$DATABASE_PORT"
+    return
+  fi
+
+  require_docker
+  if container_exists "$POSTGRES_CONTAINER"; then
+    docker start "$POSTGRES_CONTAINER" >/dev/null
+  else
+    if lsof -tiTCP:"$DATABASE_PORT" -sTCP:LISTEN >/dev/null 2>&1; then
+      echo "[uat-postgres] using externally managed loopback service"
+      return
+    fi
+    export POSTGRES_USER="${DATABASE_USERNAME:?DATABASE_USERNAME is required}"
+    export POSTGRES_PASSWORD="${DATABASE_PASSWORD:?DATABASE_PASSWORD is required}"
+    export POSTGRES_DB="$DATABASE_NAME"
+    docker volume create shresta_uat_postgres_data >/dev/null
+    docker run -d \
+      --name "$POSTGRES_CONTAINER" \
+      --restart unless-stopped \
+      -e POSTGRES_USER -e POSTGRES_PASSWORD -e POSTGRES_DB \
+      -p "127.0.0.1:$DATABASE_PORT:5432" \
+      -v shresta_uat_postgres_data:/var/lib/postgresql/data \
+      --health-cmd='pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"' \
+      --health-interval=5s --health-timeout=3s --health-retries=20 \
+      postgres:16-alpine >/dev/null
+  fi
+
+  wait_for_container "$POSTGRES_CONTAINER"
+  check_loopback_endpoint "uat-postgres" "$DATABASE_HOST" "$DATABASE_PORT"
+  if ! docker exec -e PGPASSWORD="$DATABASE_PASSWORD" "$POSTGRES_CONTAINER" \
+      psql -U "$DATABASE_USERNAME" -d "$DATABASE_NAME" -tAc 'select 1' | grep -qx 1; then
+    echo "ERROR: UAT PostgreSQL rejected the configured database credentials." >&2
+    echo "       If credentials changed after first creation, reset the local UAT PostgreSQL volume intentionally." >&2
+    return 1
+  fi
+  echo "[uat-postgres] ready"
+}
+
+start_redis() {
+  if ! is_loopback "${REDIS_HOST:?REDIS_HOST is required}"; then
+    check_remote_endpoint "uat-redis" "$REDIS_HOST" "${REDIS_PORT:?REDIS_PORT is required}"
+    return
+  fi
+
+  require_docker
+  if container_exists "$REDIS_CONTAINER"; then
+    docker start "$REDIS_CONTAINER" >/dev/null
+  else
+    if lsof -tiTCP:"$REDIS_PORT" -sTCP:LISTEN >/dev/null 2>&1; then
+      echo "[uat-redis] using externally managed loopback service"
+      return
+    fi
+    export REDIS_PASSWORD="${REDIS_PASSWORD:?REDIS_PASSWORD is required}"
+    docker volume create shresta_uat_redis_data >/dev/null
+    docker run -d \
+      --name "$REDIS_CONTAINER" \
+      --restart unless-stopped \
+      -e REDIS_PASSWORD \
+      -p "127.0.0.1:$REDIS_PORT:6379" \
+      -v shresta_uat_redis_data:/data \
+      --health-cmd='REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli ping' \
+      --health-interval=5s --health-timeout=3s --health-retries=20 \
+      redis:7-alpine sh -c 'exec redis-server --appendonly yes --requirepass "$REDIS_PASSWORD"' >/dev/null
+  fi
+
+  wait_for_container "$REDIS_CONTAINER"
+  check_loopback_endpoint "uat-redis" "$REDIS_HOST" "$REDIS_PORT"
+  if ! docker exec -e REDISCLI_AUTH="$REDIS_PASSWORD" "$REDIS_CONTAINER" redis-cli ping | grep -qx PONG; then
+    echo "ERROR: UAT Redis rejected the configured password." >&2
+    return 1
+  fi
+  echo "[uat-redis] ready"
+}
+
+start() {
+  mkdir -p "$RUN_DIR"
+  start_postgres
+  start_redis
+  if is_loopback "$DATABASE_HOST" || is_loopback "$REDIS_HOST"; then
+    touch "$OWNERSHIP_MARKER"
+  fi
+}
+
+stop() {
+  if [[ ! -f "$OWNERSHIP_MARKER" ]]; then
+    return
+  fi
+  for container in "$REDIS_CONTAINER" "$POSTGRES_CONTAINER"; do
+    if container_exists "$container"; then
+      docker stop "$container" >/dev/null
+      echo "[$container] stopped (data volume preserved)"
+    fi
+  done
+  rm -f "$OWNERSHIP_MARKER"
+}
+
+status() {
+  local container health
+  for container in "$POSTGRES_CONTAINER" "$REDIS_CONTAINER"; do
+    if container_exists "$container"; then
+      health="$(container_health "$container")"
+      echo "[$container] $(printf '%s' "$health" | tr '[:lower:]' '[:upper:]')"
+    fi
+  done
+}
+
+case "${1:-}" in
+  start) start ;;
+  stop) stop ;;
+  status) status ;;
+  *)
+    echo "Usage: $0 <start|stop|status>" >&2
+    exit 1
+    ;;
+esac

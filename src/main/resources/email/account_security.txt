@@ -1,0 +1,7 @@
+SHRESTA | Account security update
+
+This notice contains important information about activity or a security-related change associated with your SHRESTA account:
+
+{{message}}
+
+If you recognize this activity, no action is needed. If you do not, contact SHRESTA support promptly. Never share passwords or verification codes.

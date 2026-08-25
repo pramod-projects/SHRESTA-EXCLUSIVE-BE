@@ -12,6 +12,7 @@ CREATE TABLE storefront_home_items (
     sort_order     INTEGER     NOT NULL DEFAULT 0,
     is_featured    BOOLEAN     NOT NULL DEFAULT FALSE,
     media_asset_id UUID        REFERENCES media_assets(id),
+    video_media_asset_id UUID  REFERENCES media_assets(id),
     demo_video_url TEXT,
     metadata       JSONB       NOT NULL DEFAULT '{}'::jsonb,
     is_active      BOOLEAN     NOT NULL DEFAULT TRUE,

@@ -10,7 +10,7 @@
     {"name": "location", "owns": ["user_addresses", "delivery_zones", "warehouses"], "responsibility": "Address capture, pincode coverage, zone and warehouse resolution"},
     {"name": "category", "owns": ["category_family_config", "category_product_type_config", "category_attribute_config", "category_filter_config", "category_tax_config", "category_styling_config"], "responsibility": "saree-focused configuration source of truth", "implementedApis": ["GET /api/v1/categories", "/api/v1/admin/catalog/categories"], "implementedClasses": ["CategoryConfigController", "CategoryConfigService", "JdbcCategoryConfigRepository", "CategoryFamilyResponse", "AdminCategoryController", "AdminCategoryService", "JdbcAdminCategoryRepository"]},
     {"name": "storefront", "owns": ["storefront_home_sections", "storefront_home_items"], "responsibility": "Backend-owned customer home merchandising, product descriptions, DB-seeded reference catalog expansion, and media composition with reference-style SHRESTA content; collection counts and optional productBadgeFilters are computed from active product-card rows", "implementedApis": ["GET /api/v1/storefront/home", "/api/v1/admin/storefront/home"], "implementedClasses": ["StorefrontHomeController", "StorefrontHomeService", "JdbcStorefrontHomeRepository", "StorefrontHomeResponse", "StorefrontAdminController", "StorefrontMediaUrlBuilder"]},
-    {"name": "asset", "owns": ["media_assets", "media_asset_variants"], "responsibility": "Catalog-scoped admin asset management, S3-compatible object-key URL construction, original storage, optimized variants, object-store publishing, existing image replacement, nullable-filter-safe search, category/subcategory/SKU/tag bindings, versioned media metadata, excluding brand/system chrome from DAM workflows, and forbidding runtime packaged/static media assets", "implementedApis": ["/api/v1/admin/assets", "/api/v1/admin/assets/{assetKey}/image"], "implementedClasses": ["AdminAssetController", "AssetService", "JdbcAssetRepository", "AssetStorageService", "S3CompatibleObjectStoragePublisher", "LocalSipsAssetVariantProcessor"]},
+    {"name": "asset", "owns": ["media_assets"], "responsibility": "Authorize canonical direct browser uploads to Cloudflare R2, generate immutable keys, verify completion with HEAD, expose custom-domain metadata, enforce product media limits, and perform explicit lifecycle deletion", "implementedApis": ["/api/v1/admin/assets/upload-authorizations", "/api/v1/admin/assets/upload-completions", "/api/v1/admin/assets", "GET /api/v1/admin/assets/storefront-unreferenced"], "implementedClasses": ["AdminAssetController", "AssetService", "JdbcAssetRepository", "R2ObjectStorageClient"]},
     {"name": "catalog", "owns": ["products", "product_variants", "product_media"], "responsibility": "Product data, backend media asset keys, launch category modelling"},
     {"name": "search", "owns": ["product_search_documents"], "responsibility": "Inventory-aware discovery via PostgreSQL FTS in Phase 1 and Typesense in Phase 2"},
     {"name": "cart", "owns": ["Redis cart:{userId}"], "responsibility": "Redis-primary cart, item limits, server-priced cart views"},
@@ -21,6 +21,7 @@
     {"name": "logistics", "owns": ["shipments", "delivery_assignments", "delivery_otp_codes", "rider_locations"], "responsibility": "Rider assignment, ETA, OTP delivery verification"},
     {"name": "notification", "owns": ["notification_outbox", "notification_templates", "notification_preferences"], "responsibility": "FCM, SMS, email, retries, channel routing"},
     {"name": "admin", "owns": ["admin_audit_log", "admin_roles"], "responsibility": "Operations dashboard, store-scoped RBAC, audit logging"},
+    {"name": "admin-test-users", "owns": ["storefront_test_accounts", "customer_accounts.is_test", "customer_orders.is_test", "customer_order_drafts.is_test", "Redis auth:test-user-otp:*"], "responsibility": "Governed storefront test accounts: change-request-gated create/delete, backend-minted static OTP (SHA-256 hash for login + one-time pending plaintext cleared on reveal), static-OTP login lane with dedicated rate limits, zero stock mutation, zero email/SMS, simulated Razorpay orders and refunds, aggregate exclusion", "implementedApis": ["GET /api/v1/admin/test-users", "GET /api/v1/admin/test-users/{customerId}/reveal-otp", "change-requests type=test-user-management (CREATE/DELETE)"], "implementedClasses": ["AdminTestUserController", "AdminTestUserService", "AdminTestUserExceptionHandler", "TestUserOtpRateLimiter", "JdbcStorefrontTestAccountRepository"]},
     {"name": "recommendation", "owns": ["behaviour_events", "recommendation_snapshots"], "responsibility": "Rule-based Phase 1 recommendations, ML-compatible interfaces"},
     {"name": "observability", "owns": ["metrics catalog", "trace conventions", "runbooks"], "responsibility": "SLOs, structured logs, metrics, alerts, incident response"},
     {"name": "kv", "owns": ["Redis read-through keys", "table version keys"], "responsibility": "Table-configurable KV-first aggregate reads with DB fallback"},
@@ -28,7 +29,7 @@
   ],
   "phaseEvolution": {
     "phase1": "Railway, PostgreSQL, Redis, Spring events, PostgreSQL FTS, rule-based recommendations",
-    "phase2": "AWS ECS Fargate, RDS Multi-AZ, ElastiCache, Kafka/MSK, Typesense, CloudFront, PostGIS",
+    "phase2": "Scale the existing Cloudflare R2/Vercel/VPS architecture only when measured demand requires it",
     "phase3": "EKS, Karpenter, KEDA, PgBouncer, ClickHouse, Flink, Feast, Milvus, city namespaces"
   },
   "boundaryRules": [
@@ -38,7 +39,7 @@
     "Customer order placement uses authenticated customer session context, Redis idempotency, and a per-customer mutation lock.",
     "Admin mutations acquire Redis locks before DB writes and publish KV snapshots only after transaction commit.",
     "Local/dev/UAT seed migrations may not be loaded by production profiles.",
-    "Image binaries may live only under seed/shresta-media for object-storage seeding; runtime image delivery must use S3-compatible URLs.",
+    "Image binaries may live only under seed/shresta-media for DEV object-storage seeding; runtime media uses the Cloudflare custom domain and one canonical R2 object.",
     "Gradle check must include verifyNoRuntimeStaticMedia to prevent backend static media regressions.",
     "Analytics and recommendations consume events/read models; they do not block checkout."
   ]

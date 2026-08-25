@@ -1,0 +1,7 @@
+SHRESTA | Order cancelled
+
+Hello {{customerName}},
+
+Order {{orderNumber}} has been cancelled and will not be processed further.
+
+If payment was captured, refund updates will be sent separately to this email address.

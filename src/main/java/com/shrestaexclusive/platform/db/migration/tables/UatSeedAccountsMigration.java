@@ -1,14 +1,15 @@
 package com.shrestaexclusive.platform.db.migration.tables;
 
-import com.shrestaexclusive.platform.db.migration.framework.TransitionPlan;
 import java.util.List;
+
+import com.shrestaexclusive.platform.db.migration.framework.TransitionPlan;
 
 /**
  * Schema migration for uat_seed_accounts.
  *
- * This table is a UAT/dev-only control table used by CustomerAuthService
- * to authenticate test users with a static OTP (no real OTP delivery needed).
- * It must exist in all non-production environments (local, dev, uat).
+ * This table can hold local/dev/UAT static-OTP control rows used by
+ * CustomerAuthService. Its schema exists in every environment, but default
+ * account rows are inserted only by the local/dev full seeder.
  *
  * The service query joins:
  *   uat_seed_accounts → customer_accounts (via identity_email = primary_email)

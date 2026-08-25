@@ -1,4 +1,4 @@
-# ADR 0007: Asset Management Media Pipeline
+# ADR 0007: Direct Cloudflare R2 Canonical Media
 
 ## Status
 
@@ -6,20 +6,18 @@ Accepted.
 
 ## Context
 
-SHRESTA storefront and admin surfaces need high-quality images without sending heavy API payloads or forcing the frontend to own asset datasets. Administrators must upload, search, update, archive, and organize assets while the customer storefront receives fast CDN-compatible media metadata.
-
-The Phase 1 implementation must expose S3-compatible media URLs from the backend. Local and UAT use MinIO as a real S3-compatible object store; production uses AWS S3, CloudFront-backed S3, or another compatible provider through environment variables.
+SHRESTA storefront and admin surfaces need high-quality media without routing file bytes through Next.js or Spring Boot. Cloudflare R2 is the only production object store. DEV uses MinIO solely as an R2 protocol-compatible local target.
 
 ## Decision
 
-Store original uploads separately from generated variants under versioned object keys such as `assets/{assetKey}/v{version}/original/...` and `assets/{assetKey}/v{version}/variants/...`. Persist asset records in `media_assets` and variant records in `media_asset_variants`. Generate thumbnail, small, medium, and large variants locally, emit WebP/AVIF variants when host tools exist, and store LQIP data URLs for fast perceived rendering.
+Spring validates each request, creates a UUID-based immutable key, persists `PENDING_UPLOAD`, and returns a short-lived presigned PUT URL. The browser uploads exactly one canonical object directly to R2 and then requests completion. Spring performs `HEAD` verification before changing the row to `READY`.
 
-Expose admin asset APIs under `/api/v1/admin/assets` for search/detail, multi-file upload, existing image replacement, metadata update, bulk category assignment, and archive/remove. Backend responses include asset keys, backend-versioned/cache-busted S3-compatible URLs, dimensions, byte sizes, status, alt text, tags, SEO fields, variants, and optimization statistics.
+PostgreSQL stores metadata and object keys only. R2 stores no thumbnails, responsive sizes, WebP/AVIF derivatives, LQIP objects, or replacement objects at stable paths. Primary-image replacement links the product to a newly uploaded READY asset and removes the old object only through explicit lifecycle approval.
 
 ## Consequences
 
-- Frontend API responses stay metadata-first; image bytes are served from immutable cacheable URLs whose backend-generated versions bust stale caches.
-- Database rows store object keys and delivery metadata; `StorefrontMediaUrlBuilder` maps them to the configured S3/CloudFront media base URL.
-- Replacing an existing image preserves the asset key, bumps the version, regenerates variants, and lets versioned URLs invalidate stale caches.
+- Frontend API responses stay metadata-first; image bytes use the configured Cloudflare custom media domain.
+- Cloudflare Image Resizing and Next.js image transformation are disabled; frontend layout and CSS control display dimensions while loading the canonical object directly from the custom media domain.
+- Immutable object keys make query-string cache busting unnecessary.
 - Asset changes invalidate media KV tables and refresh storefront home KV only after commit.
-- Future hard purge must remain a separate guarded operation from archive/remove.
+- UAT browser cache is environment-configured to 30 days; PROD is environment-configured to 7 days.

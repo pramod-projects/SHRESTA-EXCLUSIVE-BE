@@ -1,23 +1,10 @@
 package com.shrestaexclusive.platform.asset;
 
-import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_KEY_HEADER;
-import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_ROLE_HEADER;
-import static com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator.IDEMPOTENCY_KEY_HEADER;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shrestaexclusive.platform.common.api.ApiResponse;
-import com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator;
-import com.shrestaexclusive.platform.mutation.MutationFingerprint;
-import com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard;
-import jakarta.validation.Valid;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.slf4j.MDC;
 import org.springframework.http.CacheControl;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,16 +14,26 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shrestaexclusive.platform.common.api.ApiResponse;
+import com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator;
+import static com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator.IDEMPOTENCY_KEY_HEADER;
+import com.shrestaexclusive.platform.mutation.MutationFingerprint;
+import com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard;
+import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_KEY_HEADER;
+import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_ROLE_HEADER;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/admin/assets")
 public class AdminAssetController {
 
-    private static final Set<String> ASSET_ROLES = Set.of("CHANGE_SUBMITTER", "CHANGE_REVIEWER", "CHANGE_MANAGER");
-    private static final TypeReference<List<AssetResponse>> ASSET_LIST_RESPONSE = new TypeReference<>() {
+        private static final Set<String> ASSET_ROLES = Set.of("CHANGE_SUBMITTER", "CHANGE_APPROVER", "CHANGE_MANAGER", "CHANGE_ADMIN");
+        private static final TypeReference<MediaUploadAuthorizationResponse> UPLOAD_AUTHORIZATION_RESPONSE = new TypeReference<>() {
     };
     private static final TypeReference<AssetResponse> ASSET_RESPONSE = new TypeReference<>() {
     };
@@ -78,6 +75,19 @@ public class AdminAssetController {
         return noStore(service.search(query, categoryFamilyKey, categoryProductTypeKey, productSku, status, page, size));
     }
 
+    @GetMapping("/storefront-unreferenced")
+    public ResponseEntity<ApiResponse<StorefrontUnreferencedAssetsResponse>> storefrontUnreferenced(
+            @RequestHeader(value = ADMIN_KEY_HEADER, required = false) String adminKey,
+            @RequestHeader(value = ADMIN_ROLE_HEADER, required = false) String adminRole,
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "24") int size
+    ) {
+        accessGuard.requireRole(adminKey, adminRole, ASSET_ROLES);
+        return noStore(service.searchStorefrontUnreferenced(query, status, page, size));
+    }
+
     @GetMapping("/{assetKey}")
     public ResponseEntity<ApiResponse<AssetResponse>> get(
             @RequestHeader(value = ADMIN_KEY_HEADER, required = false) String adminKey,
@@ -88,48 +98,59 @@ public class AdminAssetController {
         return noStore(service.get(assetKey));
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<List<AssetResponse>>> upload(
+    @PostMapping("/upload-authorizations")
+    public ResponseEntity<ApiResponse<MediaUploadAuthorizationResponse>> authorizeUpload(
             @RequestHeader(value = ADMIN_KEY_HEADER, required = false) String adminKey,
             @RequestHeader(value = ADMIN_ROLE_HEADER, required = false) String adminRole,
             @RequestHeader(value = IDEMPOTENCY_KEY_HEADER, required = false) String idempotencyKey,
-            @RequestPart("files") List<MultipartFile> files,
-            @RequestParam(required = false) String categoryFamilyKey,
-            @RequestParam(required = false) String categoryProductTypeKey,
-            @RequestParam(required = false) String productSku,
-            @RequestParam(required = false) String altText,
-            @RequestParam(required = false) List<String> tags,
-            @RequestParam(required = false) String seoTitle,
-            @RequestParam(required = false) String seoDescription
+            @RequestHeader(value = "X-SHRESTA-ADMIN-ACTOR", required = false) String actor,
+            @Valid @org.springframework.web.bind.annotation.RequestBody MediaUploadAuthorizationRequest request
     ) {
         accessGuard.requireRole(adminKey, adminRole, ASSET_ROLES);
-        AssetUploadRequest request = new AssetUploadRequest(categoryFamilyKey, categoryProductTypeKey, productSku, altText, tags, seoTitle, seoDescription);
         return noStore(mutations.run(
-                "admin-assets:upload",
+                "admin-assets:authorize-upload",
                 idempotencyKey,
-                MutationFingerprint.multipart(objectMapper, "POST", "/api/v1/admin/assets", files, uploadFields(request)),
-                "admin-assets:upload:" + idempotencyKey,
-                ASSET_LIST_RESPONSE,
-                () -> service.upload(files, request)
+                MutationFingerprint.json(objectMapper, "POST", "/api/v1/admin/assets/upload-authorizations", request),
+                "admin-assets:authorize-upload:" + idempotencyKey,
+                UPLOAD_AUTHORIZATION_RESPONSE,
+                () -> service.authorizeUpload(request, actor)
         ));
     }
 
-    @PostMapping(path = "/{assetKey}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<AssetResponse>> replaceImage(
+    @PostMapping("/product-media-reservations")
+    public ResponseEntity<ApiResponse<ProductMediaReservationResponse>> reserveProductMedia(
             @RequestHeader(value = ADMIN_KEY_HEADER, required = false) String adminKey,
             @RequestHeader(value = ADMIN_ROLE_HEADER, required = false) String adminRole,
             @RequestHeader(value = IDEMPOTENCY_KEY_HEADER, required = false) String idempotencyKey,
-            @PathVariable String assetKey,
-            @RequestPart("file") MultipartFile file
+            @RequestHeader(value = "X-SHRESTA-ADMIN-ACTOR", required = false) String actor
     ) {
         accessGuard.requireRole(adminKey, adminRole, ASSET_ROLES);
         return noStore(mutations.run(
-                "admin-assets:replace-image:" + assetKey,
+                "admin-assets:reserve-product-media",
                 idempotencyKey,
-                MutationFingerprint.multipart(objectMapper, "POST", "/api/v1/admin/assets/" + assetKey + "/image", List.of(file), Map.of("assetKey", assetKey)),
-                "admin-assets:asset:" + assetKey,
+                MutationFingerprint.json(objectMapper, "POST", "/api/v1/admin/assets/product-media-reservations", java.util.Map.of()),
+                "admin-assets:reserve-product-media:" + idempotencyKey,
+                new TypeReference<ProductMediaReservationResponse>() { },
+                () -> service.reserveProductMedia(actor)
+        ));
+    }
+
+    @PostMapping("/upload-completions")
+    public ResponseEntity<ApiResponse<AssetResponse>> completeUpload(
+            @RequestHeader(value = ADMIN_KEY_HEADER, required = false) String adminKey,
+            @RequestHeader(value = ADMIN_ROLE_HEADER, required = false) String adminRole,
+            @RequestHeader(value = IDEMPOTENCY_KEY_HEADER, required = false) String idempotencyKey,
+            @RequestHeader(value = "X-SHRESTA-ADMIN-ACTOR", required = false) String actor,
+            @Valid @org.springframework.web.bind.annotation.RequestBody MediaUploadCompletionRequest request
+    ) {
+        accessGuard.requireRole(adminKey, adminRole, ASSET_ROLES);
+        return noStore(mutations.run(
+                "admin-assets:complete-upload:" + request.mediaId(),
+                idempotencyKey,
+                MutationFingerprint.json(objectMapper, "POST", "/api/v1/admin/assets/upload-completions", request),
+                "admin-assets:complete-upload:" + request.mediaId(),
                 ASSET_RESPONSE,
-                () -> service.replaceImage(assetKey, file)
+                () -> service.completeUpload(request.mediaId(), actor)
         ));
     }
 
@@ -202,15 +223,4 @@ public class AdminAssetController {
         return traceId == null ? "not-set" : traceId;
     }
 
-    private Map<String, Object> uploadFields(AssetUploadRequest request) {
-        Map<String, Object> fields = new LinkedHashMap<>();
-        fields.put("categoryFamilyKey", request.categoryFamilyKey());
-        fields.put("categoryProductTypeKey", request.categoryProductTypeKey());
-        fields.put("productSku", request.productSku());
-        fields.put("altText", request.altText());
-        fields.put("tags", request.tags());
-        fields.put("seoTitle", request.seoTitle());
-        fields.put("seoDescription", request.seoDescription());
-        return fields;
-    }
 }

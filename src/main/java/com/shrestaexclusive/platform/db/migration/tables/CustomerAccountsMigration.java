@@ -1,7 +1,8 @@
 package com.shrestaexclusive.platform.db.migration.tables;
 
-import com.shrestaexclusive.platform.db.migration.framework.TransitionPlan;
 import java.util.List;
+
+import com.shrestaexclusive.platform.db.migration.framework.TransitionPlan;
 
 public final class CustomerAccountsMigration {
 
@@ -24,6 +25,12 @@ public final class CustomerAccountsMigration {
                 )
                 """,
                 "CREATE INDEX idx_customer_accounts_status ON customer_accounts (status)"
+            ))
+            .transition(List.of(0), 1, List.of(
+                "ALTER TABLE customer_accounts ALTER COLUMN primary_email DROP NOT NULL"
+            ))
+            .transition(List.of(1), 2, List.of(
+                "ALTER TABLE customer_accounts ADD COLUMN IF NOT EXISTS is_test BOOLEAN NOT NULL DEFAULT FALSE"
             ))
             .build();
     }

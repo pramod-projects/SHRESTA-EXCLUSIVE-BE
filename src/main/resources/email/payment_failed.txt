@@ -1,0 +1,9 @@
+SHRESTA | Payment could not be completed
+
+Hello {{customerName}},
+
+We were unable to confirm a successful payment for order {{orderNumber}}. Your order has not been marked as paid.
+
+Review your payment details, then return to SHRESTA and try again. Avoid making several attempts at the same time.
+
+A pending bank charge may be a temporary authorization. If it is shown as completed or you continue to have trouble, contact SHRESTA support with order number {{orderNumber}}.

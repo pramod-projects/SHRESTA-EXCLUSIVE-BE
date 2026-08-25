@@ -6,7 +6,7 @@ Accepted
 
 ## Decision
 
-Phase 1 targets Railway.app with PostgreSQL 16, Redis 7, one Spring Boot service, Flyway migrations, Spring events, PostgreSQL full-text search, and managed environment variables. Phase 2 moves to AWS ap-south-1 with ECS Fargate, RDS Multi-AZ, ElastiCache, Kafka/MSK, Typesense, CloudFront, and Secrets Manager. Phase 3 moves to EKS, Karpenter, KEDA, PgBouncer, ClickHouse, Flink, Feast, and Milvus when order volume and city expansion justify the operational cost.
+Phase 1 uses Vercel for Next.js, a VPS for one Spring Boot service, PostgreSQL 16, Redis 7, Cloudflare, and Cloudflare R2. Infrastructure changes must preserve direct browser-to-R2 canonical uploads and may be introduced only from measured operational need.
 
 ## Phase Triggers
 

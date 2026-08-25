@@ -1,5 +1,7 @@
 package com.shrestaexclusive.platform.asset;
 
+import java.time.Duration;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -7,13 +9,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "shresta.assets")
 public class AssetStorageProperties {
 
-    private String localStorageRoot = "var/shresta-assets";
-
-    private String storageProvider = "s3-compatible";
-
-    private String deliveryMode = "s3-compatible";
-
-    private boolean objectUploadEnabled = false;
+    private String objectAccountId = "";
 
     private String objectEndpoint = "";
 
@@ -27,38 +23,24 @@ public class AssetStorageProperties {
 
     private boolean objectPathStyle = true;
 
-    private String objectCacheControl = "public,max-age=31536000,immutable";
+    private long browserCacheMaxAgeSeconds = 3600;
 
-    public String getLocalStorageRoot() {
-        return localStorageRoot;
+    private Duration uploadUrlTtl = Duration.ofMinutes(10);
+
+    private int canonicalMaxWidth = 4000;
+
+    private int canonicalMaxHeight = 5333;
+
+    private long canonicalMaxFileSize = 15_000_000;
+
+    private long videoMaxFileSize = 100_000_000;
+
+    public String getObjectAccountId() {
+        return objectAccountId;
     }
 
-    public void setLocalStorageRoot(String localStorageRoot) {
-        this.localStorageRoot = localStorageRoot;
-    }
-
-    public String getStorageProvider() {
-        return storageProvider;
-    }
-
-    public void setStorageProvider(String storageProvider) {
-        this.storageProvider = storageProvider;
-    }
-
-    public String getDeliveryMode() {
-        return deliveryMode;
-    }
-
-    public void setDeliveryMode(String deliveryMode) {
-        this.deliveryMode = deliveryMode;
-    }
-
-    public boolean isObjectUploadEnabled() {
-        return objectUploadEnabled;
-    }
-
-    public void setObjectUploadEnabled(boolean objectUploadEnabled) {
-        this.objectUploadEnabled = objectUploadEnabled;
+    public void setObjectAccountId(String objectAccountId) {
+        this.objectAccountId = objectAccountId;
     }
 
     public String getObjectEndpoint() {
@@ -110,10 +92,54 @@ public class AssetStorageProperties {
     }
 
     public String getObjectCacheControl() {
-        return objectCacheControl;
+        return "public,max-age=" + browserCacheMaxAgeSeconds;
     }
 
-    public void setObjectCacheControl(String objectCacheControl) {
-        this.objectCacheControl = objectCacheControl;
+    public long getBrowserCacheMaxAgeSeconds() {
+        return browserCacheMaxAgeSeconds;
+    }
+
+    public void setBrowserCacheMaxAgeSeconds(long browserCacheMaxAgeSeconds) {
+        this.browserCacheMaxAgeSeconds = browserCacheMaxAgeSeconds;
+    }
+
+    public Duration getUploadUrlTtl() {
+        return uploadUrlTtl;
+    }
+
+    public void setUploadUrlTtl(Duration uploadUrlTtl) {
+        this.uploadUrlTtl = uploadUrlTtl;
+    }
+
+    public int getCanonicalMaxWidth() {
+        return canonicalMaxWidth;
+    }
+
+    public void setCanonicalMaxWidth(int canonicalMaxWidth) {
+        this.canonicalMaxWidth = canonicalMaxWidth;
+    }
+
+    public int getCanonicalMaxHeight() {
+        return canonicalMaxHeight;
+    }
+
+    public void setCanonicalMaxHeight(int canonicalMaxHeight) {
+        this.canonicalMaxHeight = canonicalMaxHeight;
+    }
+
+    public long getCanonicalMaxFileSize() {
+        return canonicalMaxFileSize;
+    }
+
+    public void setCanonicalMaxFileSize(long canonicalMaxFileSize) {
+        this.canonicalMaxFileSize = canonicalMaxFileSize;
+    }
+
+    public long getVideoMaxFileSize() {
+        return videoMaxFileSize;
+    }
+
+    public void setVideoMaxFileSize(long videoMaxFileSize) {
+        this.videoMaxFileSize = videoMaxFileSize;
     }
 }

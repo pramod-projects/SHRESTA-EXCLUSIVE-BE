@@ -1,7 +1,5 @@
 package com.shrestaexclusive.platform.asset;
 
-import java.util.List;
-
 public record AssetResponse(
         String assetKey,
         String originalFilename,
@@ -17,16 +15,12 @@ public record AssetResponse(
         long byteSize,
         String contentType,
         String deliveryMode,
-        String lqipDataUrl,
-        List<String> tags,
+        java.util.List<String> tags,
         String seoTitle,
-        String seoDescription,
-        List<AssetVariantResponse> variants,
-        AssetOptimizationStats optimizationStats
+        String seoDescription
 ) {
 
     public AssetResponse {
         tags = AssetTagRules.normalize(tags);
-        variants = List.copyOf(variants);
     }
 }

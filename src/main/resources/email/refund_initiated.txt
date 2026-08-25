@@ -1,0 +1,7 @@
+SHRESTA | Refund initiated
+
+Hello {{customerName}},
+
+We have initiated a refund of {{total}} for order {{orderNumber}} to the original payment method.
+
+Your bank or payment provider may need additional time before the credit appears.

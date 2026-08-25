@@ -1,5 +1,20 @@
 package com.shrestaexclusive.platform.storefront.home;
 
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.util.StringUtils;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.shrestaexclusive.platform.kv.KvReadThroughCache;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeRepository.GalleryRow;
@@ -12,7 +27,6 @@ import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.Hero
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.MaterialShowcase;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.MaterialStory;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.MediaAsset;
-import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.MediaVariant;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.NavigationItem;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.Newsletter;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.ProductCard;
@@ -20,18 +34,6 @@ import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.Sect
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.TrustBadge;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.WhyShrestaFeature;
 import com.shrestaexclusive.platform.storefront.media.StorefrontMediaUrlBuilder;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Service
 public class StorefrontHomeService {
@@ -40,8 +42,7 @@ public class StorefrontHomeService {
             "storefront_home_sections",
             "storefront_home_items",
             "storefront_home_item_gallery",
-            "media_assets",
-            "media_asset_variants"
+            "media_assets"
     );
     private static final TypeReference<StorefrontHomeResponse> STOREFRONT_HOME_RESPONSE = new TypeReference<>() {
     };
@@ -59,7 +60,12 @@ public class StorefrontHomeService {
 
     @Transactional(readOnly = true)
     public StorefrontHomeResponse getHome() {
-        return kvCache.getOrLoad("storefront-home", STOREFRONT_HOME_CACHE_KEY, STOREFRONT_HOME_TABLES, STOREFRONT_HOME_RESPONSE, this::loadHomeFromDb);
+        return kvCache.getOrLoad("storefront-home", STOREFRONT_HOME_CACHE_KEY, STOREFRONT_HOME_TABLES, STOREFRONT_HOME_RESPONSE, () -> loadHomeFromDb(false));
+    }
+
+    @Transactional(readOnly = true)
+    public StorefrontHomeResponse getAdminHome() {
+        return loadHomeFromDb(true);
     }
 
     @Transactional
@@ -70,14 +76,48 @@ public class StorefrontHomeService {
 
     @Transactional
     public StorefrontHomeResponse updateItem(StorefrontHomeItemUpdateCommand command) {
+        assertUniqueProductIdentity(command.itemKey(), command.metadata());
         repository.updateItem(command);
         return refreshHomeKv();
     }
 
     @Transactional
+    public StorefrontHomeResponse updateDisplayMedia(String itemKey, String imageAssetKey, String videoAssetKey) {
+        repository.updateDisplayMedia(itemKey, imageAssetKey, videoAssetKey);
+        return refreshHomeKv();
+    }
+
+    @Transactional
+    public String currentItemImageAssetKey(String itemKey) {
+        return repository.findItemImageAssetKeyForUpdate(itemKey);
+    }
+
+    @Transactional
+    public String currentItemVideoAssetKey(String itemKey) {
+        return repository.findItemVideoAssetKeyForUpdate(itemKey);
+    }
+
+    @Transactional
+    public String currentGalleryAssetKey(String itemKey, int slot) {
+        return repository.findGalleryAssetKeyForUpdate(itemKey, slot);
+    }
+
+    @Transactional
     public StorefrontHomeResponse createItem(StorefrontHomeItemCreateCommand command) {
+        assertUniqueProductIdentity(command.itemKey(), command.metadata());
         repository.createItem(command);
         return refreshHomeKv();
+    }
+
+    private void assertUniqueProductIdentity(String itemKey, Map<String, Object> metadata) {
+        if (metadata == null) {
+            return;
+        }
+        String sku = string(metadata, "sku");
+        String slug = string(metadata, "slug");
+        if (StringUtils.hasText(sku) && StringUtils.hasText(slug)) {
+            repository.assertUniqueProductIdentity(itemKey, sku, slug);
+        }
     }
 
     /**
@@ -91,7 +131,7 @@ public class StorefrontHomeService {
     }
 
     public StorefrontHomeResponse refreshHomeKv() {
-        StorefrontHomeResponse response = loadHomeFromDb();
+        StorefrontHomeResponse response = loadHomeFromDb(false);
         publishAfterCommit(response);
         return response;
     }
@@ -113,17 +153,20 @@ public class StorefrontHomeService {
         }
     }
 
-    private StorefrontHomeResponse loadHomeFromDb() {
-        StorefrontDataset dataset = loadDataset();
+    private StorefrontHomeResponse loadHomeFromDb(boolean includeImageLessProducts) {
+        StorefrontDataset dataset = loadDataset(includeImageLessProducts);
         return toResponse(dataset);
     }
 
-    private StorefrontDataset loadDataset() {
+    private StorefrontDataset loadDataset(boolean includeImageLessProducts) {
         List<SectionRow> sections = repository.findActiveSections();
         Map<String, SectionRow> sectionsByKey = sections.stream()
                 .collect(Collectors.toMap(SectionRow::sectionKey, Function.identity(), (left, right) -> left, LinkedHashMap::new));
 
-        List<ItemRow> items = repository.findActiveItems(List.copyOf(sectionsByKey.keySet()));
+        List<String> sectionKeys = List.copyOf(sectionsByKey.keySet());
+        List<ItemRow> items = includeImageLessProducts
+            ? repository.findAdminItems(sectionKeys)
+            : repository.findActiveItems(sectionKeys);
         Map<String, List<ItemRow>> itemsBySection = items.stream()
                 .collect(Collectors.groupingBy(ItemRow::sectionKey, LinkedHashMap::new, Collectors.toList()));
 
@@ -154,7 +197,7 @@ public class StorefrontHomeService {
 
     private Brand brand(StorefrontDataset dataset) {
         ItemRow item = requiredFirst(dataset, "brand");
-        return new Brand(item.itemKey(), item.title(), item.description(), media(item.media()));
+        return new Brand(item.itemKey(), item.title(), item.description(), media(item.media()), resolveDemoVideoUrl(item.demoVideoUrl()));
     }
 
     private List<NavigationItem> navigation(StorefrontDataset dataset) {
@@ -221,12 +264,21 @@ public class StorefrontHomeService {
                         integer(item.metadata(), "reviewCount"),
                         integer(item.metadata(), "stockQuantity"),
                         stringList(item.metadata(), "badges"),
+                        stringMap(item.metadata(), "badgeIcons"),
+                        string(item.metadata(), "colorFilter"),
                         media(item.media()),
                         galleryImages(dataset, item.id()),
-                        item.demoVideoUrl() != null ? item.demoVideoUrl() : "",
+                        resolveDemoVideoUrl(item.demoVideoUrl()),
                         item.featured()
                 ))
                 .toList();
+    }
+
+    private String resolveDemoVideoUrl(String value) {
+        if (!StringUtils.hasText(value)) {
+            return null;
+        }
+        return media.assetUrl(value);
     }
 
     private List<MediaAsset> galleryImages(StorefrontDataset dataset, UUID itemId) {
@@ -240,6 +292,17 @@ public class StorefrontHomeService {
 
     private int productCountForCollection(ItemRow collection, Map<String, Long> productCountByFamily, List<ProductCard> productCards) {
         String familyKey = collection.familyKey();
+        String collectionSlug = string(collection.metadata(), "slug");
+
+        if (StringUtils.hasText(collectionSlug)) {
+            int productTypeMatchedCount = Math.toIntExact(productCards.stream()
+                    .filter(product -> matchesCollectionProductType(product, collectionSlug))
+                    .count());
+            if (productTypeMatchedCount > 0) {
+                return productTypeMatchedCount;
+            }
+        }
+
         List<String> productBadgeFilters = stringList(collection.metadata(), "productBadgeFilters");
         if (!productBadgeFilters.isEmpty()) {
             return Math.toIntExact(productCards.stream()
@@ -268,6 +331,20 @@ public class StorefrontHomeService {
                 .toUpperCase(Locale.ROOT)
                 .replace('-', '_')
                 .replace(' ', '_');
+    }
+
+    private boolean matchesCollectionProductType(ProductCard product, String collectionSlug) {
+        if (!StringUtils.hasText(product.productType()) || !StringUtils.hasText(collectionSlug)) {
+            return false;
+        }
+        return collectionTypeToken(product.productType()).equals(collectionTypeToken(collectionSlug));
+    }
+
+    private static String collectionTypeToken(String value) {
+        return value.trim()
+                .toLowerCase(Locale.ROOT)
+                .replace('_', '-')
+                .replaceAll("[^a-z0-9-]", "");
     }
 
     private List<WhyShrestaFeature> whyShresta(StorefrontDataset dataset) {
@@ -312,23 +389,13 @@ public class StorefrontHomeService {
 
         return new MediaAsset(
                 row.assetKey(),
-                media.assetUrl(row.assetUrl(), row.version()),
+                media.assetUrl(row.assetUrl()),
                 row.altText(),
                 row.widthPx(),
                 row.heightPx(),
                 row.deliveryMode(),
                 row.version(),
-                row.lqipDataUrl(),
-                row.variants().stream()
-                        .map(variant -> new MediaVariant(
-                                variant.variantKey(),
-                                variant.format(),
-                                variant.widthPx(),
-                                variant.heightPx(),
-                                variant.byteSize(),
-                                media.assetUrl(variant.urlPath(), row.version())
-                        ))
-                        .toList()
+                row.tags()
         );
     }
 
@@ -387,6 +454,19 @@ public class StorefrontHomeService {
         }
 
         return List.of();
+    }
+
+    private Map<String, String> stringMap(Map<String, Object> metadata, String key) {
+        Object value = metadata.get(key);
+        if (!(value instanceof Map<?, ?> map)) {
+            return Map.of();
+        }
+        return map.entrySet().stream()
+                .filter(entry -> entry.getKey() != null && entry.getValue() != null)
+                .collect(Collectors.toUnmodifiableMap(
+                        entry -> String.valueOf(entry.getKey()),
+                        entry -> String.valueOf(entry.getValue()),
+                        (first, ignored) -> first));
     }
 
     private record StorefrontDataset(

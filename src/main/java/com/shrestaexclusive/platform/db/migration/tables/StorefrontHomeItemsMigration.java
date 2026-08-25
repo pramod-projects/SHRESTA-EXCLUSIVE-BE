@@ -1,7 +1,8 @@
 package com.shrestaexclusive.platform.db.migration.tables;
 
-import com.shrestaexclusive.platform.db.migration.framework.TransitionPlan;
 import java.util.List;
+
+import com.shrestaexclusive.platform.db.migration.framework.TransitionPlan;
 
 public final class StorefrontHomeItemsMigration {
 
@@ -24,6 +25,7 @@ public final class StorefrontHomeItemsMigration {
                     sort_order     INTEGER     NOT NULL DEFAULT 0,
                     is_featured    BOOLEAN     NOT NULL DEFAULT FALSE,
                     media_asset_id UUID        REFERENCES media_assets(id),
+                    video_media_asset_id UUID  REFERENCES media_assets(id),
                     demo_video_url TEXT,
                     metadata       JSONB       NOT NULL DEFAULT '{}'::jsonb,
                     is_active      BOOLEAN     NOT NULL DEFAULT TRUE,
@@ -34,6 +36,15 @@ public final class StorefrontHomeItemsMigration {
                 """,
                 "CREATE INDEX idx_storefront_home_items_section_sort ON storefront_home_items (section_id, is_active, sort_order)",
                 "CREATE INDEX idx_storefront_home_items_family       ON storefront_home_items (family_key, is_active)"
+            ))
+            .transition(List.of(0), 1, List.of(
+                "ALTER TABLE storefront_home_items ADD COLUMN IF NOT EXISTS video_media_asset_id UUID REFERENCES media_assets(id)",
+                """
+                UPDATE storefront_home_items item
+                SET demo_video_url = NULL
+                FROM storefront_home_sections section
+                WHERE section.id = item.section_id AND section.section_key = 'bestsellers'
+                """
             ))
             .build();
     }

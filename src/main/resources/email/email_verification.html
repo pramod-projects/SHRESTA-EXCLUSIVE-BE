@@ -1,0 +1,6 @@
+<p style="margin:0 0 12px;color:#967628;font-size:11px;line-height:16px;font-weight:700;text-transform:uppercase;letter-spacing:2px;">Account setup</p>
+<h1 class="title" style="margin:0 0 18px;color:#0f213d;font-family:Georgia,'Times New Roman',serif;font-size:36px;line-height:42px;font-weight:600;">Verify your email</h1>
+<p style="margin:0 0 26px;color:#6e5a46;font-size:16px;line-height:26px;">Confirm that this email address belongs to you. Verification helps protect your SHRESTA account and ensures important order and security updates reach the correct inbox.</p>
+<table role="presentation" style="margin:0 0 26px;"><tr><td class="button-cell" bgcolor="#0f213d" style="background:#0f213d;"><a class="button button-link" th:href="${verificationUrl}" style="display:inline-block;padding:14px 24px;color:#ffffff;font-size:14px;line-height:20px;font-weight:700;text-decoration:none;">Verify email address</a></td></tr></table>
+<p style="margin:0 0 16px;color:#2f2115;font-size:14px;line-height:23px;">This secure link expires in <strong th:text="${expiresMinutes}">60</strong> minutes.</p>
+<p style="margin:0;padding:14px 16px;background:#f8efe0;border-left:4px solid #d8b35a;color:#6e5a46;font-size:13px;line-height:21px;">If you did not create a SHRESTA account or request this change, do not open the link. You can safely ignore this email.</p>

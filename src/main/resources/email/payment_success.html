@@ -1,0 +1,8 @@
+<p style="margin:0 0 12px;color:#36745a;font-size:11px;line-height:16px;font-weight:700;text-transform:uppercase;letter-spacing:2px;">Payment successful</p>
+<h1 class="title" style="margin:0 0 18px;color:#0f213d;font-family:Georgia,'Times New Roman',serif;font-size:36px;line-height:42px;font-weight:600;">Payment received</h1>
+<p style="margin:0 0 26px;color:#6e5a46;font-size:16px;line-height:26px;">Hello <span th:text="${customerName}">customer</span>, your payment was completed successfully.</p>
+<table role="presentation" width="100%" style="width:100%;margin:0 0 24px;border:1px solid #cee7d8;">
+	<tr><td style="padding:14px 18px;background:#edf7f1;color:#4f6f5d;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Order</td><td align="right" style="padding:14px 18px;background:#edf7f1;color:#0f213d;font-size:14px;font-weight:700;"><span th:text="${orderNumber}">order</span></td></tr>
+	<tr><td style="padding:16px 18px;color:#6e5a46;font-size:14px;">Amount paid</td><td align="right" style="padding:16px 18px;color:#0f213d;font-size:18px;font-weight:700;"><span th:text="${total}">total</span></td></tr>
+</table>
+<p style="margin:0;color:#6e5a46;font-size:13px;line-height:21px;">Keep this confirmation for your records. Order updates will arrive separately.</p>

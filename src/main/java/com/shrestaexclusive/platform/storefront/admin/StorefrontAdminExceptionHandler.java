@@ -1,12 +1,5 @@
 package com.shrestaexclusive.platform.storefront.admin;
 
-import com.shrestaexclusive.platform.common.api.ApiResponse;
-import com.shrestaexclusive.platform.mutation.IdempotencyConflictException;
-import com.shrestaexclusive.platform.mutation.IdempotencyKeyRequiredException;
-import com.shrestaexclusive.platform.mutation.MutationLockConflictException;
-import com.shrestaexclusive.platform.mutation.MutationSafetyUnavailableException;
-import com.shrestaexclusive.platform.storefront.home.StorefrontHomeItemNotFoundException;
-import com.shrestaexclusive.platform.storefront.home.StorefrontHomeSectionNotFoundException;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,7 +7,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.shrestaexclusive.platform.common.api.ApiResponse;
+import com.shrestaexclusive.platform.mutation.IdempotencyConflictException;
+import com.shrestaexclusive.platform.mutation.IdempotencyKeyRequiredException;
+import com.shrestaexclusive.platform.mutation.MutationLockConflictException;
+import com.shrestaexclusive.platform.mutation.MutationSafetyUnavailableException;
+import com.shrestaexclusive.platform.storefront.home.StorefrontHomeItemNotFoundException;
+import com.shrestaexclusive.platform.storefront.home.StorefrontHomeSectionNotFoundException;
+import com.shrestaexclusive.platform.storefront.home.StorefrontMediaAssignmentException;
+
 @RestControllerAdvice(assignableTypes = StorefrontAdminController.class)
+@SuppressWarnings("unused")
 class StorefrontAdminExceptionHandler {
 
     @ExceptionHandler(StorefrontAdminUnauthorizedException.class)
@@ -33,6 +36,12 @@ class StorefrontAdminExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ApiResponse<Void> invalidRequest(MethodArgumentNotValidException exception) {
         return ApiResponse.failed("INVALID_STOREFRONT_UPDATE", "Storefront update payload is invalid", traceId());
+    }
+
+    @ExceptionHandler(StorefrontMediaAssignmentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ApiResponse<Void> invalidMediaAssignment(StorefrontMediaAssignmentException exception) {
+        return ApiResponse.failed("INVALID_PRODUCT_MEDIA", exception.getMessage(), traceId());
     }
 
     @ExceptionHandler(IdempotencyKeyRequiredException.class)

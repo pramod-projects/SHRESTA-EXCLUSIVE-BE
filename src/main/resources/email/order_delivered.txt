@@ -1,0 +1,7 @@
+SHRESTA | Order delivered
+
+Hello {{customerName}},
+
+Delivery for order {{orderNumber}} has been completed.
+
+We hope you love your selection. If you cannot locate the parcel, contact SHRESTA support.

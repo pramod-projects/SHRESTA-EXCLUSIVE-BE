@@ -1,14 +1,10 @@
 package com.shrestaexclusive.platform.admin.acl;
 
-import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_KEY_HEADER;
-import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_ROLE_HEADER;
-
-import com.shrestaexclusive.platform.common.api.ApiResponse;
-import com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
 import org.slf4j.MDC;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +14,21 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shrestaexclusive.platform.common.api.ApiResponse;
+import com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard;
+import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_KEY_HEADER;
+import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_ROLE_HEADER;
+
 @RestController
 @RequestMapping("/api/v1/admin/acl")
 public class AdminAclController {
 
-    private static final Set<String> KNOWN_ROLES = Set.of("SUPER_ADMIN", "CHANGE_SUBMITTER", "CHANGE_REVIEWER", "CHANGE_MANAGER");
+    private static final Set<String> KNOWN_ROLES = Set.of("SUPER_ADMIN", "CHANGE_SUBMITTER", "CHANGE_APPROVER", "CHANGE_MANAGER", "CHANGE_ADMIN");
     private static final Map<String, List<String>> PERMISSIONS_BY_ROLE = Map.of(
             "CHANGE_SUBMITTER", List.of("admin:read", "change_request:submit"),
-            "CHANGE_REVIEWER", List.of("admin:read", "change_request:read", "change_request:approve", "change_request:reject"),
+        "CHANGE_APPROVER", List.of("admin:read", "change_request:read", "change_request:approve", "change_request:reject"),
             "CHANGE_MANAGER", List.of("admin:read", "change_request:submit", "change_request:read", "change_request:approve", "change_request:reject"),
+        "CHANGE_ADMIN", List.of("admin:read", "change_request:submit", "change_request:read", "change_request:approve", "change_request:reject"),
             "SUPER_ADMIN", List.of("admin:*")
     );
 

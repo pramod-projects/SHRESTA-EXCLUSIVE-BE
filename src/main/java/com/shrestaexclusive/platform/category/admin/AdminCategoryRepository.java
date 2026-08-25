@@ -1,10 +1,14 @@
 package com.shrestaexclusive.platform.category.admin;
 
-interface AdminCategoryRepository {
+import java.util.List;
+import java.util.Map;
+
+public interface AdminCategoryRepository {
 
     void createFamily(CategoryFamilyMutationRequest request);
 
     void updateFamily(String familyKey, CategoryFamilyMutationRequest request);
+    void updateFamilyMerchandising(String familyKey, List<Map<String, Object>> merchandisingTags, List<Map<String, Object>> colorFilters);
 
     void archiveFamily(String familyKey);
 

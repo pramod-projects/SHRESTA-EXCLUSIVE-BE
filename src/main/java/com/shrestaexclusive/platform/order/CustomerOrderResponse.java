@@ -10,6 +10,12 @@ public record CustomerOrderResponse(
         String orderStatus,
         String paymentStatus,
         String fulfillmentStatus,
+        String refundRequestStatus,
+        String customerStageCode,
+        String customerStageLabel,
+        int customerStageIndex,
+        String customerStageMeaning,
+        boolean customerStageTerminal,
         String currency,
         long subtotalPaise,
         long deliveryPaise,
@@ -22,7 +28,8 @@ public record CustomerOrderResponse(
         ShippingAddressSnapshot shippingAddress,
         List<LineItem> lines,
         List<StatusEvent> statusEvents,
-        Instant placedAt
+        Instant placedAt,
+        boolean isTest
 ) {
 
     public CustomerOrderResponse {

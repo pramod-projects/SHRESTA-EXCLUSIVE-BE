@@ -3,7 +3,7 @@ package com.shrestaexclusive.platform.admin.changes;
 import java.util.List;
 import java.util.Optional;
 
-interface AdminChangeRequestRepository {
+public interface AdminChangeRequestRepository {
 
     AdminChangeRequestResponse create(String requestKey, String submittedByRole, AdminChangeRequestCreateRequest request);
 

@@ -1,7 +1,17 @@
 package com.shrestaexclusive.platform.admin.changes;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shrestaexclusive.platform.admin.testusers.AdminTestUserService;
 import com.shrestaexclusive.platform.asset.AssetMetadataUpdateRequest;
 import com.shrestaexclusive.platform.asset.AssetService;
 import com.shrestaexclusive.platform.asset.BulkCategoryAssignmentRequest;
@@ -12,16 +22,15 @@ import com.shrestaexclusive.platform.category.admin.CategoryFilterMutationReques
 import com.shrestaexclusive.platform.category.admin.CategoryProductTypeMutationRequest;
 import com.shrestaexclusive.platform.category.admin.CategoryStylingMutationRequest;
 import com.shrestaexclusive.platform.category.admin.CategoryTaxMutationRequest;
+import com.shrestaexclusive.platform.email.configuration.NotificationConfigurationService;
+import com.shrestaexclusive.platform.email.domain.NotificationType;
+import com.shrestaexclusive.platform.order.RefundPolicyConfigurationService;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeItemCreateCommand;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeItemUpdateCommand;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeService;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import org.springframework.stereotype.Service;
 
 @Service
-class AdminChangeRequestApplier {
+public class AdminChangeRequestApplier {
 
     private static final TypeReference<Map<String, Object>> STRING_OBJECT_MAP = new TypeReference<>() {
     };
@@ -30,38 +39,81 @@ class AdminChangeRequestApplier {
     private final AssetService assetService;
     private final AdminCategoryService categoryService;
     private final StorefrontHomeService storefrontHomeService;
+    private final NotificationConfigurationService notificationConfigurationService;
+    private final RefundPolicyConfigurationService refundPolicyConfigurationService;
+    private final AdminTestUserService testUserService;
 
-    AdminChangeRequestApplier(
+    public AdminChangeRequestApplier(
             ObjectMapper objectMapper,
             AssetService assetService,
             AdminCategoryService categoryService,
-            StorefrontHomeService storefrontHomeService
+            StorefrontHomeService storefrontHomeService,
+            NotificationConfigurationService notificationConfigurationService,
+            RefundPolicyConfigurationService refundPolicyConfigurationService,
+            AdminTestUserService testUserService
     ) {
         this.objectMapper = objectMapper;
         this.assetService = assetService;
         this.categoryService = categoryService;
         this.storefrontHomeService = storefrontHomeService;
+        this.notificationConfigurationService = notificationConfigurationService;
+        this.refundPolicyConfigurationService = refundPolicyConfigurationService;
+        this.testUserService = testUserService;
     }
 
-    void apply(AdminChangeRequestResponse request) {
+    void apply(AdminChangeRequestResponse request, String reviewedBy) {
         String requestType = normalizedRequestType(request.requestType());
         switch (requestType) {
             case "asset-metadata" -> applyAssetMetadata(request);
             case "asset-removal" -> applyAssetRemoval(request);
             case "asset-bulk-category-assignment" -> applyAssetBulkAssignment(request);
+            case "storefront-display-media", "storefront-display-image", "storefront-display-video" -> applyDisplayMedia(request);
             case "storefront-product-merchandising" -> applyProductMerchandising(request);
             case "storefront-product-image" -> applyProductImage(request);
             case "storefront-product-gallery" -> applyProductGallery(request);
             case "storefront-product-video" -> applyProductVideo(request);
+            case "storefront-product-media-link" -> applyProductMediaLink(request);
             case "storefront-product-create" -> applyProductCreate(request);
+                        case "category-merchandising" -> applyCategoryMerchandising(request);
             case "category-family" -> applyCategoryFamily(request);
             case "category-product-type" -> applyCategoryProductType(request);
             case "category-attribute" -> applyCategoryAttribute(request);
             case "category-filter" -> applyCategoryFilter(request);
             case "category-tax" -> applyCategoryTax(request);
             case "category-styling" -> applyCategoryStyling(request);
+            case "notification-configuration", "configuration-notification" -> applyNotificationConfiguration(request, reviewedBy);
+            case "configuration-refund-policy" -> applyRefundPolicyConfiguration(request, reviewedBy);
+            case "test-user-management" -> applyTestUserManagement(request, reviewedBy);
             default -> throw new UnsupportedAdminChangeRequestException(request.requestKey(), request.requestType(), request.action());
         }
+    }
+
+    private void applyTestUserManagement(AdminChangeRequestResponse request, String reviewedBy) {
+        switch (request.action()) {
+            case "CREATE" -> testUserService.applyCreate(request, reviewedBy);
+            case "DELETE" -> testUserService.applyDelete(request);
+            default -> throw unsupported(request);
+        }
+    }
+
+    private void applyNotificationConfiguration(AdminChangeRequestResponse request, String reviewedBy) {
+        requireAction(request, "UPDATE");
+        Map<String, Object> values = payload(request);
+        Object enabled = values.get("enabled");
+        if (!(enabled instanceof Boolean enabledValue)) throw new IllegalArgumentException("enabled is required");
+        String reason = text(values, "reason");
+        notificationConfigurationService.update(NotificationType.valueOf(request.entityKey().trim().toUpperCase()),
+            enabledValue, reviewedBy, reason);
+    }
+
+    private void applyRefundPolicyConfiguration(AdminChangeRequestResponse request, String reviewedBy) {
+        requireAction(request, "UPDATE");
+        Map<String, Object> values = payload(request);
+        Object eligibilityDays = values.get("eligibilityDays");
+        if (!(eligibilityDays instanceof Number days)) {
+            throw new IllegalArgumentException("eligibilityDays is required");
+        }
+        refundPolicyConfigurationService.update(days.intValue(), reviewedBy, requiredText(values, "reason", null));
     }
 
     private void applyAssetMetadata(AdminChangeRequestResponse request) {
@@ -82,6 +134,30 @@ class AdminChangeRequestApplier {
         assetService.bulkAssignCategory(convert(request.payload(), BulkCategoryAssignmentRequest.class));
     }
 
+    private void applyDisplayMedia(AdminChangeRequestResponse request) {
+        requireAction(request, "UPDATE");
+        Map<String, Object> payload = payload(request);
+        String imageMediaId = text(payload, "imageMediaId");
+        String videoMediaId = text(payload, "videoMediaId");
+        if (imageMediaId != null) {
+            assetService.validateDisplayUpload(imageMediaId, requiredText(payload, "imageAssetKey", null), "DISPLAY_IMAGE");
+        }
+        if (videoMediaId != null) {
+            assetService.validateDisplayUpload(videoMediaId, requiredText(payload, "videoAssetKey", null), "DISPLAY_VIDEO");
+        }
+        String imageAssetKey = text(payload, "imageAssetKey");
+        String videoAssetKey = text(payload, "videoAssetKey");
+        String replacedAssetKey = imageAssetKey != null
+                ? storefrontHomeService.currentItemImageAssetKey(request.entityKey())
+                : storefrontHomeService.currentItemVideoAssetKey(request.entityKey());
+        storefrontHomeService.updateDisplayMedia(
+                request.entityKey(),
+                imageAssetKey,
+                videoAssetKey
+        );
+        assetService.archiveIfUnreferenced(replacedAssetKey, imageAssetKey != null ? imageAssetKey : videoAssetKey);
+    }
+
     private void applyProductMerchandising(AdminChangeRequestResponse request) {
         requireAction(request, "UPDATE");
         Map<String, Object> payload = payload(request);
@@ -91,9 +167,15 @@ class AdminChangeRequestApplier {
         Map<String, Object> metadata = payload.containsKey("metadata")
                 ? objectMap(payload.get("metadata"))
                 : null;
-        Map<String, Object> media = objectMap(payload.get("media"));
+        if (metadata != null) {
+            validateProductMetadata(metadata);
+            categoryService.validateProductClassification(
+                requiredText(payload, "familyKey", null),
+                requiredText(metadata, "productType", null)
+            );
+        }
         List<String> galleryAssetKeys = stringList(payload.get("galleryAssetKeys"));
-        String demoVideoUrl = text(payload, "demoVideoUrl");
+        String demoVideoAssetKey = text(payload, "demoVideoAssetKey");
         storefrontHomeService.updateItem(new StorefrontHomeItemUpdateCommand(
                 request.entityKey(),
                 text(payload, "familyKey"),
@@ -105,49 +187,26 @@ class AdminChangeRequestApplier {
                 integer(payload, "sortOrder"),
                 bool(payload, "featured"),
                 metadata,
-                text(media, "assetUrl"),
-                text(media, "altText"),
-                integer(media, "widthPx"),
-                integer(media, "heightPx"),
-                text(media, "deliveryMode"),
+                text(payload, "mediaAssetKey"),
                 galleryAssetKeys,
-                demoVideoUrl
+                demoVideoAssetKey
         ));
     }
 
-    /**
-     * Apply a primary-image-only change. Only the media fields are updated;
-     * all text, metadata, gallery, and video fields are left untouched.
-     * If {@code oldAssetKey} is present in the payload, that asset is archived
-     * atomically so no separate asset-removal review item is needed.
-     */
     private void applyProductImage(AdminChangeRequestResponse request) {
         requireAction(request, "UPDATE");
         Map<String, Object> payload = payload(request);
-        Map<String, Object> media = objectMap(payload.get("media"));
+        String newAssetKey = requiredText(payload, "newAssetKey", null);
+        String replacedAssetKey = storefrontHomeService.currentItemImageAssetKey(request.entityKey());
         storefrontHomeService.updateItem(new StorefrontHomeItemUpdateCommand(
                 request.entityKey(),
-                null, null, null, null, null, null, null, null, null,
-                text(media, "assetUrl"),
-                text(media, "altText"),
-                integer(media, "widthPx"),
-                integer(media, "heightPx"),
-                text(media, "deliveryMode"),
+            null, null, null, null, null, null, null, null, null,
+            newAssetKey,
                 null, null
         ));
-        String oldAssetKey = text(payload, "oldAssetKey");
-        if (oldAssetKey != null && !oldAssetKey.isBlank()) {
-            assetService.archive(oldAssetKey);
-        }
+        assetService.archiveIfUnreferenced(replacedAssetKey, newAssetKey);
     }
 
-    /**
-     * Apply a single gallery-slot change.
-     * entityKey format: {@code "productKey:gallery:N"} (1-based slot).
-     * Only the target slot is touched; all other slots and fields are untouched.
-     * If {@code oldAssetKey} is present in the payload, that asset is archived
-     * atomically so no separate asset-removal review item is needed.
-     */
     private void applyProductGallery(AdminChangeRequestResponse request) {
         requireAction(request, "UPDATE");
         Map<String, Object> payload = payload(request);
@@ -156,38 +215,91 @@ class AdminChangeRequestApplier {
         Integer slot = integer(payload, "gallerySlot");
         String assetKey = text(payload, "galleryAssetKey");
         if (productKey != null && slot != null && slot >= 1 && slot <= 4) {
+            String replacedAssetKey = storefrontHomeService.currentGalleryAssetKey(productKey, slot);
             storefrontHomeService.updateItemGallerySlot(productKey, slot, assetKey != null ? assetKey : "");
-        }
-        String oldAssetKey = text(payload, "oldAssetKey");
-        if (oldAssetKey != null && !oldAssetKey.isBlank()) {
-            assetService.archive(oldAssetKey);
+            assetService.archiveIfUnreferenced(replacedAssetKey, assetKey);
         }
     }
 
-    /**
-     * Apply a video-only change. Only demo_video_url is updated;
-     * all text, metadata, media, and gallery fields are left untouched.
-     */
     private void applyProductVideo(AdminChangeRequestResponse request) {
         requireAction(request, "UPDATE");
         Map<String, Object> payload = payload(request);
-        String demoVideoUrl = text(payload, "demoVideoUrl");
-        // Pass "" to clear, actual URL to set, null would skip — default to "" if key absent
+        String demoVideoAssetKey = text(payload, "demoVideoAssetKey");
+        String replacedAssetKey = storefrontHomeService.currentItemVideoAssetKey(request.entityKey());
         storefrontHomeService.updateItem(new StorefrontHomeItemUpdateCommand(
                 request.entityKey(),
                 null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null,
-                null, demoVideoUrl != null ? demoVideoUrl : ""
+                null,
+                null, demoVideoAssetKey != null ? demoVideoAssetKey : ""
         ));
+        assetService.archiveIfUnreferenced(replacedAssetKey, demoVideoAssetKey);
+    }
+
+    private void applyProductMediaLink(AdminChangeRequestResponse request) {
+        requireAction(request, "UPDATE");
+        if (!"storefront_home_items".equals(request.entityType())) {
+            throw unsupported(request);
+        }
+        Map<String, Object> payload = payload(request);
+        String assetKey = requiredText(payload, "assetKey", null);
+        StorefrontProductMediaSlot slot = StorefrontProductMediaSlot.parse(requiredText(payload, "slot", null));
+        String itemKey = request.entityKey();
+        assetService.validateStorefrontProductMediaLink(itemKey, assetKey, slot.targetMediaType());
+        assetService.reassignStorefrontProductMedia(itemKey, assetKey, slot.targetMediaType());
+        String replacedAssetKey;
+        switch (slot) {
+            case PRIMARY -> {
+                replacedAssetKey = storefrontHomeService.currentItemImageAssetKey(itemKey);
+                storefrontHomeService.updateItem(new StorefrontHomeItemUpdateCommand(
+                        itemKey,
+                        null, null, null, null, null, null, null, null, null,
+                        assetKey,
+                        null, null
+                ));
+            }
+            case VIDEO -> {
+                replacedAssetKey = storefrontHomeService.currentItemVideoAssetKey(itemKey);
+                storefrontHomeService.updateItem(new StorefrontHomeItemUpdateCommand(
+                        itemKey,
+                        null, null, null, null, null, null, null, null, null,
+                        null,
+                        null, assetKey
+                ));
+            }
+            default -> {
+                int gallerySlot = slot.gallerySlot();
+                replacedAssetKey = storefrontHomeService.currentGalleryAssetKey(itemKey, gallerySlot);
+                storefrontHomeService.updateItemGallerySlot(itemKey, gallerySlot, assetKey);
+            }
+        }
+        assetService.archiveIfUnreferenced(replacedAssetKey, assetKey);
     }
 
     private void applyProductCreate(AdminChangeRequestResponse request) {
         requireAction(request, "CREATE");
         Map<String, Object> payload = payload(request);
-        Map<String, Object> metadata = objectMap(payload.get("metadata"));
+        Map<String, Object> metadata = new HashMap<>(objectMap(payload.get("metadata")));
+        if (!metadata.containsKey("longDescription") && payload.containsKey("longDescription")) {
+            metadata.put("longDescription", payload.get("longDescription"));
+        }
+        validateProductMetadata(metadata);
+        categoryService.validateProductClassification(
+            requiredText(payload, "familyKey", null),
+            requiredText(metadata, "productType", null)
+        );
         String sectionKey = text(payload, "sectionKey");
         Integer sortOrder = integer(payload, "sortOrder");
         Boolean featured = bool(payload, "featured");
+        List<String> galleryAssetKeys = stringList(payload.get("galleryAssetKeys"));
+        assetService.validateSubmittedProductMedia(
+            request.entityKey(),
+            requiredText(payload, "mediaId", null),
+            requiredText(payload, "mediaAssetKey", null),
+            stringList(payload.get("galleryMediaIds")),
+            galleryAssetKeys,
+            text(payload, "demoVideoMediaId"),
+            text(payload, "demoVideoAssetKey")
+        );
         storefrontHomeService.createItem(new StorefrontHomeItemCreateCommand(
                 sectionKey != null ? sectionKey : "bestsellers",
                 request.entityKey(),
@@ -200,10 +312,41 @@ class AdminChangeRequestApplier {
                 sortOrder != null ? sortOrder : 0,
                 featured != null ? featured : false,
                 metadata,
-                text(payload, "mediaAssetKey"),
-                stringList(payload.get("galleryAssetKeys")),
-                text(payload, "demoVideoUrl")
+                requiredText(payload, "mediaAssetKey", null),
+                galleryAssetKeys,
+                text(payload, "demoVideoAssetKey")
         ));
+        assetService.consumeProductMediaReservation(request.entityKey());
+    }
+
+    private void applyCategoryMerchandising(AdminChangeRequestResponse request) {
+        requireAction(request, "UPDATE");
+        Map<String, Object> values = payload(request);
+        categoryService.updateFamilyMerchandising(
+                request.entityKey(),
+                objectList(values.get("merchandisingTags")),
+                objectList(values.get("colorFilters"))
+        );
+    }
+
+    private void validateProductMetadata(Map<String, Object> metadata) {
+        requiredText(metadata, "sku", null);
+        String slug = requiredText(metadata, "slug", null);
+        requiredText(metadata, "productType", null);
+        if (!slug.matches("^[a-z0-9]+(?:-[a-z0-9]+)*$")) {
+            throw new IllegalArgumentException("slug must contain lowercase letters, numbers, and single hyphens");
+        }
+        long pricePaise = requiredLong(metadata, "pricePaise");
+        long compareAtPricePaise = optionalLong(metadata, "compareAtPricePaise", 0);
+        double rating = optionalDouble(metadata, "rating", 0);
+        int reviewCount = optionalInteger(metadata, "reviewCount", 0);
+        int stockQuantity = requiredInteger(metadata, "stockQuantity");
+        if (pricePaise <= 0 || compareAtPricePaise < 0 || (compareAtPricePaise > 0 && compareAtPricePaise < pricePaise)) {
+            throw new IllegalArgumentException("product pricing is invalid");
+        }
+        if (!Double.isFinite(rating) || rating < 0 || rating > 5 || reviewCount < 0 || stockQuantity < 0) {
+            throw new IllegalArgumentException("product rating, review count, or stock quantity is invalid");
+        }
     }
 
     private void applyCategoryFamily(AdminChangeRequestResponse request) {
@@ -337,12 +480,60 @@ class AdminChangeRequestApplier {
     private Integer integer(Map<String, Object> source, String key) {
         Object value = source.get(key);
         if (value instanceof Number number) {
-            return number.intValue();
+            return exactInteger(number, key);
         }
-        if (value instanceof String text && !text.isBlank()) {
-            return Integer.parseInt(text);
+        if (value instanceof String && !value.toString().isBlank()) {
+            return Integer.valueOf(value.toString());
         }
         return null;
+    }
+
+    private int requiredInteger(Map<String, Object> source, String key) {
+        Integer value = integer(source, key);
+        if (value == null) {
+            throw new IllegalArgumentException(key + " is required for approved admin change request");
+        }
+        return value;
+    }
+
+    private int optionalInteger(Map<String, Object> source, String key, int fallback) {
+        Integer value = integer(source, key);
+        return value != null ? value : fallback;
+    }
+
+    private long requiredLong(Map<String, Object> source, String key) {
+        Object value = source.get(key);
+        if (value instanceof Number number) {
+            return exactLong(number, key);
+        }
+        throw new IllegalArgumentException(key + " is required for approved admin change request");
+    }
+
+    private long optionalLong(Map<String, Object> source, String key, long fallback) {
+        Object value = source.get(key);
+        return value instanceof Number number ? exactLong(number, key) : fallback;
+    }
+
+    private double optionalDouble(Map<String, Object> source, String key, double fallback) {
+        Object value = source.get(key);
+        return value instanceof Number number ? number.doubleValue() : fallback;
+    }
+
+    private int exactInteger(Number number, String key) {
+        try {
+            return new BigDecimal(number.toString()).toBigIntegerExact().intValueExact();
+        } catch (ArithmeticException | NumberFormatException exception) {
+            throw new IllegalArgumentException(key + " must be an exact 32-bit integer", exception);
+        }
+    }
+
+    private long exactLong(Number number, String key) {
+        try {
+            BigInteger integer = new BigDecimal(number.toString()).toBigIntegerExact();
+            return integer.longValueExact();
+        } catch (ArithmeticException | NumberFormatException exception) {
+            throw new IllegalArgumentException(key + " must be an exact 64-bit integer", exception);
+        }
     }
 
     private Boolean bool(Map<String, Object> source, String key) {
@@ -350,8 +541,8 @@ class AdminChangeRequestApplier {
         if (value instanceof Boolean bool) {
             return bool;
         }
-        if (value instanceof String text && !text.isBlank()) {
-            return Boolean.parseBoolean(text);
+        if (value instanceof String && !value.toString().isBlank()) {
+            return Boolean.valueOf(value.toString());
         }
         return null;
     }
@@ -382,5 +573,12 @@ class AdminChangeRequestApplier {
             return list.stream().map(item -> item == null ? null : item.toString()).toList();
         }
         return null;
+    }
+
+    private List<Map<String, Object>> objectList(Object value) {
+        if (!(value instanceof List<?> list)) {
+            throw new IllegalArgumentException("Expected an array in approved admin change request");
+        }
+        return list.stream().map(this::objectMap).toList();
     }
 }

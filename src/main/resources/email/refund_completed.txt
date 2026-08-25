@@ -1,0 +1,7 @@
+SHRESTA | Refund completed
+
+Hello {{customerName}},
+
+Your refund of {{total}} for order {{orderNumber}} has been completed to the original payment method.
+
+Depending on your bank, the credit may take a few business days to appear on your statement.

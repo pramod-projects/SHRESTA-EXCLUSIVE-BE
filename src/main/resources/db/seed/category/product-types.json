@@ -1,8 +1,8 @@
 [
   {
     "family_key": "silk_saree",
-    "type_key": "kalamkari",
-    "display_name": "Kalamkari",
+    "type_key": "kalankari",
+    "display_name": "Kalankari",
     "is_active": true,
     "sort_order": 10,
     "metadata": {}

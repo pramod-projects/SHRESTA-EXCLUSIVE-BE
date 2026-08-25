@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+FE_DIR="$(cd "$BE_DIR/../SHRESTA-EXCLUSIVE-WEB-FE" && pwd)"
+environment="${1:-}"
+action="${2:-}"
+
+case "$environment" in
+  dev|uat|prod) ;;
+  *)
+    echo "Usage: $0 <dev|uat|prod> <build|start>" >&2
+    exit 1
+    ;;
+esac
+
+case "$action" in
+  build|start) ;;
+  *)
+    echo "Usage: $0 <dev|uat|prod> <build|start>" >&2
+    exit 1
+    ;;
+esac
+
+set -a
+source "$BE_DIR/.env.$environment"
+backend_admin_api_key="${SHRESTA_ADMIN_API_KEY:-}"
+source "$FE_DIR/.env.$environment"
+export SHRESTA_ADMIN_API_KEY="$backend_admin_api_key"
+set +a
+
+if [[ -z "$SHRESTA_ADMIN_API_KEY" || "$SHRESTA_ADMIN_API_KEY" == *YOUR_* || "$SHRESTA_ADMIN_API_KEY" == *change-me* ]]; then
+  echo "ERROR: SHRESTA_ADMIN_API_KEY must be configured in $BE_DIR/.env.$environment." >&2
+  exit 1
+fi
+
+if [[ -z "${SHRESTA_ADMIN_SESSION_SECRET:-}" || "$SHRESTA_ADMIN_SESSION_SECRET" == *YOUR_* || "$SHRESTA_ADMIN_SESSION_SECRET" == *change-me* ]]; then
+  if ! command -v openssl >/dev/null 2>&1; then
+    echo "ERROR: openssl is required to initialize the admin session secret." >&2
+    exit 1
+  fi
+  session_secret_file="$BE_DIR/.run/$environment-admin-session-secret"
+  umask 077
+  mkdir -p "$BE_DIR/.run"
+  if [[ ! -s "$session_secret_file" ]]; then
+    openssl rand -hex 32 >"$session_secret_file"
+  fi
+  export SHRESTA_ADMIN_SESSION_SECRET
+  SHRESTA_ADMIN_SESSION_SECRET="$(<"$session_secret_file")"
+fi
+
+cd "$FE_DIR"
+exec npm run "$action"

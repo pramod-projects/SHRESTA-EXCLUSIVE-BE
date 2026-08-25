@@ -1,5 +1,7 @@
 package com.shrestaexclusive.platform.storefront.home;
 
+import java.util.List;
+
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.Brand;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.FeaturedCollection;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.MaterialShowcase;
@@ -7,7 +9,6 @@ import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.Medi
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.NavigationItem;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.Newsletter;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeResponse.SectionCopy;
-import java.util.List;
 
 public final class StorefrontHomeFixtures {
 
@@ -22,20 +23,11 @@ public final class StorefrontHomeFixtures {
                 1154,
                 1398,
                 "s3-compatible-local",
-                1,
-                "data:image/jpeg;base64,abc",
-                List.of(new StorefrontHomeResponse.MediaVariant(
-                        "thumbnail",
-                        "jpg",
-                        160,
-                        160,
-                        12000,
-                        "http://localhost:9010/shresta-local-assets/variants/hero-silk-saree-maroon-gold/v1/160.jpg"
-                ))
+                1
         );
 
         return new StorefrontHomeResponse(
-                new Brand("brand-shresta-exclusive", "SHRESTA EXCLUSIVE", "Premium quick commerce", media),
+                new Brand("brand-shresta-exclusive", "SHRESTA EXCLUSIVE", "Premium quick commerce", media, null),
                 List.of(new NavigationItem("Shop", "/products")),
                 List.of(),
                 List.of(),

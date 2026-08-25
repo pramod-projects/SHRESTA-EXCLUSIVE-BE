@@ -10,11 +10,31 @@ public interface StorefrontHomeRepository {
 
     List<ItemRow> findActiveItems(List<String> sectionKeys);
 
+        default List<ItemRow> findAdminItems(List<String> sectionKeys) {
+                return findActiveItems(sectionKeys);
+        }
+
     Map<UUID, List<GalleryRow>> findGalleryByItemIds(List<UUID> itemIds);
 
     void updateSection(StorefrontHomeSectionUpdateCommand command);
 
     void updateItem(StorefrontHomeItemUpdateCommand command);
+
+        default String findItemImageAssetKeyForUpdate(String itemKey) {
+                return null;
+        }
+
+        default String findItemVideoAssetKeyForUpdate(String itemKey) {
+                return null;
+        }
+
+        default String findGalleryAssetKeyForUpdate(String itemKey, int slot) {
+                return null;
+        }
+
+        default void updateDisplayMedia(String itemKey, String imageAssetKey, String videoAssetKey) {
+                throw new UnsupportedOperationException("Display media updates are not supported");
+        }
 
     /**
      * Update a single gallery slot for a product without touching any other slot.
@@ -23,6 +43,9 @@ public interface StorefrontHomeRepository {
     void updateGallerySlot(String itemKey, int slot, String assetKey);
 
     void createItem(StorefrontHomeItemCreateCommand command);
+
+        default void assertUniqueProductIdentity(String itemKey, String sku, String slug) {
+        }
 
     record SectionRow(
             UUID id,
@@ -69,21 +92,11 @@ public interface StorefrontHomeRepository {
             int heightPx,
             String deliveryMode,
             int version,
-            String lqipDataUrl,
-            List<VariantRow> variants
+            List<String> tags
     ) {
-        public MediaRow {
-            variants = List.copyOf(variants);
-        }
-    }
-
-    record VariantRow(
-            String variantKey,
-            String format,
-            int widthPx,
-            int heightPx,
-            long byteSize,
-            String urlPath
-    ) {
+                MediaRow(String assetKey, String assetUrl, String altText, int widthPx, int heightPx,
+                                String deliveryMode, int version) {
+                        this(assetKey, assetUrl, altText, widthPx, heightPx, deliveryMode, version, List.of());
+                }
     }
 }

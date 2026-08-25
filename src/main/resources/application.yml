@@ -1,10 +1,12 @@
 spring:
+  # Framework-owned runtime configuration. Environment variables override deploy-specific values.
   application:
     name: shresta-be
   threads:
     virtual:
       enabled: true
   datasource:
+    # PostgreSQL is durable truth; Hikari values cap backend database concurrency.
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5442/shresta}
     username: ${DATABASE_USERNAME:shresta_app}
     password: ${DATABASE_PASSWORD:change-me}
@@ -15,6 +17,7 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1800000
   jpa:
+    # Transactions end in the service layer; Flyway owns schema changes.
     open-in-view: false
     hibernate:
       ddl-auto: validate
@@ -24,20 +27,24 @@ spring:
           time_zone: UTC
         format_sql: false
   flyway:
+    # Production schema evolution path. Non-prod compatibility behavior is defined below.
     enabled: true
     locations: ${SHRESTA_FLYWAY_LOCATIONS:classpath:db/migration}
   data:
     redis:
+      # Redis holds volatile caches, idempotency records, and distributed mutation locks.
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6389}
       password: ${REDIS_PASSWORD:}
       timeout: ${REDIS_TIMEOUT:2s}
-
 server:
+  # Graceful shutdown lets in-flight requests complete during deployment replacement.
   port: ${SERVER_PORT:8090}
   shutdown: graceful
+  forward-headers-strategy: framework
 
 management:
+  # Operational endpoints used by container/platform health checks and metrics collection.
   endpoints:
     web:
       exposure:
@@ -60,29 +67,46 @@ logging:
     console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} level=%level service=shresta-be trace_id=%X{traceId:-none} thread=%thread logger=%logger{36} msg=%msg%n"
 
 shresta:
+  environment:
+    # Typed DEV/UAT/PROD identity and canonical public origins exposed in health diagnostics.
+    mode: ${SHRESTA_ENVIRONMENT_MODE:DEV}
+    storefront-url: ${SHRESTA_STOREFRONT_URL:http://localhost:3010}
+    admin-url: ${SHRESTA_ADMIN_URL:http://localhost:3010/admin}
+    api-url: ${SHRESTA_API_URL:http://localhost:8090}
   platform:
+    # Informational architecture invariants returned by the platform health endpoint.
     architecture: modular-monolith
     money-unit: paise
     cart-state: redis-primary
     payment-truth: razorpay-webhook
   media:
-    asset-base-url: ${SHRESTA_MEDIA_ASSET_BASE_URL:}
-    delivery-mode: ${SHRESTA_MEDIA_DELIVERY_MODE:s3-compatible}
+    # Browser-facing canonical media URL construction; no credentials are used here.
+    asset-base-url: ${MEDIA_PUBLIC_BASE_URL:}
+    delivery-mode: ${SHRESTA_MEDIA_DELIVERY_MODE:cloudflare-r2}
   assets:
-    local-storage-root: ${SHRESTA_ASSET_STORAGE_ROOT:var/shresta-assets}
-    storage-provider: ${SHRESTA_ASSET_STORAGE_PROVIDER:s3-compatible}
-    delivery-mode: ${SHRESTA_ASSET_DELIVERY_MODE:s3-compatible}
-    object-upload-enabled: ${SHRESTA_ASSET_OBJECT_UPLOAD_ENABLED:false}
-    object-endpoint: ${SHRESTA_ASSET_OBJECT_ENDPOINT:}
-    object-bucket: ${SHRESTA_ASSET_OBJECT_BUCKET:}
-    object-region: ${SHRESTA_ASSET_OBJECT_REGION:}
-    object-access-key: ${SHRESTA_ASSET_OBJECT_ACCESS_KEY:}
-    object-secret-key: ${SHRESTA_ASSET_OBJECT_SECRET_KEY:}
-    object-path-style: ${SHRESTA_ASSET_OBJECT_PATH_STYLE:true}
-    object-cache-control: ${SHRESTA_ASSET_OBJECT_CACHE_CONTROL:public,max-age=31536000,immutable}
+    # Server-only R2 protocol client. DEV points these values to MinIO; UAT/PROD to Cloudflare R2.
+    # The backend signs requests and verifies objects but never receives uploaded media bytes.
+    object-account-id: ${R2_ACCOUNT_ID:}
+    object-endpoint: ${R2_ENDPOINT:}
+    object-bucket: ${R2_BUCKET_NAME:}
+    object-region: ${R2_REGION:auto}
+    object-access-key: ${R2_ACCESS_KEY_ID:}
+    object-secret-key: ${R2_SECRET_ACCESS_KEY:}
+    object-path-style: ${R2_PATH_STYLE:true}
+    browser-cache-max-age-seconds: ${MEDIA_BROWSER_CACHE_MAX_AGE_SECONDS:3600}
+    upload-url-ttl: ${MEDIA_UPLOAD_URL_TTL:10m}
+    canonical-max-width: ${MEDIA_CANONICAL_MAX_WIDTH:4000}
+    canonical-max-height: ${MEDIA_CANONICAL_MAX_HEIGHT:5333}
+    canonical-max-file-size: ${MEDIA_CANONICAL_MAX_FILE_SIZE:15000000}
+    video-max-file-size: ${MEDIA_VIDEO_MAX_FILE_SIZE:100000000}
   admin:
-    api-key: ${SHRESTA_ADMIN_API_KEY:local-shresta-admin-key}
+    # Server-only API bridge key plus the single bootstrapped SUPER_ADMIN account.
+    api-key: ${SHRESTA_ADMIN_API_KEY:}
+    bootstrap-email: ${SHRESTA_ADMIN_BOOTSTRAP_EMAIL:}
+    bootstrap-password: ${SHRESTA_ADMIN_BOOTSTRAP_PASSWORD:}
+    bootstrap-role: ${SHRESTA_ADMIN_BOOTSTRAP_ROLE:SUPER_ADMIN}
   kv:
+    # Read-through Redis cache. Per-table TTLs balance freshness against database load.
     enabled: ${SHRESTA_KV_ENABLED:true}
     key-prefix: ${SHRESTA_KV_KEY_PREFIX:shresta:local}
     tables:
@@ -113,9 +137,6 @@ shresta:
       media_assets:
         enabled: ${SHRESTA_KV_MEDIA_ASSETS_ENABLED:true}
         ttl: ${SHRESTA_KV_MEDIA_ASSETS_TTL:120s}
-      media_asset_variants:
-        enabled: ${SHRESTA_KV_MEDIA_ASSET_VARIANTS_ENABLED:true}
-        ttl: ${SHRESTA_KV_MEDIA_ASSET_VARIANTS_TTL:120s}
       storefront_store_sections:
         enabled: ${SHRESTA_KV_STOREFRONT_STORE_SECTIONS_ENABLED:true}
         ttl: ${SHRESTA_KV_STOREFRONT_STORE_SECTIONS_TTL:120s}
@@ -123,6 +144,7 @@ shresta:
         enabled: ${SHRESTA_KV_STORE_LOCATIONS_ENABLED:true}
         ttl: ${SHRESTA_KV_STORE_LOCATIONS_TTL:120s}
   mutation:
+    # Idempotency prevents duplicate writes; locks serialize conflicting cross-instance writes.
     idempotency:
       enabled: ${SHRESTA_IDEMPOTENCY_ENABLED:true}
       require-key: ${SHRESTA_IDEMPOTENCY_REQUIRE_KEY:true}
@@ -130,11 +152,106 @@ shresta:
     locking:
       enabled: ${SHRESTA_MUTATION_LOCKING_ENABLED:true}
       ttl: ${SHRESTA_MUTATION_LOCK_TTL:30s}
+  sms:
+    # OTP provider chain and inbound webhook authentication/signature controls.
+    enabled: ${SHRESTA_SMS_ENABLED:false}
+    spring-edge-endpoint: ${SHRESTA_SMS_SPRINGEDGE_ENDPOINT:https://api.springedge.com/v1/sms/send}
+    spring-edge-api-mode: ${SHRESTA_SMS_SPRINGEDGE_API_MODE:json-v1}
+    spring-edge-api-key: ${SHRESTA_SMS_SPRINGEDGE_API_KEY:}
+    spring-edge-sender: ${SHRESTA_SMS_SPRINGEDGE_SENDER:SHRSTA}
+    spring-edge-route: ${SHRESTA_SMS_SPRINGEDGE_ROUTE:transactional}
+    spring-edge-country-code: ${SHRESTA_SMS_SPRINGEDGE_COUNTRY_CODE:91}
+    spring-edge-webhook-auth-enabled: ${SHRESTA_SMS_SPRINGEDGE_WEBHOOK_AUTH_ENABLED:false}
+    spring-edge-webhook-auth-header: ${SHRESTA_SMS_SPRINGEDGE_WEBHOOK_AUTH_HEADER:x-springedge-webhook-token}
+    spring-edge-webhook-auth-token: ${SHRESTA_SMS_SPRINGEDGE_WEBHOOK_AUTH_TOKEN:}
+    spring-edge-webhook-signature-enabled: ${SHRESTA_SMS_SPRINGEDGE_WEBHOOK_SIGNATURE_ENABLED:false}
+    spring-edge-webhook-signature-header: ${SHRESTA_SMS_SPRINGEDGE_WEBHOOK_SIGNATURE_HEADER:x-springedge-signature}
+    spring-edge-webhook-signature-secret: ${SHRESTA_SMS_SPRINGEDGE_WEBHOOK_SIGNATURE_SECRET:}
+    msg91-endpoint: ${SHRESTA_SMS_MSG91_ENDPOINT:https://control.msg91.com/api/v5/flow}
+    msg91-api-mode: ${SHRESTA_SMS_MSG91_API_MODE:flow-v5}
+    msg91-auth-key: ${SHRESTA_SMS_MSG91_AUTH_KEY:}
+    msg91-sender: ${SHRESTA_SMS_MSG91_SENDER:SHRSTA}
+    msg91-route: ${SHRESTA_SMS_MSG91_ROUTE:4}
+    msg91-country: ${SHRESTA_SMS_MSG91_COUNTRY:91}
+    msg91-template-id: ${SHRESTA_SMS_MSG91_TEMPLATE_ID:}
+    msg91-template-variable-key: ${SHRESTA_SMS_MSG91_TEMPLATE_VARIABLE_KEY:OTP}
+    msg91-webhook-auth-enabled: ${SHRESTA_SMS_MSG91_WEBHOOK_AUTH_ENABLED:false}
+    msg91-webhook-auth-header: ${SHRESTA_SMS_MSG91_WEBHOOK_AUTH_HEADER:x-msg91-webhook-token}
+    msg91-webhook-auth-token: ${SHRESTA_SMS_MSG91_WEBHOOK_AUTH_TOKEN:}
+    msg91-webhook-signature-enabled: ${SHRESTA_SMS_MSG91_WEBHOOK_SIGNATURE_ENABLED:false}
+    msg91-webhook-signature-header: ${SHRESTA_SMS_MSG91_WEBHOOK_SIGNATURE_HEADER:x-msg91-signature}
+    msg91-webhook-signature-secret: ${SHRESTA_SMS_MSG91_WEBHOOK_SIGNATURE_SECRET:}
+  email:
+    enabled: ${SHRESTA_EMAIL_ENABLED:false}
+    environment: ${SHRESTA_ENVIRONMENT_MODE:DEV}
+    sender-email: ${SHRESTA_EMAIL_SENDER:no-reply@notify.shrestaexclusive.com}
+    sender-name: ${SHRESTA_EMAIL_SENDER_NAME:SHRESTA}
+    support-email: ${SHRESTA_SUPPORT_EMAIL:support@shrestaexclusive.com}
+    support-phone-display: ${SHRESTA_SUPPORT_PHONE_DISPLAY:+91 12345 67890}
+    support-phone-dial: ${SHRESTA_SUPPORT_PHONE_DIAL:+911234567890}
+    provider-order: ${SHRESTA_EMAIL_PROVIDER_ORDER:BREVO,RESEND,MAILJET,MAILERSEND,ELASTIC_EMAIL}
+    uat-allowlist: ${SHRESTA_EMAIL_UAT_ALLOWLIST:}
+    uat-recipient-override: ${SHRESTA_EMAIL_UAT_RECIPIENT_OVERRIDE:}
+    max-attempts: ${SHRESTA_EMAIL_MAX_ATTEMPTS:6}
+    batch-size: ${SHRESTA_EMAIL_BATCH_SIZE:20}
+    lease-duration: ${SHRESTA_EMAIL_LEASE_DURATION:2m}
+    connect-timeout: ${SHRESTA_EMAIL_CONNECT_TIMEOUT:5s}
+    read-timeout: ${SHRESTA_EMAIL_READ_TIMEOUT:20s}
+    base-retry-delay: ${SHRESTA_EMAIL_BASE_RETRY_DELAY:30s}
+    max-retry-delay: ${SHRESTA_EMAIL_MAX_RETRY_DELAY:2h}
+    terminal-retention: ${SHRESTA_EMAIL_TERMINAL_RETENTION:30d}
+    webhook-retention: ${SHRESTA_EMAIL_WEBHOOK_RETENTION:90d}
+    unknown-outcome-alert-age: ${SHRESTA_EMAIL_UNKNOWN_OUTCOME_ALERT_AGE:15m}
+    poll-delay-ms: ${SHRESTA_EMAIL_POLL_DELAY_MS:5000}
+    webhook-reconcile-delay-ms: ${SHRESTA_EMAIL_WEBHOOK_RECONCILE_DELAY_MS:5000}
+    providers:
+      brevo:
+        enabled: ${SHRESTA_EMAIL_BREVO_ENABLED:false}
+        endpoint: ${SHRESTA_EMAIL_BREVO_ENDPOINT:https://api.brevo.com/v3/smtp/email}
+        api-key: ${SHRESTA_EMAIL_BREVO_API_KEY:}
+        webhook-secret: ${SHRESTA_EMAIL_BREVO_WEBHOOK_SECRET:}
+      resend:
+        enabled: ${SHRESTA_EMAIL_RESEND_ENABLED:false}
+        endpoint: ${SHRESTA_EMAIL_RESEND_ENDPOINT:https://api.resend.com/emails}
+        api-key: ${SHRESTA_EMAIL_RESEND_API_KEY:}
+        webhook-secret: ${SHRESTA_EMAIL_RESEND_WEBHOOK_SECRET:}
+      mailjet:
+        enabled: ${SHRESTA_EMAIL_MAILJET_ENABLED:false}
+        endpoint: ${SHRESTA_EMAIL_MAILJET_ENDPOINT:https://api.mailjet.com/v3.1/send}
+        api-key: ${SHRESTA_EMAIL_MAILJET_API_KEY:}
+        secret-key: ${SHRESTA_EMAIL_MAILJET_SECRET_KEY:}
+        webhook-username: ${SHRESTA_EMAIL_MAILJET_WEBHOOK_USERNAME:}
+        webhook-password: ${SHRESTA_EMAIL_MAILJET_WEBHOOK_PASSWORD:}
+      mailer-send:
+        enabled: ${SHRESTA_EMAIL_MAILERSEND_ENABLED:false}
+        endpoint: ${SHRESTA_EMAIL_MAILERSEND_ENDPOINT:https://api.mailersend.com/v1/email}
+        api-key: ${SHRESTA_EMAIL_MAILERSEND_API_KEY:}
+        webhook-secret: ${SHRESTA_EMAIL_MAILERSEND_WEBHOOK_SECRET:}
+      elastic-email:
+        enabled: ${SHRESTA_EMAIL_ELASTIC_ENABLED:false}
+        endpoint: ${SHRESTA_EMAIL_ELASTIC_ENDPOINT:https://api.elasticemail.com/v4/emails/transactional}
+        api-key: ${SHRESTA_EMAIL_ELASTIC_API_KEY:}
+        webhook-secret: ${SHRESTA_EMAIL_ELASTIC_WEBHOOK_SECRET:}
+  razorpay:
+    # Standard Checkout order creation; signed webhooks remain authoritative payment truth.
+    checkout:
+      enabled: ${SHRESTA_RAZORPAY_CHECKOUT_ENABLED:false}
+      key-id: ${RAZORPAY_KEY_ID:}
+      key-secret: ${RAZORPAY_KEY_SECRET:}
+      order-endpoint: ${SHRESTA_RAZORPAY_ORDER_ENDPOINT:https://api.razorpay.com/v1/orders}
+    webhook:
+      enabled: ${SHRESTA_RAZORPAY_WEBHOOK_ENABLED:false}
+      secret: ${SHRESTA_RAZORPAY_WEBHOOK_SECRET:${RAZORPAY_WEBHOOK_SECRET:}}
 
 ---
 spring:
   config:
+    # DEV/local/UAT tolerate non-production migration lineage; this does not enable catalog seeding in UAT.
     activate:
       on-profile: "local | dev | uat"
-  # Seed data is now handled by DatabaseSeeder (reads db/seed/**/*.json).
-  # No separate Flyway location needed for non-prod environments.
+  flyway:
+    # Local databases may carry older migration lineage; keep non-prod restarts resilient.
+    validate-on-migrate: false
+    ignore-migration-patterns: "*:missing"
+  # DatabaseSeeder bootstraps website section/home-item rows everywhere; media records and the full
+  # dataset are loaded only in local/DEV. No separate Flyway seed location is used.

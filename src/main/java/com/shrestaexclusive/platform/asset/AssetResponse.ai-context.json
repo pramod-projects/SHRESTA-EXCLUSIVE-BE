@@ -1,11 +1,11 @@
 {
   "class": "AssetResponse",
   "module": "asset",
-  "purpose": "Admin-facing asset read model containing media metadata, CDN/S3-compatible URLs, generated variants, optimization stats, and asset tags.",
+  "purpose": "Admin-facing canonical media metadata read model with Cloudflare custom-domain URLs and asset tags.",
   "ownedRules": [
     "Response tags are normalized through AssetTagRules before serialization so UI consumers receive the same 40-character/16-tag contract as writes.",
-    "Variant lists are immutable response snapshots.",
-    "Asset responses expose backend-built media URLs and do not expose runtime static image paths."
+    "Each response represents one immutable canonical object; resized or format variants are never stored.",
+    "Asset responses expose backend-built custom-domain URLs and do not expose R2 endpoints or runtime static paths."
   ],
   "usedBy": [
     "JdbcAssetRepository",

@@ -1,0 +1,9 @@
+SHRESTA | Your order has shipped
+
+Hello {{customerName}},
+
+Order {{orderNumber}} is on its way.
+
+Track your order: {{trackingUrl}}
+
+Tracking details may take a short while to update after carrier collection.

@@ -1,9 +1,11 @@
 {
   "class": "DatabaseSeeder",
   "module": "db.seed",
-  "purpose": "ApplicationRunner that seeds all reference and test data into the database on startup in non-prod environments by reading JSON files from classpath:db/seed/.",
+  "purpose": "ApplicationRunner that bootstraps website section/home-item rows in every environment and loads media records plus the complete JSON catalog/demo dataset only in local and DEV.",
   "businessRules": [
-    "Active only on profiles: local, dev, uat. Never runs in prod.",
+    "Runs in every profile after Flyway; website sections and home items are always upserted, but reference media (the three logo records) is seeded only for local and dev profiles.",
+    "Full category, reference/product media, storefront item, store, product, and test-account seeding runs only for local and dev profiles.",
+    "UAT and PROD receive no media records, products, product assets, stores, or test accounts by default.",
     "Runs after Flyway migrations (Order.MAX_VALUE) so all tables exist before seeding.",
     "Every upsert uses ON CONFLICT DO UPDATE making seeding fully idempotent; safe to run on every restart.",
     "Seed order matches FK dependency: families → product-types → attributes → filters → tax → styling → media assets → media variants → storefront sections → storefront items → store sections → store locations → products → dev auth accounts.",
@@ -11,8 +13,8 @@
     "JSON files are read from classpath:db/seed/<path>.json via ClassPathResource and parsed with Jackson ObjectMapper.",
     "jsonb() helper serializes nested objects/arrays to a JSON string for ::jsonb cast columns.",
     "seedDevAuthAccounts() issues CREATE TABLE IF NOT EXISTS uat_seed_accounts before upserting, making it safe even if V1 was applied before the table was added to the migration plan.",
-    "seedDevAuthAccounts() seeds all three auth tables in order: customer_accounts → customer_auth_identities (email identity, is_verified=TRUE) → uat_seed_accounts (static OTP from otp_code field in dev-accounts.json).",
-    "The otp_code field in auth/dev-accounts.json drives the static OTP used by CustomerAuthService for UAT/dev login; default fallback is '123456' if the field is absent."
+    "seedDevAuthAccounts() runs only in local/dev and seeds all three auth tables in order: customer_accounts → customer_auth_identities → uat_seed_accounts.",
+    "The otp_code field in auth/dev-accounts.json drives the local/dev static OTP; UAT test rows must be provisioned explicitly if that capability is needed."
   ],
   "seedFiles": [
     "category/families.json",

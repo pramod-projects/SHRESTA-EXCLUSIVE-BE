@@ -1,0 +1,10 @@
+SHRESTA | Verify your email address
+
+Confirm that this email address belongs to you. Verification helps protect your SHRESTA account and ensures important order and security updates reach the correct inbox.
+
+Verify your email:
+{{verificationUrl}}
+
+This secure link expires in {{expiresMinutes}} minutes.
+
+If you did not create a SHRESTA account or request this change, do not open the link. You can safely ignore this email.

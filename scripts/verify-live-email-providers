@@ -1,0 +1,135 @@
+#!/usr/bin/env sh
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+REPO_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/.." && pwd)
+. "$SCRIPT_DIR/be-env.sh"
+
+require_value() {
+  _name="$1"
+  eval "_value=\${${_name}:-}"
+  if [ -z "$_value" ] || printf '%s' "$_value" | grep -qE '(YOUR_|replace-in-real-env)'; then
+    echo "ERROR: $_name must be exported with a non-placeholder value." >&2
+    exit 1
+  fi
+}
+
+is_true() {
+  case "$(printf '%s' "${1:-}" | tr '[:upper:]' '[:lower:]')" in
+    1|true|yes|on) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+if [ "${SHRESTA_EMAIL_LIVE_CONFIRM:-}" != "SEND_EXACTLY_ONE_PER_PROVIDER" ]; then
+  echo "ERROR: Set SHRESTA_EMAIL_LIVE_CONFIRM=SEND_EXACTLY_ONE_PER_PROVIDER to authorize one controlled send through every enabled provider." >&2
+  exit 1
+fi
+
+require_value SHRESTA_EMAIL_LIVE_RECIPIENT
+_live_recipient=$SHRESTA_EMAIL_LIVE_RECIPIENT
+_live_confirmation=$SHRESTA_EMAIL_LIVE_CONFIRM
+
+case "$_live_recipient" in
+  *.test) echo "ERROR: SHRESTA_EMAIL_LIVE_RECIPIENT must be a deliverable controlled mailbox, not a reserved .test address." >&2; exit 1 ;;
+  *@*.*) ;;
+  *) echo "ERROR: SHRESTA_EMAIL_LIVE_RECIPIENT must be a valid controlled mailbox." >&2; exit 1 ;;
+esac
+
+ENV_FILE="$REPO_ROOT/.env.uat"
+if [ ! -f "$ENV_FILE" ]; then
+  echo "ERROR: $ENV_FILE not found." >&2
+  echo "       Copy .env.uat.example to .env.uat and fill in all provider credentials." >&2
+  exit 1
+fi
+set -a; . "$ENV_FILE"; set +a
+
+# Live-send authorization and containment must come from this invocation, not a runtime file.
+export SHRESTA_EMAIL_LIVE_RECIPIENT="$_live_recipient"
+export SHRESTA_EMAIL_LIVE_CONFIRM="$_live_confirmation"
+
+require_value SHRESTA_EMAIL_SENDER
+
+_enabled_providers=""
+_provider_order=$(printf '%s' "${SHRESTA_EMAIL_PROVIDER_ORDER:-BREVO,RESEND,MAILJET,MAILERSEND,ELASTIC_EMAIL}" | tr -d '[:space:]')
+_old_ifs=$IFS
+IFS=,
+set -- $_provider_order
+IFS=$_old_ifs
+for provider in "$@"; do
+  _enabled=false
+  case "$provider" in
+    BREVO)
+      if is_true "${SHRESTA_EMAIL_BREVO_ENABLED:-false}"; then
+        require_value SHRESTA_EMAIL_BREVO_API_KEY
+        _enabled=true
+      fi
+      ;;
+    RESEND)
+      if is_true "${SHRESTA_EMAIL_RESEND_ENABLED:-false}"; then
+        require_value SHRESTA_EMAIL_RESEND_API_KEY
+        _enabled=true
+      fi
+      ;;
+    MAILJET)
+      if is_true "${SHRESTA_EMAIL_MAILJET_ENABLED:-false}"; then
+        require_value SHRESTA_EMAIL_MAILJET_API_KEY
+        require_value SHRESTA_EMAIL_MAILJET_SECRET_KEY
+        _enabled=true
+      fi
+      ;;
+    MAILERSEND)
+      if is_true "${SHRESTA_EMAIL_MAILERSEND_ENABLED:-false}"; then
+        require_value SHRESTA_EMAIL_MAILERSEND_API_KEY
+        _enabled=true
+      fi
+      ;;
+    ELASTIC_EMAIL)
+      if is_true "${SHRESTA_EMAIL_ELASTIC_ENABLED:-false}"; then
+        require_value SHRESTA_EMAIL_ELASTIC_API_KEY
+        _enabled=true
+      fi
+      ;;
+    *) echo "ERROR: SHRESTA_EMAIL_PROVIDER_ORDER contains unknown provider code $provider." >&2; exit 1 ;;
+  esac
+  if [ "$_enabled" = true ]; then
+    _enabled_providers="${_enabled_providers}${_enabled_providers:+ }$provider"
+  fi
+done
+
+if [ -z "$_enabled_providers" ]; then
+  echo "ERROR: At least one provider in SHRESTA_EMAIL_PROVIDER_ORDER must be enabled." >&2
+  exit 1
+fi
+
+export SHRESTA_ENVIRONMENT_MODE=UAT
+export SHRESTA_EMAIL_ENABLED=true
+export SHRESTA_EMAIL_UAT_ALLOWLIST="$SHRESTA_EMAIL_LIVE_RECIPIENT"
+export SHRESTA_EMAIL_UAT_RECIPIENT_OVERRIDE="$SHRESTA_EMAIL_LIVE_RECIPIENT"
+sh "$SCRIPT_DIR/verify-provider-readiness"
+
+_verified_count=0
+for provider in $_enabled_providers; do
+  SHRESTA_EMAIL_BREVO_ENABLED=false
+  SHRESTA_EMAIL_RESEND_ENABLED=false
+  SHRESTA_EMAIL_MAILJET_ENABLED=false
+  SHRESTA_EMAIL_MAILERSEND_ENABLED=false
+  SHRESTA_EMAIL_ELASTIC_ENABLED=false
+  case "$provider" in
+    BREVO) SHRESTA_EMAIL_BREVO_ENABLED=true ;;
+    RESEND) SHRESTA_EMAIL_RESEND_ENABLED=true ;;
+    MAILJET) SHRESTA_EMAIL_MAILJET_ENABLED=true ;;
+    MAILERSEND) SHRESTA_EMAIL_MAILERSEND_ENABLED=true ;;
+    ELASTIC_EMAIL) SHRESTA_EMAIL_ELASTIC_ENABLED=true ;;
+  esac
+  export SHRESTA_EMAIL_BREVO_ENABLED SHRESTA_EMAIL_RESEND_ENABLED SHRESTA_EMAIL_MAILJET_ENABLED
+  export SHRESTA_EMAIL_MAILERSEND_ENABLED SHRESTA_EMAIL_ELASTIC_ENABLED
+  export SHRESTA_EMAIL_LIVE_PROVIDER="$provider"
+  export SHRESTA_EMAIL_PROVIDER_ORDER="$provider"
+
+  echo "Verifying $provider with one controlled email..." >&2
+  "$REPO_ROOT/gradlew" --project-dir "$REPO_ROOT" liveEmailProviderTest --rerun-tasks --no-daemon
+  _verified_count=$((_verified_count + 1))
+done
+
+echo "All $_verified_count enabled providers returned acceptance identifiers. Confirm the same number of inbox deliveries and webhook final states manually." >&2

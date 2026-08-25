@@ -1,0 +1,9 @@
+SHRESTA | Payment received
+
+Hello {{customerName}},
+
+Your payment for order {{orderNumber}} was completed successfully.
+
+Amount paid: {{total}}
+
+Keep this confirmation for your records. Order updates will arrive separately.

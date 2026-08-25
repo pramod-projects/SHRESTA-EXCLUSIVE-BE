@@ -51,11 +51,11 @@ SHRESTA-BE
 │   ├── Service: StorefrontStoresService
 │   ├── Repository: JdbcStorefrontHomeRepository
 │   ├── Repository: JdbcStorefrontStoresRepository
-│   ├── Media URL builder: StorefrontMediaUrlBuilder -> S3-compatible public URLs with backend-owned v cache busting
+│   ├── Media URL builder: StorefrontMediaUrlBuilder -> immutable Cloudflare custom-domain URLs
 │   ├── Static media guard: scripts/verify-no-runtime-static-media + Gradle verifyNoRuntimeStaticMedia
 │   ├── Tables: storefront_home_sections, storefront_home_items
 │   ├── Tables: storefront_store_sections, store_locations
-│   ├── Media dependencies: media_assets, media_asset_variants
+│   ├── Media dependency: READY media_assets only for public products
 │   ├── KV: storefront-home:active:v8, storefront-stores:active:v2
 │   ├── Mutation safety: Idempotency-Key + storefront-home lock
 │   ├── V5 seed refresh: reference-style SHRESTA wine/gold content while preserving saree-focused SHRESTA EXCLUSIVE
@@ -72,27 +72,25 @@ SHRESTA-BE
 │   ├── Controller: AdminAssetController
 │   ├── Service: AssetService
 │   ├── Repository: JdbcAssetRepository
-│   ├── Storage: AssetStorageService
-│   ├── Object publisher: S3CompatibleObjectStoragePublisher
-│   ├── Processor: LocalSipsAssetVariantProcessor
-│   ├── Tables: media_assets, media_asset_variants
-│   ├── Local object store: MinIO via docker-compose.dev.yml, using the same S3-compatible upload/read contract as production
+│   ├── R2 protocol client: R2ObjectStorageClient
+│   ├── Table: media_assets
+│   ├── DEV target: MinIO via docker-compose.dev.yml; UAT/PROD target: Cloudflare R2
 │   ├── Seed source: seed/shresta-media only; never served by Spring Boot
-│   ├── Variants: thumbnail, small, medium, large; jpg plus optional webp/avif
+│   ├── Storage rule: exactly one canonical immutable object per logical upload
 │   ├── Metadata: category_family_key, category_product_type_key, product_sku, tags, alt text, SEO fields
 │   ├── Tag contract: AssetTagRules + V19 DB check -> uppercase token format, 40 characters per tag, 16 tags maximum
 │   ├── Search SQL: nullable admin filters are explicitly cast to text for PostgreSQL type safety
 │   ├── Admin scope: category, product, and asset-manager usage types only; brand/system logo assets are excluded
-│   ├── Media URLs: object keys mapped through required S3-compatible public base URL plus asset version cache-busting
-│   ├── Replace image: POST /admin/assets/{assetKey}/image -> preserve asset key, write vN original, regenerate variants/LQIP
+│   ├── Media URLs: object keys mapped through required Cloudflare custom media domain
+│   ├── Replace image: authorize -> direct PUT -> complete -> link new READY asset -> lifecycle-delete old asset
 │   ├── KV: asset-search and asset-detail depend on media tables
 │   ├── Mutation safety: upload/update/bulk/archive idempotency + locks
-│   └── Rule: original assets are stored separately from generated optimized variants and both are published to configured object storage; no runtime image binaries are allowed under src/
+│   └── Rule: Spring never receives media bytes and no derivative objects are stored
 ├── Catalog Module
 │   ├── APIs: /products, /products/{id}, /admin/products
 │   ├── Services: ProductService, VariantService, ProductMediaService
 │   ├── Tables: products, product_variants, product_media, product_attributes
-│   ├── Image rule: persist Cloudinary public_id only
+│   ├── Image rule: persist canonical media asset keys only
 │   └── Events: ProductCreated, ProductUpdated, ProductDeactivated
 ├── Search Module
 │   ├── APIs: /search, /search/autocomplete, /search/facets
@@ -195,10 +193,10 @@ SHRESTA-BE
     ├── Local services: colima start -> docker-compose -f docker-compose.dev.yml up -d -> shresta-postgres + shresta-redis
     ├── Migration runtime: flyway-core + flyway-database-postgresql for PostgreSQL 16.x startup migration support
     ├── Migration guard: MigrationSqlLintTest -> V1 seed aliases + non-prod UAT seed profile isolation
-    ├── Media boundary guard: verifyNoRuntimeStaticMedia -> image binaries only in seed/shresta-media, runtime images only from S3-compatible URLs
+    ├── Media boundary guard: verifyNoRuntimeStaticMedia -> no runtime image binaries under src; runtime media uses canonical public URLs
     ├── KV read-through: RedisKvReadThroughCache -> table-enabled dependencies -> DB fallback
     ├── Mutation safety: RedisIdempotentMutationCoordinator -> Idempotency-Key -> lock -> DB transaction -> after-commit KV publish
-    ├── Dev runbook: README -> Colima + docker-compose + ./scripts/be-gradle bootRun --no-daemon
+    ├── Dev runbook: README -> ./up dev -> Compose dependencies + BE/FE readiness; no Cloudflare
     ├── Prod jar runbook: README -> ./scripts/be-gradle clean bootJar --no-daemon -> ./scripts/be-java -jar build/libs/shresta-be-0.0.1-SNAPSHOT.jar
     ├── Prod container runbook: README -> Dockerfile -> docker build -> docker run with env vars and /actuator/health
     └── Testcontainers: Gradle Test -> DOCKER_HOST from Colima socket + Docker API 1.41 when present -> PostgreSQL 16 integration tests

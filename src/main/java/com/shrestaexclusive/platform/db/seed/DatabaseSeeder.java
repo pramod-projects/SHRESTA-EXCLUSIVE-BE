@@ -1,30 +1,34 @@
 package com.shrestaexclusive.platform.db.seed;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.function.Predicate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Seeds the database from JSON files in classpath:db/seed/.
  *
- * Runs only in local / dev / uat profiles. Safe to run on every boot:
- * every statement uses ON CONFLICT DO UPDATE so re-seeding is idempotent.
+ * Every environment receives the website shell (section definitions and home
+ * items). Media records (brand logo reference assets and product assets) and
+ * the complete catalog/demo dataset are loaded only for local and dev
+ * profiles — UAT and PROD receive no seeded media rows.
  *
  * Seed order (respects FK dependencies):
  *   category → media → storefront → store → products → auth
@@ -37,7 +41,6 @@ import org.springframework.transaction.annotation.Transactional;
  * classpath:db/seed/shresta-media/ and are stored for future MinIO upload.
  */
 @Component
-@Profile({"local", "dev", "uat"})
 @Order(Integer.MAX_VALUE)           // runs after all Flyway migrations
 public class DatabaseSeeder implements ApplicationRunner {
 
@@ -46,10 +49,15 @@ public class DatabaseSeeder implements ApplicationRunner {
 
     private final NamedParameterJdbcTemplate jdbc;
     private final ObjectMapper objectMapper;
+    private final Environment environment;
 
-    public DatabaseSeeder(NamedParameterJdbcTemplate jdbc, ObjectMapper objectMapper) {
+    public DatabaseSeeder(
+            NamedParameterJdbcTemplate jdbc,
+            ObjectMapper objectMapper,
+            Environment environment) {
         this.jdbc = jdbc;
         this.objectMapper = objectMapper;
+        this.environment = environment;
     }
 
     // =========================================================================
@@ -59,7 +67,18 @@ public class DatabaseSeeder implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
-        log.info("[seed] Starting database seeding for non-prod environment");
+        boolean localOrDev = environment.matchesProfiles("local", "dev");
+        log.info("[seed] Bootstrapping website sections and home items");
+        seedStorefrontHomeSections(localOrDev);
+        seedWebsiteHomeItems(localOrDev);
+
+        if (!localOrDev) {
+            log.info("[seed] Media and catalog/demo seeding is disabled outside local and dev");
+            return;
+        }
+
+        log.info("[seed] Starting local/dev catalog and demo-data seeding");
+        ensureCustomerMessagingTables();
         seedCategoryFamilies();
         seedCategoryProductTypes();
         seedCategoryAttributes();
@@ -68,15 +87,106 @@ public class DatabaseSeeder implements ApplicationRunner {
         seedCategoryStyling();
         seedMediaReferenceAssets();
         seedMediaProductAssets();
-        seedMediaVariants();
-        seedStorefrontHomeSections();
         seedStorefrontHomeItems();
         seedStorefrontLocatorSections();
         seedStoreLocations();
         seedProducts();
         seedDevAuthAccounts();
-        log.info("[seed] Database seeding complete");
+        log.info("[seed] Local/dev catalog and demo-data seeding complete");
     }
+
+        private void ensureCustomerMessagingTables() {
+        jdbc.getJdbcOperations().execute("""
+            CREATE TABLE IF NOT EXISTS customer_sms_messages (
+                id                 UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+                customer_id        UUID         NOT NULL REFERENCES customer_accounts(id) ON DELETE CASCADE,
+                mobile_number      VARCHAR(16)  NOT NULL,
+                purpose            VARCHAR(40)  NOT NULL,
+                message_body       TEXT         NOT NULL,
+                status             VARCHAR(24)  NOT NULL DEFAULT 'PENDING',
+                provider_used      VARCHAR(24),
+                provider_priority  VARCHAR(80)  NOT NULL DEFAULT 'SPRINGEDGE,MSG91',
+                sent_at            TIMESTAMPTZ,
+                failure_reason     VARCHAR(255),
+                created_at         TIMESTAMPTZ  NOT NULL DEFAULT now(),
+                updated_at         TIMESTAMPTZ  NOT NULL DEFAULT now(),
+                CONSTRAINT chk_customer_sms_status CHECK (status IN ('PENDING','SENT','FAILED','SKIPPED')),
+                CONSTRAINT chk_customer_sms_provider CHECK (provider_used IS NULL OR provider_used IN ('SPRINGEDGE','MSG91'))
+            )
+            """);
+
+        jdbc.getJdbcOperations().execute("""
+            CREATE TABLE IF NOT EXISTS customer_sms_attempts (
+                id                  UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+                sms_message_id      UUID         NOT NULL REFERENCES customer_sms_messages(id) ON DELETE CASCADE,
+                customer_id         UUID         NOT NULL REFERENCES customer_accounts(id) ON DELETE CASCADE,
+                provider            VARCHAR(24)  NOT NULL,
+                status              VARCHAR(24)  NOT NULL,
+                provider_message_id VARCHAR(120),
+                http_status         INTEGER,
+                request_payload     TEXT,
+                response_payload    TEXT,
+                error_message       VARCHAR(500),
+                attempted_at        TIMESTAMPTZ  NOT NULL DEFAULT now(),
+                CONSTRAINT chk_customer_sms_attempt_provider CHECK (provider IN ('SPRINGEDGE','MSG91')),
+                CONSTRAINT chk_customer_sms_attempt_status CHECK (status IN ('SUCCESS','FAILED'))
+            )
+            """);
+
+        jdbc.getJdbcOperations().execute("""
+            CREATE INDEX IF NOT EXISTS idx_customer_sms_messages_customer
+            ON customer_sms_messages (customer_id, created_at DESC)
+            """);
+        jdbc.getJdbcOperations().execute("""
+            CREATE INDEX IF NOT EXISTS idx_customer_sms_messages_status
+            ON customer_sms_messages (status, created_at DESC)
+            """);
+        jdbc.getJdbcOperations().execute("""
+            CREATE INDEX IF NOT EXISTS idx_customer_sms_attempts_message
+            ON customer_sms_attempts (sms_message_id, attempted_at)
+            """);
+        jdbc.getJdbcOperations().execute("""
+            CREATE INDEX IF NOT EXISTS idx_customer_sms_attempts_customer
+            ON customer_sms_attempts (customer_id, attempted_at DESC)
+            """);
+
+        jdbc.getJdbcOperations().execute("""
+            CREATE TABLE IF NOT EXISTS customer_sms_webhook_events (
+                id                     UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
+                provider               VARCHAR(24)  NOT NULL,
+                provider_event_id      VARCHAR(120),
+                provider_message_id    VARCHAR(160),
+                event_type             VARCHAR(80),
+                delivery_status        VARCHAR(40),
+                mobile_number          VARCHAR(16),
+                linked_sms_message_id  UUID         REFERENCES customer_sms_messages(id) ON DELETE SET NULL,
+                payload_json           JSONB        NOT NULL,
+                processing_status      VARCHAR(24)  NOT NULL DEFAULT 'RECEIVED',
+                failure_reason         VARCHAR(255),
+                processed_at           TIMESTAMPTZ,
+                received_at            TIMESTAMPTZ  NOT NULL DEFAULT now(),
+                created_at             TIMESTAMPTZ  NOT NULL DEFAULT now(),
+                updated_at             TIMESTAMPTZ  NOT NULL DEFAULT now(),
+                CONSTRAINT chk_customer_sms_webhook_provider
+                    CHECK (provider IN ('SPRINGEDGE','MSG91')),
+                CONSTRAINT chk_customer_sms_webhook_processing_status
+                    CHECK (processing_status IN ('RECEIVED','LINKED','IGNORED','FAILED'))
+            )
+            """);
+
+        jdbc.getJdbcOperations().execute("""
+            CREATE INDEX IF NOT EXISTS idx_customer_sms_webhook_provider_message
+            ON customer_sms_webhook_events (provider, provider_message_id, received_at DESC)
+            """);
+        jdbc.getJdbcOperations().execute("""
+            CREATE INDEX IF NOT EXISTS idx_customer_sms_webhook_received
+            ON customer_sms_webhook_events (received_at DESC)
+            """);
+        jdbc.getJdbcOperations().execute("""
+            CREATE INDEX IF NOT EXISTS idx_customer_sms_webhook_linked_message
+            ON customer_sms_webhook_events (linked_sms_message_id, received_at DESC)
+            """);
+        }
 
     // =========================================================================
     // Category
@@ -171,7 +281,11 @@ public class DatabaseSeeder implements ApplicationRunner {
                 (family_id, hsn_code, gst_rate_basis_points, effective_from, effective_to, is_active)
             SELECT f.id, :hsn_code, :gst_rate_basis_points, :effective_from::date, :effective_to::date, :is_active
               FROM category_family_config f WHERE f.family_key = :family_key
-            ON CONFLICT DO NOTHING
+                        ON CONFLICT (family_id, hsn_code, effective_from) DO UPDATE SET
+                                gst_rate_basis_points = EXCLUDED.gst_rate_basis_points,
+                                effective_to         = EXCLUDED.effective_to,
+                                is_active            = EXCLUDED.is_active,
+                                updated_at           = now()
             """;
         int n = upsertAll("category/tax.json", sql, row -> params(row));
         log.info("[seed] category_tax_config: {} upserted", n);
@@ -249,39 +363,13 @@ public class DatabaseSeeder implements ApplicationRunner {
             .addValue("tags", jsonb(row, "tags")));
     }
 
-    private void seedMediaVariants() throws Exception {
-        String sql = """
-            INSERT INTO media_asset_variants
-                (asset_id, variant_key, format, width_px, height_px,
-                 byte_size, storage_key, url_path, content_type, is_active)
-            SELECT ma.id, :variant_key, :format, :width_px, :height_px,
-                   COALESCE(:byte_size, 0), :storage_key, :url_path, :content_type,
-                   COALESCE(:is_active, true)
-              FROM media_assets ma WHERE ma.asset_key = :asset_key
-            ON CONFLICT (asset_id, variant_key, format) DO UPDATE SET
-                width_px   = EXCLUDED.width_px,
-                height_px  = EXCLUDED.height_px,
-                storage_key = EXCLUDED.storage_key,
-                url_path   = EXCLUDED.url_path,
-                updated_at = now()
-            """;
-        int n = upsertAll("media/variants.json", sql, row -> params(row));
-        log.info("[seed] media_asset_variants: {} upserted", n);
-    }
-
     // =========================================================================
     // Storefront
     // =========================================================================
 
-    private void seedStorefrontHomeSections() throws Exception {
-        String sql = """
-            INSERT INTO storefront_home_sections
-                (section_key, section_type, eyebrow, title, description,
-                 sort_order, metadata, is_active)
-            VALUES
-                (:section_key, :section_type, :eyebrow, :title, :description,
-                 :sort_order, :metadata::jsonb, :is_active)
-            ON CONFLICT (section_key) DO UPDATE SET
+    private void seedStorefrontHomeSections(boolean updateExisting) throws Exception {
+        String conflictClause = updateExisting ? """
+            DO UPDATE SET
                 section_type = EXCLUDED.section_type,
                 eyebrow      = EXCLUDED.eyebrow,
                 title        = EXCLUDED.title,
@@ -290,13 +378,54 @@ public class DatabaseSeeder implements ApplicationRunner {
                 metadata     = EXCLUDED.metadata,
                 is_active    = EXCLUDED.is_active,
                 updated_at   = now()
-            """;
+            """ : "DO NOTHING";
+        String sql = """
+            INSERT INTO storefront_home_sections
+                (section_key, section_type, eyebrow, title, description,
+                 sort_order, metadata, is_active)
+            VALUES
+                (:section_key, :section_type, :eyebrow, :title, :description,
+                 :sort_order, :metadata::jsonb, :is_active)
+            ON CONFLICT (section_key) %s
+            """.formatted(conflictClause);
         int n = upsertAll("storefront/home-sections.json", sql, row -> params(row)
             .addValue("metadata", jsonb(row, "metadata")));
         log.info("[seed] storefront_home_sections: {} upserted", n);
     }
 
     private void seedStorefrontHomeItems() throws Exception {
+        seedStorefrontHomeItems(row -> true, false, true, "full local/dev dataset");
+        }
+
+        private void seedWebsiteHomeItems(boolean updateExisting) throws Exception {
+        seedStorefrontHomeItems(
+            row -> !"bestsellers".equals(row.get("section_key")),
+            true,
+            updateExisting,
+            "website bootstrap");
+        }
+
+        private void seedStorefrontHomeItems(
+            Predicate<Map<String, Object>> filter,
+            boolean clearDemoVideo,
+            boolean updateExisting,
+            String seedMode) throws Exception {
+        String conflictClause = updateExisting ? """
+            DO UPDATE SET
+                family_key     = EXCLUDED.family_key,
+                title          = EXCLUDED.title,
+                subtitle       = EXCLUDED.subtitle,
+                description    = EXCLUDED.description,
+                cta_label      = EXCLUDED.cta_label,
+                cta_href       = EXCLUDED.cta_href,
+                sort_order     = EXCLUDED.sort_order,
+                is_featured    = EXCLUDED.is_featured,
+                media_asset_id = COALESCE(EXCLUDED.media_asset_id, storefront_home_items.media_asset_id),
+                demo_video_url = EXCLUDED.demo_video_url,
+                metadata       = EXCLUDED.metadata,
+                is_active      = EXCLUDED.is_active,
+                updated_at     = now()
+            """ : "DO NOTHING";
         String sql = """
             INSERT INTO storefront_home_items
                 (section_id, item_key, family_key, title, subtitle, description,
@@ -307,30 +436,19 @@ public class DatabaseSeeder implements ApplicationRunner {
                    ma.id, :demo_video_url, :metadata::jsonb, :is_active
               FROM storefront_home_sections hs
               LEFT JOIN media_assets ma ON ma.asset_key = :media_asset_key
+                                       AND ma.status = 'READY'
+                                       AND ma.is_active = TRUE
              WHERE hs.section_key = :section_key
-            ON CONFLICT (item_key) DO UPDATE SET
-                family_key     = EXCLUDED.family_key,
-                title          = EXCLUDED.title,
-                subtitle       = EXCLUDED.subtitle,
-                description    = EXCLUDED.description,
-                cta_label      = EXCLUDED.cta_label,
-                cta_href       = EXCLUDED.cta_href,
-                sort_order     = EXCLUDED.sort_order,
-                is_featured    = EXCLUDED.is_featured,
-                media_asset_id = EXCLUDED.media_asset_id,
-                demo_video_url = EXCLUDED.demo_video_url,
-                metadata       = EXCLUDED.metadata,
-                is_active      = EXCLUDED.is_active,
-                updated_at     = now()
-            """;
-        int n = upsertAll("storefront/home-items.json", sql, row -> params(row)
+            ON CONFLICT (item_key) %s
+            """.formatted(conflictClause);
+        int n = upsertAll("storefront/home-items.json", filter, sql, row -> params(row)
             .addValue("metadata",       jsonb(row, "metadata"))
             .addValue("subtitle",       row.getOrDefault("subtitle",       null))
             .addValue("cta_label",      row.getOrDefault("cta_label",      null))
             .addValue("cta_href",       row.getOrDefault("cta_href",       null))
-            .addValue("demo_video_url", row.getOrDefault("demo_video_url", null))
+            .addValue("demo_video_url", clearDemoVideo ? null : row.getOrDefault("demo_video_url", null))
             .addValue("media_asset_key",row.getOrDefault("media_asset_key",null)));
-        log.info("[seed] storefront_home_items (non-product): {} upserted", n);
+        log.info("[seed] storefront_home_items ({}): {} upserted", seedMode, n);
     }
 
     // =========================================================================
@@ -439,7 +557,7 @@ public class DatabaseSeeder implements ApplicationRunner {
     }
 
     // =========================================================================
-    // Auth — dev/uat login accounts
+    // Auth — local/dev login accounts
     // =========================================================================
 
     private void seedDevAuthAccounts() throws Exception {
@@ -489,7 +607,7 @@ public class DatabaseSeeder implements ApplicationRunner {
             row -> params(row));
         log.info("[seed] customer_auth_identities (dev): {} upserted", m);
 
-        // 3. uat_seed_accounts — static OTP used by CustomerAuthService in local/dev/uat
+        // 3. uat_seed_accounts — local/dev fixture; UAT rows must be provisioned explicitly
         int p = upsertAll("auth/dev-accounts.json",
             """
             INSERT INTO uat_seed_accounts
@@ -525,9 +643,20 @@ public class DatabaseSeeder implements ApplicationRunner {
      * @return total number of rows processed
      */
     private int upsertAll(String seedPath, String sql, RowMapper rowMapper) throws Exception {
+        return upsertAll(seedPath, row -> true, sql, rowMapper);
+    }
+
+    private int upsertAll(
+            String seedPath,
+            Predicate<Map<String, Object>> filter,
+            String sql,
+            RowMapper rowMapper) throws Exception {
         List<Map<String, Object>> rows = readJson("db/seed/" + seedPath);
         int count = 0;
         for (Map<String, Object> row : rows) {
+            if (!filter.test(row)) {
+                continue;
+            }
             MapSqlParameterSource params = rowMapper.map(row);
             jdbc.update(sql, params);
             count++;
@@ -556,10 +685,10 @@ public class DatabaseSeeder implements ApplicationRunner {
                 // JSONB field — will be overridden by explicit .addValue in caller if needed
                 try {
                     p.addValue(entry.getKey(), objectMapper.writeValueAsString(val));
-                } catch (Exception e) {
+                } catch (JsonProcessingException e) {
                     p.addValue(entry.getKey(), val.toString());
                 }
-            } else if (val instanceof Number n && !(val instanceof Integer) && !(val instanceof Long)) {
+            } else if (val instanceof Number && !(val instanceof Integer) && !(val instanceof Long)) {
                 p.addValue(entry.getKey(), new BigDecimal(val.toString()));
             } else {
                 p.addValue(entry.getKey(), val);
@@ -578,7 +707,7 @@ public class DatabaseSeeder implements ApplicationRunner {
         if (val instanceof String s) return s;
         try {
             return objectMapper.writeValueAsString(val);
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             return "{}";
         }
     }

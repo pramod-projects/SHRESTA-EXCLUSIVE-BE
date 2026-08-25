@@ -9,11 +9,11 @@ public class StorefrontMediaProperties {
 
     /**
      * Public object-storage origin used to build customer/admin image URLs.
-     * Production should normally point this at CloudFront in front of S3.
+        * UAT and production point this at the Cloudflare custom media domain.
      */
     private String assetBaseUrl = "";
 
-    private String deliveryMode = "s3-compatible";
+        private String deliveryMode = "cloudflare-r2";
 
     public String getAssetBaseUrl() {
         return assetBaseUrl;

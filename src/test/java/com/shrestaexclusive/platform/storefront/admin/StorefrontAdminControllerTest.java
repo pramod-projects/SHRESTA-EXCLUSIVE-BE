@@ -1,9 +1,19 @@
 package com.shrestaexclusive.platform.storefront.admin;
 
+import java.util.function.Supplier;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -15,15 +25,6 @@ import com.shrestaexclusive.platform.storefront.home.StorefrontHomeFixtures;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeItemUpdateCommand;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeSectionUpdateCommand;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeService;
-import java.util.function.Supplier;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(StorefrontAdminController.class)
 class StorefrontAdminControllerTest {
@@ -41,7 +42,7 @@ class StorefrontAdminControllerTest {
     private IdempotentMutationCoordinator mutations;
 
     @BeforeEach
-    void executeMutations() {
+    public void executeMutations() {
         when(mutations.run(any(), any(), any(), any(), any(), any()))
                 .thenAnswer(invocation -> ((Supplier<?>) invocation.getArgument(5)).get());
     }
@@ -67,13 +68,7 @@ class StorefrontAdminControllerTest {
                                 {
                                   "title": "Silk Sarees",
                                   "metadata": { "itemCount": 32, "qualityBadges": ["Pure Silk"] },
-                                  "media": {
-                                    "assetUrl": "https://d111111abcdef8.cloudfront.net/categories/silk.webp",
-                                    "altText": "Updated silk saree image",
-                                    "widthPx": 1200,
-                                    "heightPx": 1500,
-                                    "deliveryMode": "cloudfront"
-                                  }
+                                  "mediaAssetKey": "media-550e8400e29b41d4a716446655440000"
                                 }
                 """))
                 .andExpect(status().isOk())

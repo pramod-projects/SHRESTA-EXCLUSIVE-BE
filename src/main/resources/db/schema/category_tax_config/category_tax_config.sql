@@ -9,7 +9,8 @@ CREATE TABLE category_tax_config (
     created_at            TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at            TIMESTAMPTZ NOT NULL DEFAULT now(),
     CONSTRAINT chk_category_tax_bps   CHECK (gst_rate_basis_points >= 0 AND gst_rate_basis_points <= 2800),
-    CONSTRAINT chk_category_tax_dates CHECK (effective_to IS NULL OR effective_to > effective_from)
+    CONSTRAINT chk_category_tax_dates CHECK (effective_to IS NULL OR effective_to > effective_from),
+    CONSTRAINT uq_category_tax_family_hsn_effective UNIQUE (family_id, hsn_code, effective_from)
 );
 
 CREATE INDEX idx_category_tax_family_active ON category_tax_config (family_id, is_active, effective_from);

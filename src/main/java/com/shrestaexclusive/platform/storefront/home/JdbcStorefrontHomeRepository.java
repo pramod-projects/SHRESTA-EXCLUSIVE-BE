@@ -1,5 +1,18 @@
 package com.shrestaexclusive.platform.storefront.home;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,32 +20,29 @@ import com.shrestaexclusive.platform.storefront.home.StorefrontHomeRepository.Ga
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeRepository.ItemRow;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeRepository.MediaRow;
 import com.shrestaexclusive.platform.storefront.home.StorefrontHomeRepository.SectionRow;
-import com.shrestaexclusive.platform.storefront.home.StorefrontHomeRepository.VariantRow;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.stereotype.Repository;
+import com.shrestaexclusive.platform.storefront.media.StorefrontMediaUrlBuilder;
 
 @Repository
-class JdbcStorefrontHomeRepository implements StorefrontHomeRepository {
+@SuppressWarnings({"unused", "java:S1144"})
+public class JdbcStorefrontHomeRepository implements StorefrontHomeRepository {
 
     private static final TypeReference<Map<String, Object>> STRING_OBJECT_MAP = new TypeReference<>() {
+    };
+    private static final TypeReference<List<String>> STRING_LIST = new TypeReference<>() {
     };
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
+    private final StorefrontMediaUrlBuilder mediaUrlBuilder;
 
-    JdbcStorefrontHomeRepository(NamedParameterJdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
+    public JdbcStorefrontHomeRepository(
+            NamedParameterJdbcTemplate jdbcTemplate,
+            ObjectMapper objectMapper,
+            StorefrontMediaUrlBuilder mediaUrlBuilder
+    ) {
         this.jdbcTemplate = jdbcTemplate;
         this.objectMapper = objectMapper;
+        this.mediaUrlBuilder = mediaUrlBuilder;
     }
 
     @Override
@@ -56,6 +66,15 @@ class JdbcStorefrontHomeRepository implements StorefrontHomeRepository {
 
     @Override
     public List<ItemRow> findActiveItems(List<String> sectionKeys) {
+        return findItems(sectionKeys, false);
+    }
+
+    @Override
+    public List<ItemRow> findAdminItems(List<String> sectionKeys) {
+        return findItems(sectionKeys, true);
+    }
+
+    private List<ItemRow> findItems(List<String> sectionKeys, boolean includeImageLessProducts) {
         if (sectionKeys.isEmpty()) {
             return List.of();
         }
@@ -64,14 +83,19 @@ class JdbcStorefrontHomeRepository implements StorefrontHomeRepository {
                 SELECT item.id, section.section_key, item.item_key, item.family_key, item.title,
                        item.subtitle, item.description, item.cta_label, item.cta_href,
                        item.sort_order, item.is_featured, item.metadata, item.demo_video_url,
+                       video.storage_key AS demo_video_storage_key,
                        media.asset_key, media.asset_url, media.alt_text, media.width_px,
-                       media.height_px, media.delivery_mode, media.version, media.lqip_data_url
+                       media.height_px, media.delivery_mode, media.version, media.tags
                 FROM storefront_home_items item
                 JOIN storefront_home_sections section ON section.id = item.section_id
-                LEFT JOIN media_assets media ON media.id = item.media_asset_id AND media.is_active = TRUE
+                LEFT JOIN media_assets media ON media.id = item.media_asset_id AND media.is_active = TRUE AND media.status = 'READY'
+                LEFT JOIN media_assets video ON video.id = item.video_media_asset_id AND video.is_active = TRUE AND video.status = 'READY'
                 WHERE item.is_active = TRUE AND section.section_key IN (:sectionKeys)
+                                    AND (:includeImageLessProducts = TRUE OR section.section_key <> 'bestsellers' OR media.id IS NOT NULL)
                 ORDER BY section.sort_order, item.sort_order, item.title
-                """, new MapSqlParameterSource("sectionKeys", sectionKeys), (rs, rowNum) -> new ItemRow(
+                                """, new MapSqlParameterSource()
+                                .addValue("sectionKeys", sectionKeys)
+                                .addValue("includeImageLessProducts", includeImageLessProducts), (rs, rowNum) -> new ItemRow(
                 uuid(rs, "id"),
                 rs.getString("section_key"),
                 rs.getString("item_key"),
@@ -85,19 +109,10 @@ class JdbcStorefrontHomeRepository implements StorefrontHomeRepository {
                 rs.getBoolean("is_featured"),
                 jsonObject(rs, "metadata"),
                 media(rs),
-                rs.getString("demo_video_url")
+                videoUrl(rs.getString("demo_video_storage_key"), rs.getString("demo_video_url"))
         ));
 
-        Map<String, List<VariantRow>> variantsByAsset = findVariantsByAssetKey(items.stream()
-                .map(ItemRow::media)
-                .filter(row -> row != null)
-                .map(MediaRow::assetKey)
-                .distinct()
-                .toList());
-
-        return items.stream()
-                .map(item -> withVariants(item, variantsByAsset))
-                .toList();
+        return items;
     }
 
     @Override
@@ -109,9 +124,9 @@ class JdbcStorefrontHomeRepository implements StorefrontHomeRepository {
         List<GalleryRow> rows = jdbcTemplate.query("""
                 SELECT gallery.item_id, gallery.sort_order,
                        media.asset_key, media.asset_url, media.alt_text, media.width_px,
-                       media.height_px, media.delivery_mode, media.version, media.lqip_data_url
+                      media.height_px, media.delivery_mode, media.version, media.tags
                 FROM storefront_home_item_gallery gallery
-                JOIN media_assets media ON media.id = gallery.media_asset_id AND media.is_active = TRUE
+                JOIN media_assets media ON media.id = gallery.media_asset_id AND media.is_active = TRUE AND media.status = 'READY'
                 WHERE gallery.item_id IN (:itemIds) AND gallery.is_active = TRUE
                 ORDER BY gallery.item_id, gallery.sort_order
                 """, new MapSqlParameterSource("itemIds", itemIds), (rs, rowNum) -> new GalleryRow(
@@ -125,33 +140,15 @@ class JdbcStorefrontHomeRepository implements StorefrontHomeRepository {
                         rs.getInt("height_px"),
                         rs.getString("delivery_mode"),
                         rs.getInt("version"),
-                        rs.getString("lqip_data_url"),
-                        List.of()
+                        jsonStringList(rs, "tags")
                 )
         ));
 
-        List<String> galleryAssetKeys = rows.stream()
-                .map(row -> row.media().assetKey())
-                .distinct()
-                .toList();
-        Map<String, List<VariantRow>> variantsByAsset = findVariantsByAssetKey(galleryAssetKeys);
-
         Map<UUID, List<GalleryRow>> galleryByItemId = new LinkedHashMap<>();
         for (GalleryRow row : rows) {
-            MediaRow mediaWithVariants = new MediaRow(
-                    row.media().assetKey(),
-                    row.media().assetUrl(),
-                    row.media().altText(),
-                    row.media().widthPx(),
-                    row.media().heightPx(),
-                    row.media().deliveryMode(),
-                    row.media().version(),
-                    row.media().lqipDataUrl(),
-                    variantsByAsset.getOrDefault(row.media().assetKey(), List.of())
-            );
             galleryByItemId
                     .computeIfAbsent(row.itemId(), id -> new ArrayList<>())
-                    .add(new GalleryRow(row.itemId(), row.sortOrder(), mediaWithVariants));
+                        .add(row);
         }
         return galleryByItemId;
     }
@@ -194,12 +191,7 @@ class JdbcStorefrontHomeRepository implements StorefrontHomeRepository {
                 .addValue("ctaHref", command.ctaHref())
                 .addValue("sortOrder", command.sortOrder())
                 .addValue("featured", command.featured())
-                .addValue("metadataJson", json(command.metadata()))
-                .addValue("mediaUrl", command.mediaUrl(), Types.VARCHAR)
-                .addValue("mediaAltText", command.mediaAltText(), Types.VARCHAR)
-                .addValue("mediaWidthPx", command.mediaWidthPx(), Types.INTEGER)
-                .addValue("mediaHeightPx", command.mediaHeightPx(), Types.INTEGER)
-                .addValue("mediaDeliveryMode", command.mediaDeliveryMode(), Types.VARCHAR);
+                .addValue("metadataJson", json(command.metadata()));
 
         int updatedItems = jdbcTemplate.update("""
                 UPDATE storefront_home_items
@@ -211,7 +203,7 @@ class JdbcStorefrontHomeRepository implements StorefrontHomeRepository {
                     cta_href = COALESCE(:ctaHref, cta_href),
                     sort_order = COALESCE(:sortOrder, sort_order),
                     is_featured = COALESCE(:featured, is_featured),
-                    metadata = COALESCE(CAST(:metadataJson AS jsonb), metadata),
+                    metadata = metadata || COALESCE(CAST(:metadataJson AS jsonb), '{}'::jsonb),
                     updated_at = now()
                 WHERE item_key = :itemKey AND is_active = TRUE
                 """, parameters);
@@ -220,30 +212,28 @@ class JdbcStorefrontHomeRepository implements StorefrontHomeRepository {
             throw new StorefrontHomeItemNotFoundException(command.itemKey());
         }
 
-        jdbcTemplate.update("""
-                UPDATE media_assets media
-                SET asset_url = COALESCE(:mediaUrl, media.asset_url),
-                    alt_text = COALESCE(:mediaAltText, media.alt_text),
-                    width_px = COALESCE(:mediaWidthPx, media.width_px),
-                    height_px = COALESCE(:mediaHeightPx, media.height_px),
-                    delivery_mode = COALESCE(:mediaDeliveryMode, media.delivery_mode),
-                    version = version + CASE WHEN :mediaUrl IS NULL THEN 0 ELSE 1 END,
-                    updated_at = now()
-                FROM storefront_home_items item
-                WHERE item.media_asset_id = media.id
-                  AND item.item_key = :itemKey
-                  AND media.is_active = TRUE
-                """, parameters);
+                if (command.mediaAssetKey() != null) {
+                        int linked = jdbcTemplate.update("""
+                                        UPDATE storefront_home_items item
+                                        SET media_asset_id = media.id, updated_at = now()
+                                        FROM media_assets media
+                                        WHERE item.item_key = :itemKey
+                                            AND item.is_active = TRUE
+                                            AND media.asset_key = :mediaAssetKey
+                                            AND media.product_sku = :itemKey
+                                            AND media.media_type = 'PRODUCT_IMAGE'
+                                            AND media.status = 'READY'
+                                            AND media.is_active = TRUE
+                                        """, new MapSqlParameterSource()
+                                        .addValue("itemKey", command.itemKey())
+                                        .addValue("mediaAssetKey", command.mediaAssetKey()));
+                        if (linked == 0) {
+                            throw new StorefrontMediaAssignmentException();
+                        }
+                }
 
-        if (command.demoVideoUrl() != null) {
-            String videoUrl = command.demoVideoUrl().isBlank() ? null : command.demoVideoUrl();
-            jdbcTemplate.update("""
-                    UPDATE storefront_home_items
-                    SET demo_video_url = :demoVideoUrl, updated_at = now()
-                    WHERE item_key = :itemKey AND is_active = TRUE
-                    """, new MapSqlParameterSource()
-                    .addValue("itemKey", command.itemKey())
-                    .addValue("demoVideoUrl", videoUrl));
+        if (command.demoVideoAssetKey() != null) {
+            updateVideoAsset(command.itemKey(), command.demoVideoAssetKey());
         }
 
         if (command.galleryAssetKeys() != null) {
@@ -252,13 +242,102 @@ class JdbcStorefrontHomeRepository implements StorefrontHomeRepository {
     }
 
     @Override
+    public String findItemImageAssetKeyForUpdate(String itemKey) {
+        return currentItemAssetKey(itemKey, "media_asset_id");
+    }
+
+    @Override
+    public String findItemVideoAssetKeyForUpdate(String itemKey) {
+        return currentItemAssetKey(itemKey, "video_media_asset_id");
+    }
+
+    @Override
+    public String findGalleryAssetKeyForUpdate(String itemKey, int slot) {
+        List<String> keys = jdbcTemplate.queryForList("""
+                SELECT media.asset_key
+                FROM storefront_home_item_gallery gallery
+                JOIN storefront_home_items item ON item.id = gallery.item_id
+                JOIN media_assets media ON media.id = gallery.media_asset_id
+                WHERE item.item_key = :itemKey
+                  AND gallery.sort_order = :slot
+                  AND gallery.is_active = TRUE
+                FOR UPDATE OF gallery
+                """, new MapSqlParameterSource()
+                .addValue("itemKey", itemKey)
+                .addValue("slot", slot), String.class);
+        return keys.isEmpty() ? null : keys.getFirst();
+    }
+
+    private String currentItemAssetKey(String itemKey, String mediaColumn) {
+        List<String> keys = jdbcTemplate.queryForList("""
+                SELECT media.asset_key
+                FROM storefront_home_items item
+                LEFT JOIN media_assets media ON media.id = item.%s
+                WHERE item.item_key = :itemKey AND item.is_active = TRUE
+                FOR UPDATE OF item
+                """.formatted(mediaColumn), new MapSqlParameterSource("itemKey", itemKey), String.class);
+        return keys.isEmpty() ? null : keys.getFirst();
+    }
+
+    @Override
+    public void updateDisplayMedia(String itemKey, String imageAssetKey, String videoAssetKey) {
+                if ((imageAssetKey == null) == (videoAssetKey == null)) {
+                        throw new IllegalArgumentException("Exactly one display image or video asset is required");
+                }
+        if (imageAssetKey != null) {
+            int linked = jdbcTemplate.update("""
+                    UPDATE storefront_home_items item
+                    SET media_asset_id = media.id, updated_at = now()
+                                        FROM media_assets media, storefront_home_sections section
+                    WHERE item.item_key = :itemKey
+                      AND item.is_active = TRUE
+                                            AND section.id = item.section_id
+                                            AND section.section_key <> 'bestsellers'
+                      AND media.asset_key = :assetKey
+                      AND (media.media_type IN ('PRODUCT_IMAGE', 'DISPLAY_IMAGE') OR media.content_type LIKE 'image/%')
+                      AND media.status = 'READY'
+                      AND media.is_active = TRUE
+                    """, new MapSqlParameterSource()
+                    .addValue("itemKey", itemKey)
+                    .addValue("assetKey", imageAssetKey));
+            if (linked == 0) {
+                throw new StorefrontMediaAssignmentException("A READY image asset is required");
+            }
+        }
+        if (videoAssetKey != null) {
+            int linked = jdbcTemplate.update("""
+                    UPDATE storefront_home_items item
+                    SET video_media_asset_id = media.id, demo_video_url = NULL, updated_at = now()
+                                        FROM media_assets media, storefront_home_sections section
+                    WHERE item.item_key = :itemKey
+                      AND item.is_active = TRUE
+                                            AND section.id = item.section_id
+                                            AND section.section_key = 'brand'
+                      AND media.asset_key = :assetKey
+                      AND media.media_type = 'DISPLAY_VIDEO'
+                      AND media.status = 'READY'
+                      AND media.is_active = TRUE
+                    """, new MapSqlParameterSource()
+                    .addValue("itemKey", itemKey)
+                    .addValue("assetKey", videoAssetKey));
+            if (linked == 0) {
+                throw new StorefrontMediaAssignmentException("A READY display video is required");
+            }
+        }
+    }
+
+    @Override
     public void updateGallerySlot(String itemKey, int slot, String assetKey) {
         if (assetKey != null && !assetKey.isBlank()) {
-            jdbcTemplate.update("""
+            int linked = jdbcTemplate.update("""
                     INSERT INTO storefront_home_item_gallery (item_id, media_asset_id, sort_order)
                     SELECT item.id, media.id, :sortOrder
                     FROM storefront_home_items item
-                    JOIN media_assets media ON media.asset_key = :assetKey AND media.is_active = TRUE
+                    JOIN media_assets media ON media.asset_key = :assetKey
+                        AND media.product_sku = item.item_key
+                        AND media.media_type = 'PRODUCT_IMAGE'
+                        AND media.status = 'READY'
+                        AND media.is_active = TRUE
                     WHERE item.item_key = :itemKey AND item.is_active = TRUE
                     ON CONFLICT (item_id, sort_order) DO UPDATE
                         SET media_asset_id = EXCLUDED.media_asset_id,
@@ -268,6 +347,9 @@ class JdbcStorefrontHomeRepository implements StorefrontHomeRepository {
                     .addValue("itemKey", itemKey)
                     .addValue("assetKey", assetKey.trim())
                     .addValue("sortOrder", slot));
+            if (linked == 0) {
+                throw new StorefrontMediaAssignmentException();
+            }
         } else {
             jdbcTemplate.update("""
                     UPDATE storefront_home_item_gallery g
@@ -296,25 +378,85 @@ class JdbcStorefrontHomeRepository implements StorefrontHomeRepository {
                 .addValue("sortOrder", command.sortOrder())
                 .addValue("featured", command.featured())
                 .addValue("metadataJson", json(command.metadata() != null ? command.metadata() : Map.of()))
-                .addValue("mediaAssetKey", command.mediaAssetKey())
-                .addValue("demoVideoUrl", command.demoVideoUrl());
+                .addValue("mediaAssetKey", command.mediaAssetKey());
 
-        jdbcTemplate.update("""
+        int inserted = jdbcTemplate.update("""
                 INSERT INTO storefront_home_items
                     (section_id, item_key, family_key, title, subtitle, description,
-                     cta_label, cta_href, sort_order, is_featured, metadata, media_asset_id, demo_video_url)
+                     cta_label, cta_href, sort_order, is_featured, metadata, media_asset_id)
                 SELECT s.id,
                        :itemKey, :familyKey, :title, :subtitle, :description,
                        :ctaLabel, :ctaHref, :sortOrder, :featured,
                        CAST(:metadataJson AS jsonb),
-                       m.id, :demoVideoUrl
+                       m.id
                 FROM storefront_home_sections s
-                LEFT JOIN media_assets m ON m.asset_key = :mediaAssetKey AND m.is_active = TRUE
+                JOIN media_assets m ON m.asset_key = :mediaAssetKey
+                    AND m.product_sku = :itemKey
+                    AND m.media_type = 'PRODUCT_IMAGE'
+                    AND m.status = 'READY'
+                    AND m.is_active = TRUE
                 WHERE s.section_key = :sectionKey AND s.is_active = TRUE
                 """, parameters);
+        if (inserted == 0) {
+            throw new StorefrontMediaAssignmentException("A READY primary product image owned by this product is required");
+        }
 
         if (command.galleryAssetKeys() != null && !command.galleryAssetKeys().isEmpty()) {
             updateGallerySlots(command.itemKey(), command.galleryAssetKeys());
+        }
+        if (command.demoVideoAssetKey() != null) {
+            updateVideoAsset(command.itemKey(), command.demoVideoAssetKey());
+        }
+    }
+
+    @Override
+    public void assertUniqueProductIdentity(String itemKey, String sku, String slug) {
+        jdbcTemplate.getJdbcTemplate().query(
+            "SELECT pg_advisory_xact_lock(hashtext('storefront-product-identity'))",
+            resultSet -> null
+        );
+        Integer conflicts = jdbcTemplate.queryForObject("""
+                SELECT COUNT(*)
+                FROM storefront_home_items item
+                JOIN storefront_home_sections section ON section.id = item.section_id
+                WHERE section.section_key = 'bestsellers'
+                  AND item.is_active = TRUE
+                  AND item.item_key <> :itemKey
+                  AND (item.metadata ->> 'sku' = :sku OR item.metadata ->> 'slug' = :slug)
+                """, new MapSqlParameterSource()
+                .addValue("itemKey", itemKey)
+                .addValue("sku", sku)
+                .addValue("slug", slug), Integer.class);
+        if (conflicts != null && conflicts > 0) {
+            throw new StorefrontProductIdentityConflictException();
+        }
+    }
+
+    private void updateVideoAsset(String itemKey, String assetKey) {
+        if (assetKey.isBlank()) {
+            jdbcTemplate.update("""
+                    UPDATE storefront_home_items
+                    SET video_media_asset_id = NULL, updated_at = now()
+                    WHERE item_key = :itemKey AND is_active = TRUE
+                    """, new MapSqlParameterSource("itemKey", itemKey));
+            return;
+        }
+        int linked = jdbcTemplate.update("""
+                UPDATE storefront_home_items item
+                SET video_media_asset_id = media.id, updated_at = now()
+                FROM media_assets media
+                WHERE item.item_key = :itemKey
+                  AND item.is_active = TRUE
+                  AND media.asset_key = :assetKey
+                  AND media.product_sku = item.item_key
+                  AND media.media_type = 'PRODUCT_VIDEO'
+                  AND media.status = 'READY'
+                  AND media.is_active = TRUE
+                """, new MapSqlParameterSource()
+                .addValue("itemKey", itemKey)
+                .addValue("assetKey", assetKey.trim()));
+        if (linked == 0) {
+            throw new StorefrontMediaAssignmentException("A READY product video owned by this product is required");
         }
     }
 
@@ -323,11 +465,15 @@ class JdbcStorefrontHomeRepository implements StorefrontHomeRepository {
             int sortOrder = i + 1;
             String assetKey = galleryAssetKeys.get(i);
             if (assetKey != null && !assetKey.isBlank()) {
-                jdbcTemplate.update("""
+                int linked = jdbcTemplate.update("""
                         INSERT INTO storefront_home_item_gallery (item_id, media_asset_id, sort_order)
                         SELECT item.id, media.id, :sortOrder
                         FROM storefront_home_items item
-                        JOIN media_assets media ON media.asset_key = :assetKey AND media.is_active = TRUE
+                        JOIN media_assets media ON media.asset_key = :assetKey
+                            AND media.product_sku = item.item_key
+                            AND media.media_type = 'PRODUCT_IMAGE'
+                            AND media.status = 'READY'
+                            AND media.is_active = TRUE
                         WHERE item.item_key = :itemKey AND item.is_active = TRUE
                         ON CONFLICT (item_id, sort_order) DO UPDATE
                             SET media_asset_id = EXCLUDED.media_asset_id,
@@ -337,6 +483,9 @@ class JdbcStorefrontHomeRepository implements StorefrontHomeRepository {
                         .addValue("itemKey", itemKey)
                         .addValue("assetKey", assetKey.trim())
                         .addValue("sortOrder", sortOrder));
+                if (linked == 0) {
+                    throw new StorefrontMediaAssignmentException();
+                }
             } else {
                 jdbcTemplate.update("""
                         UPDATE storefront_home_item_gallery g
@@ -366,73 +515,12 @@ class JdbcStorefrontHomeRepository implements StorefrontHomeRepository {
                 rs.getInt("height_px"),
                 rs.getString("delivery_mode"),
                 rs.getInt("version"),
-                rs.getString("lqip_data_url"),
-                List.of()
+                jsonStringList(rs, "tags")
         );
     }
 
-    private ItemRow withVariants(ItemRow item, Map<String, List<VariantRow>> variantsByAsset) {
-        MediaRow media = item.media();
-        if (media == null) {
-            return item;
-        }
-
-        MediaRow mediaWithVariants = new MediaRow(
-                media.assetKey(),
-                media.assetUrl(),
-                media.altText(),
-                media.widthPx(),
-                media.heightPx(),
-                media.deliveryMode(),
-                media.version(),
-                media.lqipDataUrl(),
-                variantsByAsset.getOrDefault(media.assetKey(), List.of())
-        );
-        return new ItemRow(
-                item.id(),
-                item.sectionKey(),
-                item.itemKey(),
-                item.familyKey(),
-                item.title(),
-                item.subtitle(),
-                item.description(),
-                item.ctaLabel(),
-                item.ctaHref(),
-                item.sortOrder(),
-                item.featured(),
-                item.metadata(),
-                mediaWithVariants,
-                item.demoVideoUrl()
-        );
-    }
-
-    private Map<String, List<VariantRow>> findVariantsByAssetKey(List<String> assetKeys) {
-        if (assetKeys.isEmpty()) {
-            return Map.of();
-        }
-
-        return jdbcTemplate.query("""
-                SELECT asset.asset_key, variant.variant_key, variant.format, variant.width_px,
-                       variant.height_px, variant.byte_size, variant.url_path
-                FROM media_asset_variants variant
-                JOIN media_assets asset ON asset.id = variant.asset_id
-                WHERE asset.asset_key IN (:assetKeys) AND variant.is_active = TRUE
-                ORDER BY asset.asset_key, variant.width_px, variant.format
-                """, new MapSqlParameterSource("assetKeys", assetKeys), (rs, rowNum) -> Map.entry(
-                rs.getString("asset_key"),
-                new VariantRow(
-                        rs.getString("variant_key"),
-                        rs.getString("format"),
-                        rs.getInt("width_px"),
-                        rs.getInt("height_px"),
-                        rs.getLong("byte_size"),
-                        rs.getString("url_path")
-                )
-        )).stream().collect(Collectors.groupingBy(
-                Map.Entry::getKey,
-                LinkedHashMap::new,
-                Collectors.mapping(Map.Entry::getValue, Collectors.toList())
-        ));
+    private String videoUrl(String storageKey, String websiteVideoUrl) {
+        return StringUtils.hasText(storageKey) ? mediaUrlBuilder.assetUrl(storageKey) : websiteVideoUrl;
     }
 
     private UUID uuid(ResultSet rs, String column) throws SQLException {
@@ -449,6 +537,18 @@ class JdbcStorefrontHomeRepository implements StorefrontHomeRepository {
             return objectMapper.readValue(json, STRING_OBJECT_MAP);
         } catch (JsonProcessingException exception) {
             throw new SQLException("Invalid JSON object in column " + column, exception);
+        }
+    }
+
+    private List<String> jsonStringList(ResultSet rs, String column) throws SQLException {
+        String json = rs.getString(column);
+        if (json == null || json.isBlank()) {
+            return List.of();
+        }
+        try {
+            return objectMapper.readValue(json, STRING_LIST);
+        } catch (JsonProcessingException exception) {
+            throw new SQLException("Invalid JSON list in column " + column, exception);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.shrestaexclusive.platform.storefront.home;
 
 import java.util.List;
+import java.util.Map;
 
 public record StorefrontHomeResponse(
         Brand brand,
@@ -30,7 +31,8 @@ public record StorefrontHomeResponse(
             String itemKey,
             String name,
             String tagline,
-            MediaAsset logo
+            MediaAsset logo,
+            String demoVideoUrl
     ) {
     }
 
@@ -47,24 +49,17 @@ public record StorefrontHomeResponse(
             int width,
             int height,
             String deliveryMode,
-            int version,
-            String lqipDataUrl,
-            List<MediaVariant> variants
+                        int version,
+                        List<String> tags
     ) {
+                public MediaAsset {
+                        tags = List.copyOf(tags);
+                }
 
-        public MediaAsset {
-            variants = List.copyOf(variants);
-        }
-    }
-
-    public record MediaVariant(
-            String variantKey,
-            String format,
-            int width,
-            int height,
-            long byteSize,
-            String url
-    ) {
+                public MediaAsset(String assetKey, String url, String altText, int width, int height,
+                                String deliveryMode, int version) {
+                        this(assetKey, url, altText, width, height, deliveryMode, version, List.of());
+                }
     }
 
     public record SectionCopy(
@@ -129,6 +124,8 @@ public record StorefrontHomeResponse(
             int reviewCount,
             int stockQuantity,
             List<String> badges,
+            Map<String, String> badgeIcons,
+            String colorFilter,
             MediaAsset image,
             List<MediaAsset> galleryImages,
             String demoVideoUrl,
@@ -137,6 +134,7 @@ public record StorefrontHomeResponse(
 
         public ProductCard {
             badges = List.copyOf(badges);
+                        badgeIcons = Map.copyOf(badgeIcons);
             galleryImages = List.copyOf(galleryImages);
         }
     }

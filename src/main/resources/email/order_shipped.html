@@ -1,0 +1,5 @@
+<p style="margin:0 0 12px;color:#967628;font-size:11px;line-height:16px;font-weight:700;text-transform:uppercase;letter-spacing:2px;">On its way</p>
+<h1 class="title" style="margin:0 0 18px;color:#0f213d;font-family:Georgia,'Times New Roman',serif;font-size:36px;line-height:42px;font-weight:600;">Your order has shipped</h1>
+<p style="margin:0 0 24px;color:#6e5a46;font-size:16px;line-height:26px;">Hello <span th:text="${customerName}">customer</span>, order <strong th:text="${orderNumber}">order</strong> has left our facility and is moving toward you.</p>
+<table role="presentation" style="margin:0 0 26px;"><tr><td class="button-cell" bgcolor="#0f213d" style="background:#0f213d;"><a class="button button-link" th:href="${trackingUrl}" style="display:inline-block;padding:14px 24px;color:#ffffff;font-size:14px;line-height:20px;font-weight:700;text-decoration:none;">Track your order</a></td></tr></table>
+<p style="margin:0;color:#6e5a46;font-size:13px;line-height:21px;">Tracking updates can take a short while to appear after the parcel is handed to the carrier.</p>

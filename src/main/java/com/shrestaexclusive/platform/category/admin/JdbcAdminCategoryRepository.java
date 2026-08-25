@@ -1,21 +1,24 @@
 package com.shrestaexclusive.platform.category.admin;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Repository
+@SuppressWarnings({"unused", "java:S1144"})
 class JdbcAdminCategoryRepository implements AdminCategoryRepository {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
 
-    JdbcAdminCategoryRepository(NamedParameterJdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
+    public JdbcAdminCategoryRepository(NamedParameterJdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.objectMapper = objectMapper;
     }
@@ -40,6 +43,24 @@ class JdbcAdminCategoryRepository implements AdminCategoryRepository {
                 WHERE family_key = :targetFamilyKey
                 """, familyParams(request).addValue("targetFamilyKey", familyKey));
     }
+        @Override
+        public void updateFamilyMerchandising(String familyKey, List<Map<String, Object>> merchandisingTags, List<Map<String, Object>> colorFilters) {
+            int updated = jdbcTemplate.update("""
+                    UPDATE category_family_config
+                    SET metadata = metadata || jsonb_build_object(
+                            'merchandisingTags', CAST(:merchandisingTagsJson AS jsonb),
+                            'colorFilters', CAST(:colorFiltersJson AS jsonb)
+                        ),
+                        updated_at = now()
+                    WHERE family_key = :familyKey AND is_active = TRUE
+                    """, new MapSqlParameterSource()
+                    .addValue("familyKey", familyKey)
+                    .addValue("merchandisingTagsJson", jsonValue(merchandisingTags))
+                    .addValue("colorFiltersJson", jsonValue(colorFilters)));
+            if (updated == 0) {
+                throw new IllegalArgumentException("Active category family not found: " + familyKey);
+            }
+        }
 
     @Override
     public void archiveFamily(String familyKey) {
@@ -494,6 +515,14 @@ class JdbcAdminCategoryRepository implements AdminCategoryRepository {
             return objectMapper.writeValueAsString(values);
         } catch (JsonProcessingException exception) {
             throw new IllegalArgumentException("Invalid category list value", exception);
+        }
+    }
+
+    private String jsonValue(Object value) {
+        try {
+            return objectMapper.writeValueAsString(value);
+        } catch (JsonProcessingException exception) {
+            throw new IllegalArgumentException("Invalid category metadata value", exception);
         }
     }
 }

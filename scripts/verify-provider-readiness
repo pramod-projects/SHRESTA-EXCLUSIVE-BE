@@ -1,0 +1,262 @@
+#!/usr/bin/env sh
+set -eu
+
+# Validates external provider runtime settings after env loading.
+# Intended to run from scripts/be-prod before application startup.
+
+errors=0
+
+is_true() {
+  case "$(printf '%s' "${1:-}" | tr '[:upper:]' '[:lower:]')" in
+    1|true|yes|on) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+getv() {
+  _name="$1"
+  eval "printf '%s' \"\${${_name}:-}\""
+}
+
+require_if_true() {
+  _flag_name="$1"
+  _value_name="$2"
+  _hint="$3"
+  _flag_value=$(getv "$_flag_name")
+  _value=$(getv "$_value_name")
+  if is_true "$_flag_value" && [ -z "$_value" ]; then
+    echo "  INVALID: $_value_name is required when $_flag_name=true ($_hint)" >&2
+    errors=1
+  fi
+}
+
+require_value_if_true() {
+  _flag_name="$1"
+  _value_name="$2"
+  _flag_value=$(getv "$_flag_name")
+  if is_true "$_flag_value"; then
+    require_value "$_value_name"
+  fi
+}
+
+require_when_set() {
+  _trigger_name="$1"
+  _required_name="$2"
+  _hint="$3"
+  _trigger=$(getv "$_trigger_name")
+  _required=$(getv "$_required_name")
+  if [ -n "$_trigger" ] && [ -z "$_required" ]; then
+    echo "  INVALID: $_required_name is required when $_trigger_name is set ($_hint)" >&2
+    errors=1
+  fi
+}
+
+require_value() {
+  _name="$1"
+  _value=$(getv "$_name")
+  if [ -z "$_value" ] || printf '%s' "$_value" | grep -qE '(YOUR_|replace-in-real-env)'; then
+    echo "  INVALID: $_name must be configured with a non-placeholder value" >&2
+    errors=1
+  fi
+}
+
+require_exact() {
+  _name="$1"
+  _expected="$2"
+  _value=$(getv "$_name")
+  if [ "$_value" != "$_expected" ]; then
+    echo "  INVALID: $_name must be $_expected for $(getv SHRESTA_ENVIRONMENT_MODE)" >&2
+    errors=1
+  fi
+}
+
+provider_in_order() {
+  _provider_code="$1"
+  _provider_order=$(getv SHRESTA_EMAIL_PROVIDER_ORDER)
+  if [ -z "$_provider_order" ]; then
+    _provider_order="BREVO,RESEND,MAILJET,MAILERSEND,ELASTIC_EMAIL"
+  fi
+  _provider_order=$(printf '%s' "$_provider_order" | tr -d '[:space:]')
+  case ",$_provider_order," in
+    *,"$_provider_code",*) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+validate_provider_order() {
+  _provider_order=$(getv SHRESTA_EMAIL_PROVIDER_ORDER)
+  if [ -z "$_provider_order" ]; then
+    _provider_order="BREVO,RESEND,MAILJET,MAILERSEND,ELASTIC_EMAIL"
+  fi
+  _provider_order=$(printf '%s' "$_provider_order" | tr -d '[:space:]')
+  case ",$_provider_order," in
+    *,,*)
+      echo "  INVALID: SHRESTA_EMAIL_PROVIDER_ORDER must not contain empty provider codes" >&2
+      errors=1
+      return
+      ;;
+  esac
+  _seen=,
+  _old_ifs=$IFS
+  IFS=,
+  set -- $_provider_order
+  IFS=$_old_ifs
+  for _provider_code in "$@"; do
+    case "$_provider_code" in
+      BREVO|RESEND|MAILJET|MAILERSEND|ELASTIC_EMAIL) ;;
+      *)
+        echo "  INVALID: SHRESTA_EMAIL_PROVIDER_ORDER contains unknown provider code $_provider_code" >&2
+        errors=1
+        ;;
+    esac
+    case "$_seen" in
+      *,"$_provider_code",*)
+        echo "  INVALID: SHRESTA_EMAIL_PROVIDER_ORDER contains duplicate provider code $_provider_code" >&2
+        errors=1
+        ;;
+      *) _seen="$_seen$_provider_code," ;;
+    esac
+  done
+}
+
+echo "Checking provider readiness..." >&2
+
+deployment_mode=$(printf '%s' "$(getv SHRESTA_ENVIRONMENT_MODE)" | tr '[:lower:]' '[:upper:]')
+case "$deployment_mode" in
+  UAT)
+    require_exact SHRESTA_STOREFRONT_URL https://uat.shrestaexclusive.com
+    require_exact SHRESTA_ADMIN_URL https://uat-admin.shrestaexclusive.com
+    require_exact SHRESTA_API_URL https://uat-api.shrestaexclusive.com
+    require_exact MEDIA_BROWSER_CACHE_MAX_AGE_SECONDS 2592000
+    ;;
+  PROD)
+    require_exact SHRESTA_STOREFRONT_URL https://shrestaexclusive.com
+    require_exact SHRESTA_ADMIN_URL https://admin.shrestaexclusive.com
+    require_exact SHRESTA_API_URL https://api.shrestaexclusive.com
+    require_exact MEDIA_BROWSER_CACHE_MAX_AGE_SECONDS 604800
+    ;;
+  DEV) ;;
+  *)
+    echo "  INVALID: SHRESTA_ENVIRONMENT_MODE must be DEV, UAT, or PROD" >&2
+    errors=1
+    ;;
+esac
+
+if [ "$deployment_mode" = "UAT" ] || [ "$deployment_mode" = "PROD" ]; then
+  require_value SHRESTA_ADMIN_API_KEY
+  if [ "$(getv SHRESTA_ADMIN_API_KEY)" = "local-shresta-admin-key" ]; then
+    echo "  INVALID: SHRESTA_ADMIN_API_KEY must not use the DEV key outside DEV" >&2
+    errors=1
+  fi
+  require_value R2_ACCOUNT_ID
+  require_value R2_ENDPOINT
+  require_value R2_BUCKET_NAME
+  require_value R2_ACCESS_KEY_ID
+  require_value R2_SECRET_ACCESS_KEY
+  require_value MEDIA_PUBLIC_BASE_URL
+
+  media_public_base_url=$(getv MEDIA_PUBLIC_BASE_URL)
+  r2_endpoint=$(getv R2_ENDPOINT)
+  case "$media_public_base_url" in
+    https://*) ;;
+    *)
+      echo "  INVALID: MEDIA_PUBLIC_BASE_URL must use HTTPS outside DEV" >&2
+      errors=1
+      ;;
+  esac
+  if [ "$media_public_base_url" = "$r2_endpoint" ] || printf '%s' "$media_public_base_url" | grep -q 'r2.cloudflarestorage.com'; then
+    echo "  INVALID: MEDIA_PUBLIC_BASE_URL must be the Cloudflare custom media domain, not the private R2 endpoint" >&2
+    errors=1
+  fi
+fi
+
+# Razorpay webhook secret is optional: when unset, signature verification is skipped.
+
+# Razorpay Standard Checkout credentials.
+razorpay_checkout_enabled=$(getv SHRESTA_RAZORPAY_CHECKOUT_ENABLED)
+razorpay_key_id=$(getv RAZORPAY_KEY_ID)
+razorpay_key_secret=$(getv RAZORPAY_KEY_SECRET)
+if is_true "$razorpay_checkout_enabled" || [ -n "$razorpay_key_id" ] || [ -n "$razorpay_key_secret" ]; then
+  if [ -z "$razorpay_key_id" ] || [ -z "$razorpay_key_secret" ]; then
+    echo "  INVALID: RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET are both required for Razorpay Standard Checkout" >&2
+    errors=1
+  fi
+fi
+
+# SpringEdge SMS requirements (when API key is present).
+if [ -n "$(getv SHRESTA_SMS_SPRINGEDGE_API_KEY)" ]; then
+  require_when_set SHRESTA_SMS_SPRINGEDGE_API_KEY SHRESTA_SMS_SPRINGEDGE_ENDPOINT "SpringEdge endpoint"
+  require_when_set SHRESTA_SMS_SPRINGEDGE_API_KEY SHRESTA_SMS_SPRINGEDGE_SENDER "SpringEdge sender id"
+  _se_mode=$(printf '%s' "$(getv SHRESTA_SMS_SPRINGEDGE_API_MODE)" | tr '[:upper:]' '[:lower:]')
+  if [ -n "$_se_mode" ] && [ "$_se_mode" != "json-v1" ] && [ "$_se_mode" != "legacy-form" ] && [ "$_se_mode" != "v1-json" ]; then
+    echo "  INVALID: SHRESTA_SMS_SPRINGEDGE_API_MODE must be one of json-v1, v1-json, legacy-form" >&2
+    errors=1
+  fi
+fi
+
+# MSG91 SMS requirements (when auth key is present).
+if [ -n "$(getv SHRESTA_SMS_MSG91_AUTH_KEY)" ]; then
+  require_when_set SHRESTA_SMS_MSG91_AUTH_KEY SHRESTA_SMS_MSG91_ENDPOINT "MSG91 endpoint"
+  _msg_mode=$(printf '%s' "$(getv SHRESTA_SMS_MSG91_API_MODE)" | tr '[:upper:]' '[:lower:]')
+  if [ "$_msg_mode" = "flow-v5" ]; then
+    require_when_set SHRESTA_SMS_MSG91_AUTH_KEY SHRESTA_SMS_MSG91_TEMPLATE_ID "MSG91 flow template id"
+  elif [ "$_msg_mode" = "legacy-form" ]; then
+    require_when_set SHRESTA_SMS_MSG91_AUTH_KEY SHRESTA_SMS_MSG91_SENDER "MSG91 sender"
+  else
+    echo "  INVALID: SHRESTA_SMS_MSG91_API_MODE must be flow-v5 or legacy-form" >&2
+    errors=1
+  fi
+fi
+
+# SMS webhook auth/signature controls.
+require_if_true SHRESTA_SMS_SPRINGEDGE_WEBHOOK_AUTH_ENABLED SHRESTA_SMS_SPRINGEDGE_WEBHOOK_AUTH_HEADER "SpringEdge webhook auth header name"
+require_if_true SHRESTA_SMS_SPRINGEDGE_WEBHOOK_AUTH_ENABLED SHRESTA_SMS_SPRINGEDGE_WEBHOOK_AUTH_TOKEN "SpringEdge webhook token"
+require_if_true SHRESTA_SMS_SPRINGEDGE_WEBHOOK_SIGNATURE_ENABLED SHRESTA_SMS_SPRINGEDGE_WEBHOOK_SIGNATURE_HEADER "SpringEdge signature header name"
+require_if_true SHRESTA_SMS_SPRINGEDGE_WEBHOOK_SIGNATURE_ENABLED SHRESTA_SMS_SPRINGEDGE_WEBHOOK_SIGNATURE_SECRET "SpringEdge signature secret"
+
+require_if_true SHRESTA_SMS_MSG91_WEBHOOK_AUTH_ENABLED SHRESTA_SMS_MSG91_WEBHOOK_AUTH_HEADER "MSG91 webhook auth header name"
+require_if_true SHRESTA_SMS_MSG91_WEBHOOK_AUTH_ENABLED SHRESTA_SMS_MSG91_WEBHOOK_AUTH_TOKEN "MSG91 webhook token"
+require_if_true SHRESTA_SMS_MSG91_WEBHOOK_SIGNATURE_ENABLED SHRESTA_SMS_MSG91_WEBHOOK_SIGNATURE_HEADER "MSG91 signature header name"
+require_if_true SHRESTA_SMS_MSG91_WEBHOOK_SIGNATURE_ENABLED SHRESTA_SMS_MSG91_WEBHOOK_SIGNATURE_SECRET "MSG91 signature secret"
+
+# Transactional email requires a sender and at least one complete enabled provider.
+email_enabled=$(getv SHRESTA_EMAIL_ENABLED)
+if is_true "$email_enabled"; then
+  validate_provider_order
+  require_value SHRESTA_EMAIL_SENDER
+  require_value_if_true SHRESTA_EMAIL_BREVO_ENABLED SHRESTA_EMAIL_BREVO_API_KEY
+  require_value_if_true SHRESTA_EMAIL_BREVO_ENABLED SHRESTA_EMAIL_BREVO_WEBHOOK_SECRET
+  require_value_if_true SHRESTA_EMAIL_RESEND_ENABLED SHRESTA_EMAIL_RESEND_API_KEY
+  require_value_if_true SHRESTA_EMAIL_RESEND_ENABLED SHRESTA_EMAIL_RESEND_WEBHOOK_SECRET
+  require_value_if_true SHRESTA_EMAIL_MAILJET_ENABLED SHRESTA_EMAIL_MAILJET_API_KEY
+  require_value_if_true SHRESTA_EMAIL_MAILJET_ENABLED SHRESTA_EMAIL_MAILJET_SECRET_KEY
+  require_value_if_true SHRESTA_EMAIL_MAILJET_ENABLED SHRESTA_EMAIL_MAILJET_WEBHOOK_USERNAME
+  require_value_if_true SHRESTA_EMAIL_MAILJET_ENABLED SHRESTA_EMAIL_MAILJET_WEBHOOK_PASSWORD
+  require_value_if_true SHRESTA_EMAIL_MAILERSEND_ENABLED SHRESTA_EMAIL_MAILERSEND_API_KEY
+  require_value_if_true SHRESTA_EMAIL_MAILERSEND_ENABLED SHRESTA_EMAIL_MAILERSEND_WEBHOOK_SECRET
+  require_value_if_true SHRESTA_EMAIL_ELASTIC_ENABLED SHRESTA_EMAIL_ELASTIC_API_KEY
+  require_value_if_true SHRESTA_EMAIL_ELASTIC_ENABLED SHRESTA_EMAIL_ELASTIC_WEBHOOK_SECRET
+
+  if [ "$deployment_mode" = "UAT" ] && [ -z "$(getv SHRESTA_EMAIL_UAT_ALLOWLIST)" ] && [ -z "$(getv SHRESTA_EMAIL_UAT_RECIPIENT_OVERRIDE)" ]; then
+    echo "  INVALID: UAT email requires SHRESTA_EMAIL_UAT_ALLOWLIST or SHRESTA_EMAIL_UAT_RECIPIENT_OVERRIDE" >&2
+    errors=1
+  fi
+
+  email_provider_ready=false
+  if is_true "$(getv SHRESTA_EMAIL_BREVO_ENABLED)" && [ -n "$(getv SHRESTA_EMAIL_BREVO_API_KEY)" ] && provider_in_order BREVO; then email_provider_ready=true; fi
+  if is_true "$(getv SHRESTA_EMAIL_RESEND_ENABLED)" && [ -n "$(getv SHRESTA_EMAIL_RESEND_API_KEY)" ] && provider_in_order RESEND; then email_provider_ready=true; fi
+  if is_true "$(getv SHRESTA_EMAIL_MAILJET_ENABLED)" && [ -n "$(getv SHRESTA_EMAIL_MAILJET_API_KEY)" ] && [ -n "$(getv SHRESTA_EMAIL_MAILJET_SECRET_KEY)" ] && provider_in_order MAILJET; then email_provider_ready=true; fi
+  if is_true "$(getv SHRESTA_EMAIL_MAILERSEND_ENABLED)" && [ -n "$(getv SHRESTA_EMAIL_MAILERSEND_API_KEY)" ] && provider_in_order MAILERSEND; then email_provider_ready=true; fi
+  if is_true "$(getv SHRESTA_EMAIL_ELASTIC_ENABLED)" && [ -n "$(getv SHRESTA_EMAIL_ELASTIC_API_KEY)" ] && provider_in_order ELASTIC_EMAIL; then email_provider_ready=true; fi
+  if [ "$email_provider_ready" != true ]; then
+    echo "  INVALID: enable and fully configure at least one transactional email provider" >&2
+    errors=1
+  fi
+fi
+
+if [ "$errors" -ne 0 ]; then
+  echo "ERROR: Provider readiness checks failed." >&2
+  exit 1
+fi
+
+echo "Provider readiness checks passed." >&2

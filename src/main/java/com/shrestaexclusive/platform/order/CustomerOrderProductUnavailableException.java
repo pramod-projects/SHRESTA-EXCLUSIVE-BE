@@ -5,4 +5,8 @@ public class CustomerOrderProductUnavailableException extends RuntimeException {
     public CustomerOrderProductUnavailableException(String productId) {
         super("Product is unavailable for ordering: " + productId);
     }
+
+    public CustomerOrderProductUnavailableException(String productId, String message) {
+        super(message + " (product: " + productId + ")");
+    }
 }

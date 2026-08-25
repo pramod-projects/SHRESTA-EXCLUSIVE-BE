@@ -1,7 +1,8 @@
 package com.shrestaexclusive.platform.db.migration.tables;
 
-import com.shrestaexclusive.platform.db.migration.framework.TransitionPlan;
 import java.util.List;
+
+import com.shrestaexclusive.platform.db.migration.framework.TransitionPlan;
 
 public final class CustomerOrderDraftsMigration {
 
@@ -50,6 +51,12 @@ public final class CustomerOrderDraftsMigration {
                 "CREATE INDEX idx_customer_order_drafts_customer_active    ON customer_order_drafts (customer_id, status, expires_at DESC)",
                 "CREATE INDEX idx_customer_order_drafts_customer_signature ON customer_order_drafts (customer_id, cart_signature, status)",
                 "CREATE INDEX idx_customer_order_drafts_converted_order    ON customer_order_drafts (converted_order_id)"
+            ))
+            .transition(List.of(0), 1, List.of(
+                "ALTER TABLE customer_order_drafts ALTER COLUMN customer_email DROP NOT NULL"
+            ))
+            .transition(List.of(1), 2, List.of(
+                "ALTER TABLE customer_order_drafts ADD COLUMN IF NOT EXISTS is_test BOOLEAN NOT NULL DEFAULT FALSE"
             ))
             .build();
     }

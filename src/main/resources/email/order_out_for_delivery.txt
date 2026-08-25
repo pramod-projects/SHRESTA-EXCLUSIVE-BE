@@ -1,0 +1,7 @@
+SHRESTA | Out for delivery
+
+Hello {{customerName}},
+
+Order {{orderNumber}} is with the delivery partner and is expected to arrive soon.
+
+Please keep your phone available in case the delivery partner needs help reaching you.

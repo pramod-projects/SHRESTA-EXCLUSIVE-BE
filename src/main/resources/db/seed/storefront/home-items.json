@@ -11,7 +11,7 @@
     "sort_order": 10,
     "is_featured": false,
     "media_asset_key": "shresta-logo-light",
-    "demo_video_url": "logos/SHRESTA.mp4",
+    "demo_video_url": "logos/INTRO.mp4",
     "metadata": {},
     "is_active": true
   },
@@ -64,17 +64,17 @@
     "is_active": true
   },
   {
-    "item_key": "hero-kalamkari",
+    "item_key": "hero-kalankari",
     "section_key": "hero",
     "family_key": "silk_saree",
     "title": "SHRESTA Saree Signature",
     "subtitle": "Luxury saree curation for every celebration",
-    "description": "Discover kalamkari sarees with refined craftsmanship, rich drape, and premium finish.",
+    "description": "Discover kalankari sarees with refined craftsmanship, rich drape, and premium finish.",
     "cta_label": "Shop Sarees",
     "cta_href": "/categories/silk-sarees",
     "sort_order": 10,
     "is_featured": true,
-    "media_asset_key": "saree-kalamkari-0001",
+    "media_asset_key": "saree-kalankari-0001",
     "demo_video_url": null,
     "metadata": {
       "trustNote": "Authentic weave stories, premium finish, curated by SHRESTA"
@@ -190,20 +190,20 @@
     "is_active": true
   },
   {
-    "item_key": "collection-kalamkari",
+    "item_key": "collection-kalankari",
     "section_key": "featured_collections",
     "family_key": "silk_saree",
-    "title": "Kalamkari",
+    "title": "Kalankari",
     "subtitle": null,
-    "description": "Kalamkari saree edit curated for premium drape and occasion styling.",
+    "description": "Kalankari saree edit curated for premium drape and occasion styling.",
     "cta_label": null,
     "cta_href": null,
     "sort_order": 10,
     "is_featured": true,
-    "media_asset_key": "saree-kalamkari-0001",
+    "media_asset_key": "saree-kalankari-0001",
     "demo_video_url": null,
     "metadata": {
-      "slug": "kalamkari",
+      "slug": "kalankari",
       "itemCount": 18,
       "qualityBadges": [
         "Curated Weaves",
@@ -211,7 +211,7 @@
         "Signature Edit"
       ],
       "productBadgeFilters": [
-        "Collection Kalamkari"
+        "Collection Kalankari"
       ]
     },
     "is_active": true
@@ -417,7 +417,7 @@
     "sort_order": 10,
     "is_featured": false,
     "media_asset_key": "shresta-brand-mark-light",
-    "demo_video_url": "logos/SHRESTA.mp4",
+    "demo_video_url": "logos/INTRO.mp4",
     "metadata": {
       "highlights": [
         "Brand film",
@@ -438,7 +438,7 @@
     "cta_href": null,
     "sort_order": 20,
     "is_featured": false,
-    "media_asset_key": "saree-kalamkari-0001",
+    "media_asset_key": "saree-kalankari-0001",
     "demo_video_url": null,
     "metadata": {
       "highlights": [
@@ -460,7 +460,7 @@
     "cta_href": null,
     "sort_order": 30,
     "is_featured": false,
-    "media_asset_key": "saree-kalamkari-0002",
+    "media_asset_key": "saree-kalankari-0002",
     "demo_video_url": null,
     "metadata": {
       "highlights": [

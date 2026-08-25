@@ -1,5 +1,7 @@
 package com.shrestaexclusive.platform.order;
 
+import java.util.List;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
@@ -10,15 +12,15 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import java.util.List;
 
 public record CustomerOrderPlacementRequest(
         @NotEmpty @Size(max = 100) List<@Valid LineItem> lines,
         @Size(max = 80) String draftOrderId,
+        @Valid @NotNull RazorpayPaymentProof razorpayPayment,
         @Valid @NotNull Contact contact,
         @Valid @NotNull ShippingAddress shippingAddress,
         @NotBlank @Pattern(regexp = "^(STANDARD|EXPRESS|SAME_DAY)$") String deliveryMode,
-        @NotBlank @Pattern(regexp = "^(UPI|CARD|NETBANKING)$") String paymentMethod,
+        @Pattern(regexp = "^(UPI|CARD|NETBANKING)$") String paymentMethod,
         @AssertTrue boolean acceptedTerms
 ) {
 
@@ -31,6 +33,13 @@ public record CustomerOrderPlacementRequest(
     public record Contact(
             @NotBlank @Email @Size(max = 320) String email,
             @NotBlank @Pattern(regexp = "^[6-9][0-9]{9}$") String phone
+    ) {
+    }
+
+    public record RazorpayPaymentProof(
+            @NotBlank @Size(max = 120) String orderId,
+            @NotBlank @Size(max = 120) String paymentId,
+            @NotBlank @Size(max = 255) String signature
     ) {
     }
 

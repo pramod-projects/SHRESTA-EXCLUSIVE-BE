@@ -1,7 +1,7 @@
 [
   {
-    "asset_key": "saree-kalamkari-0001",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0001",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -9,21 +9,21 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260722_073439.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-001",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-001",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260722_073439.png"
   },
   {
-    "asset_key": "saree-kalamkari-0002",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0002",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -31,21 +31,21 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260722_074409.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-002",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-002",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260722_074409.png"
   },
   {
-    "asset_key": "saree-kalamkari-0003",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0003",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -53,21 +53,21 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260722_074450.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-003",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-003",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260722_074450.png"
   },
   {
-    "asset_key": "saree-kalamkari-0004",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0004",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -75,21 +75,21 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260722_075020.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-004",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-004",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260722_075020.png"
   },
   {
-    "asset_key": "saree-kalamkari-0005",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0005",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -97,21 +97,21 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260722_075120.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-005",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-005",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260722_075120.png"
   },
   {
-    "asset_key": "saree-kalamkari-0006",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0006",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -119,21 +119,21 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260722_075147.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-006",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-006",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260722_075147.png"
   },
   {
-    "asset_key": "saree-kalamkari-0007",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0007",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -141,21 +141,21 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260722_080335.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-007",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-007",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260722_080335.png"
   },
   {
-    "asset_key": "saree-kalamkari-0008",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0008",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -163,21 +163,21 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260722_080454.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-008",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-008",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260722_080454.png"
   },
   {
-    "asset_key": "saree-kalamkari-0009",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0009",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -185,21 +185,21 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260722_080735.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-009",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-009",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260722_080735.png"
   },
   {
-    "asset_key": "saree-kalamkari-0010",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0010",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -207,21 +207,21 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260730_080111.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-010",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-010",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260730_080111.png"
   },
   {
-    "asset_key": "saree-kalamkari-0011",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0011",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -229,21 +229,21 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260730_080138.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-011",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-011",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260730_080138.png"
   },
   {
-    "asset_key": "saree-kalamkari-0012",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0012",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -251,21 +251,21 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260730_080306.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-012",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-012",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260730_080306.png"
   },
   {
-    "asset_key": "saree-kalamkari-0013",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0013",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -273,21 +273,21 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260730_080357.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-013",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-013",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260730_080357.png"
   },
   {
-    "asset_key": "saree-kalamkari-0014",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0014",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -295,21 +295,21 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260730_080703.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-014",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-014",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260730_080703.png"
   },
   {
-    "asset_key": "saree-kalamkari-0015",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0015",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -317,21 +317,21 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260730_080749.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-015",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-015",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260730_080749.png"
   },
   {
-    "asset_key": "saree-kalamkari-0016",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0016",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -339,21 +339,21 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260730_080922.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-016",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-016",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260730_080922.png"
   },
   {
-    "asset_key": "saree-kalamkari-0017",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0017",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -361,21 +361,21 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260730_081149.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-017",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-017",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260730_081149.png"
   },
   {
-    "asset_key": "saree-kalamkari-0018",
-    "alt_text": "Kalamkari saree by SHRESTA EXCLUSIVE",
+    "asset_key": "saree-kalankari-0018",
+    "alt_text": "Kalankari saree by SHRESTA EXCLUSIVE",
     "width_px": 1080,
     "height_px": 1350,
     "delivery_mode": "s3-compatible",
@@ -383,16 +383,16 @@
     "storage_provider": "s3-compatible",
     "storage_key": "assets/Kalankari/IMG_20260730_082039.png",
     "category_family_key": "silk_saree",
-    "category_product_type_key": "kalamkari",
-    "product_sku": "SHRESTA-KALAMKARI-018",
+    "category_product_type_key": "kalankari",
+    "product_sku": "SHRESTA-KALANKARI-018",
     "content_type": "image/png",
     "status": "READY",
     "tags": [
       "SAREE",
       "SHRESTA",
-      "KALAMKARI"
+      "KALANKARI"
     ],
-    "seo_title": "Kalamkari Saree | SHRESTA EXCLUSIVE",
+    "seo_title": "Kalankari Saree | SHRESTA EXCLUSIVE",
     "image_path": "assets/Kalankari/IMG_20260730_082039.png"
   },
   {

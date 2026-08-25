@@ -8,7 +8,7 @@ import java.util.Map;
  * <p>
  * {@code sectionKey} must match an existing active section (e.g. "bestsellers").
  * {@code itemKey} must be unique across all items and match {@code ^[a-z][a-z0-9_-]*$}.
- * {@code mediaAssetKey} is the asset_key of an already-uploaded media asset, or null for no image.
+ * Media keys refer to already-uploaded READY assets owned by this product.
  */
 public record StorefrontHomeItemCreateCommand(
         String sectionKey,
@@ -24,6 +24,6 @@ public record StorefrontHomeItemCreateCommand(
         Map<String, Object> metadata,
         String mediaAssetKey,
         List<String> galleryAssetKeys,
-        String demoVideoUrl
+        String demoVideoAssetKey
 ) {
 }

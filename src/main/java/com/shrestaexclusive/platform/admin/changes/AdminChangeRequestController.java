@@ -1,20 +1,10 @@
 package com.shrestaexclusive.platform.admin.changes;
 
-import static com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator.IDEMPOTENCY_KEY_HEADER;
-import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_KEY_HEADER;
-import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_ROLE_HEADER;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shrestaexclusive.platform.common.api.ApiResponse;
-import com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator;
-import com.shrestaexclusive.platform.mutation.MutationFingerprint;
-import com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard;
-import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
 import org.slf4j.MDC;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
@@ -28,12 +18,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shrestaexclusive.platform.common.api.ApiResponse;
+import com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator;
+import static com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator.IDEMPOTENCY_KEY_HEADER;
+import com.shrestaexclusive.platform.mutation.MutationFingerprint;
+import com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard;
+import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_KEY_HEADER;
+import static com.shrestaexclusive.platform.storefront.admin.StorefrontAdminAccessGuard.ADMIN_ROLE_HEADER;
+
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/admin/change-requests")
 public class AdminChangeRequestController {
 
-    private static final Set<String> SUBMIT_ROLES = Set.of("CHANGE_SUBMITTER", "CHANGE_MANAGER");
-    private static final Set<String> REVIEW_ROLES = Set.of("CHANGE_REVIEWER", "CHANGE_MANAGER");
+    private static final Set<String> SUBMIT_ROLES = Set.of("CHANGE_SUBMITTER", "CHANGE_MANAGER", "CHANGE_ADMIN");
+    private static final Set<String> REVIEW_ROLES = Set.of("CHANGE_APPROVER", "CHANGE_MANAGER", "CHANGE_ADMIN");
     private static final TypeReference<AdminChangeRequestResponse> CHANGE_REQUEST_RESPONSE = new TypeReference<>() {
     };
 
@@ -79,6 +81,7 @@ public class AdminChangeRequestController {
             @RequestHeader(value = ADMIN_KEY_HEADER, required = false) String adminKey,
             @RequestHeader(value = ADMIN_ROLE_HEADER, required = false) String adminRole,
             @RequestHeader(value = IDEMPOTENCY_KEY_HEADER, required = false) String idempotencyKey,
+            @RequestHeader(value = "X-SHRESTA-ADMIN-ACTOR", required = false) String actor,
             @Valid @RequestBody AdminChangeRequestCreateRequest request
     ) {
         accessGuard.requireRole(adminKey, adminRole, SUBMIT_ROLES);
@@ -89,7 +92,7 @@ public class AdminChangeRequestController {
                 MutationFingerprint.json(objectMapper, "POST", "/api/v1/admin/change-requests", request),
                 "admin-change-requests:create:" + idempotencyKey,
                 CHANGE_REQUEST_RESPONSE,
-                () -> service.create(role, request)
+                () -> service.create(role, actor, request)
         ));
     }
 
@@ -103,6 +106,7 @@ public class AdminChangeRequestController {
             @RequestHeader(value = ADMIN_KEY_HEADER, required = false) String adminKey,
             @RequestHeader(value = ADMIN_ROLE_HEADER, required = false) String adminRole,
             @RequestHeader(value = IDEMPOTENCY_KEY_HEADER, required = false) String idempotencyKey,
+            @RequestHeader(value = "X-SHRESTA-ADMIN-ACTOR", required = false) String actor,
             @Valid @RequestBody AdminChangeRequestCreateRequest request
     ) {
         accessGuard.requireRole(adminKey, adminRole, SUBMIT_ROLES);
@@ -113,7 +117,7 @@ public class AdminChangeRequestController {
                 MutationFingerprint.json(objectMapper, "POST", "/api/v1/admin/change-requests/upsert", request),
                 "admin-change-requests:upsert:" + request.entityKey() + ":" + request.requestType(),
                 CHANGE_REQUEST_RESPONSE,
-                () -> service.createOrUpdatePending(role, request)
+                () -> service.createOrUpdatePending(role, actor, request)
         ));
     }
 

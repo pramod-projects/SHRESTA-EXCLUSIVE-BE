@@ -8,6 +8,7 @@ public record AuthenticatedCustomer(
         String identityEmail,
         String displayName,
         String status,
-        Instant sessionExpiresAt
+        Instant sessionExpiresAt,
+        boolean test
 ) {
 }

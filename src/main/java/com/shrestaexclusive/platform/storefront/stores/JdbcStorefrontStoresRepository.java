@@ -1,23 +1,26 @@
 package com.shrestaexclusive.platform.storefront.stores;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shrestaexclusive.platform.storefront.stores.StorefrontStoresRepository.OpeningHourRow;
-import com.shrestaexclusive.platform.storefront.stores.StorefrontStoresRepository.SectionRow;
-import com.shrestaexclusive.platform.storefront.stores.StorefrontStoresRepository.StoreRow;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shrestaexclusive.platform.storefront.stores.StorefrontStoresRepository.OpeningHourRow;
+import com.shrestaexclusive.platform.storefront.stores.StorefrontStoresRepository.SectionRow;
+import com.shrestaexclusive.platform.storefront.stores.StorefrontStoresRepository.StoreRow;
+
 @Repository
-class JdbcStorefrontStoresRepository implements StorefrontStoresRepository {
+@SuppressWarnings("unused")
+public class JdbcStorefrontStoresRepository implements StorefrontStoresRepository {
 
     private static final TypeReference<Map<String, Object>> STRING_OBJECT_MAP = new TypeReference<>() {
     };
@@ -29,7 +32,7 @@ class JdbcStorefrontStoresRepository implements StorefrontStoresRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper;
 
-    JdbcStorefrontStoresRepository(NamedParameterJdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
+    public JdbcStorefrontStoresRepository(NamedParameterJdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
         this.jdbcTemplate = jdbcTemplate;
         this.objectMapper = objectMapper;
     }

@@ -1,18 +1,8 @@
 package com.shrestaexclusive.platform.order;
 
-import static com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator.IDEMPOTENCY_KEY_HEADER;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shrestaexclusive.platform.auth.AuthenticatedCustomer;
-import com.shrestaexclusive.platform.auth.CustomerAuthService;
-import com.shrestaexclusive.platform.auth.CustomerUnauthorizedException;
-import com.shrestaexclusive.platform.common.api.ApiResponse;
-import com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator;
-import com.shrestaexclusive.platform.mutation.MutationFingerprint;
-import jakarta.validation.Valid;
 import java.util.List;
 import java.util.function.Supplier;
+
 import org.slf4j.MDC;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
@@ -26,6 +16,19 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shrestaexclusive.platform.auth.AuthenticatedCustomer;
+import com.shrestaexclusive.platform.auth.CustomerAuthService;
+import com.shrestaexclusive.platform.auth.CustomerUnauthorizedException;
+import com.shrestaexclusive.platform.common.api.ApiResponse;
+import com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator;
+import static com.shrestaexclusive.platform.mutation.IdempotentMutationCoordinator.IDEMPOTENCY_KEY_HEADER;
+import com.shrestaexclusive.platform.mutation.MutationFingerprint;
+import com.shrestaexclusive.platform.payment.razorpay.RazorpayCreateOrderResponse;
+
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/customer/orders")
 public class CustomerOrderController {
@@ -34,19 +37,24 @@ public class CustomerOrderController {
     };
     private static final TypeReference<CustomerOrderDraftResponse> ORDER_DRAFT_RESPONSE = new TypeReference<>() {
     };
+        private static final TypeReference<RazorpayCreateOrderResponse> RAZORPAY_ORDER_RESPONSE = new TypeReference<>() {
+        };
 
     private final CustomerOrderService orderService;
+        private final CustomerOrderLifecycleService lifecycleService;
     private final CustomerAuthService authService;
     private final IdempotentMutationCoordinator mutations;
     private final ObjectMapper objectMapper;
 
     public CustomerOrderController(
             CustomerOrderService orderService,
+                        CustomerOrderLifecycleService lifecycleService,
             CustomerAuthService authService,
             IdempotentMutationCoordinator mutations,
             ObjectMapper objectMapper
     ) {
         this.orderService = orderService;
+                this.lifecycleService = lifecycleService;
         this.authService = authService;
         this.mutations = mutations;
         this.objectMapper = objectMapper;
@@ -96,6 +104,41 @@ public class CustomerOrderController {
                 .body(ApiResponse.ok(response, traceId()));
     }
 
+    @PostMapping("/draft/{draftOrderId}/payment-failed")
+    public ResponseEntity<ApiResponse<CustomerOrderDraftPaymentStatusResponse>> markDraftPaymentFailed(
+            @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorization,
+            @PathVariable String draftOrderId,
+            @Valid @RequestBody CustomerOrderDraftPaymentFailedRequest request
+    ) {
+        AuthenticatedCustomer customer = authService.authenticatedCustomer(bearerToken(authorization));
+        CustomerOrderDraftPaymentStatusResponse response = orderService.markDraftPaymentFailed(customer, draftOrderId, request);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.noStore().cachePrivate().mustRevalidate())
+                .body(ApiResponse.ok(response, traceId()));
+    }
+
+    @PostMapping("/draft/{draftOrderId}/razorpay-order")
+    public ResponseEntity<ApiResponse<RazorpayCreateOrderResponse>> createRazorpayOrder(
+            @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorization,
+            @RequestHeader(value = IDEMPOTENCY_KEY_HEADER, required = false) String idempotencyKey,
+            @PathVariable String draftOrderId
+    ) {
+        AuthenticatedCustomer customer = authService.authenticatedCustomer(bearerToken(authorization));
+        RazorpayCreateOrderResponse response = mutate(
+                "customer-orders:razorpay:" + customer.customerId(),
+                idempotencyKey,
+                "POST",
+                "/api/v1/customer/orders/draft/" + draftOrderId + "/razorpay-order",
+                java.util.Map.of("draftOrderId", draftOrderId),
+                "customer-orders:razorpay:" + customer.customerId(),
+                RAZORPAY_ORDER_RESPONSE,
+                () -> orderService.createRazorpayOrder(customer, draftOrderId)
+        );
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .cacheControl(CacheControl.noStore().cachePrivate().mustRevalidate())
+                .body(ApiResponse.ok(response, traceId()));
+    }
+
     @GetMapping("/{orderNumber}")
     public ResponseEntity<ApiResponse<CustomerOrderResponse>> findOrder(
             @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorization,
@@ -115,6 +158,31 @@ public class CustomerOrderController {
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.noStore().cachePrivate().mustRevalidate())
                 .body(ApiResponse.ok(orderService.listOrdersForCustomer(customer.customerId()), traceId()));
+    }
+
+    @PostMapping("/{orderNumber}/refund-request")
+    public ResponseEntity<ApiResponse<CustomerOrderResponse>> requestRefund(
+            @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorization,
+            @RequestHeader(value = IDEMPOTENCY_KEY_HEADER, required = false) String idempotencyKey,
+            @PathVariable String orderNumber,
+            @Valid @RequestBody(required = false) CustomerOrderRefundRequest request
+    ) {
+        AuthenticatedCustomer customer = authService.authenticatedCustomer(bearerToken(authorization));
+        CustomerOrderRefundRequest refundRequest = request == null ? new CustomerOrderRefundRequest(null) : request;
+        CustomerOrderResponse response = mutate(
+                "customer-orders:refund-request:" + customer.customerId(),
+                idempotencyKey,
+                "POST",
+                "/api/v1/customer/orders/" + orderNumber + "/refund-request",
+                refundRequest,
+                "customer-orders:refund-request:" + customer.customerId() + ":" + orderNumber,
+                ORDER_RESPONSE,
+                () -> lifecycleService.requestRefundByCustomer(customer.customerId(), orderNumber, refundRequest.note())
+        );
+
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.noStore().cachePrivate().mustRevalidate())
+                .body(ApiResponse.ok(response, traceId()));
     }
 
     private <T> T mutate(

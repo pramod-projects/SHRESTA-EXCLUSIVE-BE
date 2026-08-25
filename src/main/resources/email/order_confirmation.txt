@@ -1,0 +1,9 @@
+SHRESTA | Order confirmed
+
+Hello {{customerName}},
+
+Thank you for your order. We have received order {{orderNumber}} and will update you when it ships.
+
+Order total: {{total}}
+
+Keep this confirmation for your records.

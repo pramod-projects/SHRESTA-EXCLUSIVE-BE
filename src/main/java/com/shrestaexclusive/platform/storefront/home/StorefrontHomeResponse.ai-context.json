@@ -5,6 +5,6 @@
   "businessRules": [
     "ProductCard carries product identity, SKU, slug, customer-facing description, customer-facing longDescription, family, type, pricing, ratings, badges, and media.",
     "FeaturedCollection carries computed itemCount and optional productBadgeFilters so all curated collection counts use generic backend rules.",
-    "Media assets include versioned URLs, LQIP, dimensions, delivery mode, and optimized variants for responsive frontend rendering."
+    "Media assets expose one canonical immutable source URL and dimensions; responsive display sizing is handled only at delivery time."
   ]
 }
